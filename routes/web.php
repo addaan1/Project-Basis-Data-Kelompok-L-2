@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+// ini punya adi
 // Controller dari Breeze
 use App\Http\Controllers\ProfileController;
 
@@ -131,3 +131,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/topup/{topUp}', [TopUpController::class, 'show'])->name('topup.show');
     Route::post('/topup/{topUp}/confirm', [TopUpController::class, 'confirm'])->name('topup.confirm');
 });
+
+// ini faiz
