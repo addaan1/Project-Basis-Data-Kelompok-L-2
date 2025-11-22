@@ -38,6 +38,11 @@ class Transaksi extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'payment_method' => 'encrypted',
+        'reference_code' => 'encrypted',
+    ];
+
     // Relasi ke User sebagai penjual
     public function penjual()
     {

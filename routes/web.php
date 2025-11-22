@@ -72,6 +72,12 @@ Route::prefix('app')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('pasar', PasarController::class);
     Route::resource('inventory', InventoryController::class);
     Route::resource('transaksi', TransaksiController::class);
+    Route::middleware(['role:petani'])->group(function () {
+        Route::post('/transaksi/{transaksi}/approve', [TransaksiController::class, 'approve'])->name('transaksi.approve');
+        Route::post('/transaksi/{transaksi}/reject', [TransaksiController::class, 'reject'])->name('transaksi.reject');
+        Route::get('/transaksi/{transaksi}/history', [TransaksiController::class, 'history'])->name('transaksi.history');
+    });
+    Route::get('/transaksi/notifications', [TransaksiController::class, 'notifications'])->name('transaksi.notifications');
 });
 
 

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProdukBeras;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MarketController extends Controller
 {
@@ -13,8 +17,9 @@ class MarketController extends Controller
         return view('market.index', compact('products'));
     }
 
-    public function show(ProdukBeras $product)
+    public function show(ProdukBeras $market)
     {
+        $product = $market;
         return view('market.show', compact('product'));
     }
 
@@ -54,25 +59,97 @@ class MarketController extends Controller
         $product = ProdukBeras::findOrFail($id);
         return view('market.edit', compact('product'));
     }
-    public function buy(Request $request, ProdukBeras $product)
+    public function buy(Request $request, ProdukBeras $market)
     {
-    $request->validate([
-        'jumlah' => 'required|integer|min:1|max:'.$product->stok,
-    ]);
+        try {
+            $product = $market;
+            $request->validate([
+                'jumlah' => 'required|integer|min:1|max:'.$product->stok,
+            ]);
 
-    // Buat transaksi baru
-    $transaksi = \App\Models\Transaksi::create([
-        'id_user'   => auth()->id(),
-        'id_produk' => $product->id_produk,
-        'jumlah'    => $request->jumlah,
-        'total'     => $product->harga * $request->jumlah,
-        'status'    => 'pending',
-    ]);
+            DB::beginTransaction();
 
-    // Kurangi stok produk
-    $product->decrement('stok', $request->jumlah);
+            $buyerId = Auth::user()->id_user;
+            $sellerId = $product->id_user;
+            $jumlah = (int) $request->input('jumlah');
+            $hargaSatuan = (float) $product->harga;
 
-    return redirect()->route('market.show', $product->id_produk)
-                     ->with('status', 'Pembelian berhasil dibuat, menunggu konfirmasi!');
+            $trx = Transaksi::create([
+                'id_penjual' => $sellerId,
+                'id_pembeli' => $buyerId,
+                'jumlah' => $jumlah,
+                'harga_awalan' => $hargaSatuan,
+                'harga_akhir' => $hargaSatuan,
+                'tanggal' => now()->toDateString(),
+                'jenis_transaksi' => 'market_purchase',
+                'status_transaksi' => 'menunggu_pembayaran',
+                'type' => 'purchase',
+                'description' => 'Pembelian langsung produk beras',
+                'user_id' => $buyerId,
+            ]);
+
+            $product->decrement('stok', $jumlah);
+
+            DB::commit();
+
+            return redirect()->route('market.show', $product->id_produk)
+                ->with('status', 'Pembelian berhasil dibuat, menunggu konfirmasi!');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Market buy error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return redirect()->route('market.index')->with('error', 'Gagal membuat pembelian: '.$e->getMessage());
+        }
+    }
+
+    public function negotiate(Request $request, ProdukBeras $market)
+    {
+        try {
+            $product = $market;
+            $request->validate([
+                'tawaran_harga' => 'required|numeric|min:1',
+                'jumlah' => 'nullable|integer|min:1|max:'.$product->stok,
+                'pesan' => 'nullable|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $buyerId = Auth::user()->id_user;
+            $sellerId = $product->id_user;
+            $jumlah = (int) ($request->input('jumlah') ?? 0);
+            $offer = (float) $request->input('tawaran_harga');
+            $message = (string) $request->input('pesan', '');
+
+            $trx = Transaksi::create([
+                'id_penjual' => $sellerId,
+                'id_pembeli' => $buyerId,
+                'jumlah' => $jumlah,
+                'harga_awalan' => (float) $product->harga,
+                'harga_akhir' => $offer,
+                'tanggal' => now()->toDateString(),
+                'jenis_transaksi' => 'market_negotiation',
+                'status_transaksi' => 'dalam_proses',
+                'type' => 'purchase',
+                'description' => 'Negosiasi harga: '.($message ?: '-'),
+                'user_id' => $buyerId,
+            ]);
+
+            DB::table('negosiasi_hargas')->insert([
+                'id_transaksi' => $trx->id_transaksi,
+                'id_user_penawar' => $buyerId,
+                'harga_tawaran' => $offer,
+                'catatan' => $message,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('market.show', $product->id_produk)
+                ->with('status', 'Tawaran negosiasi telah dikirim dan sedang diproses');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Market negotiate error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return redirect()->route('market.index')->with('error', 'Gagal mengirim negosiasi: '.$e->getMessage());
+        }
     }
 }
