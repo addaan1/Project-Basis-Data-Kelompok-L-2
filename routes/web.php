@@ -47,6 +47,7 @@ Route::get('/contact-us', function () {
 */
 Route::prefix('app')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/data', [DashboardController::class, 'data'])->name('dashboard.data');
 
     // Rute untuk Fitur Dashboard
     Route::get('/saldo', [SettingsController::class, 'saldo'])->name('saldo');
