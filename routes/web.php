@@ -30,6 +30,7 @@ Route::get('/about-us', [WelcomeController::class, 'about'])->name('about');
 Route::middleware(['auth'])->group(function () {
     Route::post('/market/{market}/buy', [MarketController::class, 'buy'])->name('market.buy');
     Route::post('/market/{market}/negotiate', [MarketController::class, 'negotiate'])->name('market.negotiate');
+    Route::get('/market/seller/{id}', [MarketController::class, 'seller'])->name('market.seller');
     Route::resource('market', MarketController::class);
 });
 Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');

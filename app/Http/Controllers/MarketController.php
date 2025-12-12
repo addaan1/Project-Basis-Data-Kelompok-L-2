@@ -34,22 +34,30 @@ class MarketController extends Controller
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'jenis_beras' => 'required|string|max:255',
+            'kualitas' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
-            'nama_petani' => 'required|string|max:255',
             'lokasi_gudang' => 'required|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('produk', 'public');
+        }
 
         ProdukBeras::create([
             'nama_produk' => $request->nama_produk,
             'jenis_beras' => $request->jenis_beras,
+            'kualitas' => $request->kualitas,
             'deskripsi' => $request->deskripsi,
             'harga' => $request->harga,
             'stok' => $request->stok,
-            'nama_petani' => $request->nama_petani,
+            'nama_petani' => Auth::user()->nama,
             'lokasi_gudang' => $request->lokasi_gudang,
-            'id_petani' => auth()->id(), // Asumsi produk dibuat oleh user yang sedang login
+            'id_petani' => Auth::id(),
+            'foto' => $fotoPath,
         ]);
 
         return redirect()->route('market.index')->with('success', 'Produk berhasil ditambahkan!');
@@ -176,5 +184,20 @@ class MarketController extends Controller
             Log::error('Market negotiate error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect()->route('market.index')->with('error', 'Gagal mengirim negosiasi: '.$e->getMessage());
         }
+
+
+    }
+
+    public function seller($id)
+    {
+        $seller = \App\Models\User::findOrFail($id);
+        
+        // Only allow viewing profiles of sellers (Petani/Pengepul/Pasar)
+        if (!in_array($seller->peran, ['petani', 'pengepul', 'pasar', 'distributor', 'admin'])) {
+             // In a real app we might restrict this, for now allow all involved in trade
+        }
+
+        $products = ProdukBeras::where('id_petani', $id)->latest()->get();
+        return view('market.seller', compact('seller', 'products'));
     }
 }

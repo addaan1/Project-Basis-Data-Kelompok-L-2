@@ -160,19 +160,24 @@
                             </p>
                         </div>
 
-                        @if(isset($product->rating) && $product->rating > 0)
+                        @php
+                            $averageRating = $product->rating()->avg('nilai_rating') ?? 0;
+                            $reviewCount = $product->rating()->count();
+                        @endphp
+
+                        @if($averageRating > 0)
                             <div class="rating-box mt-4 p-3 rounded d-flex align-items-center justify-content-between">
                                 <div>
                                     <h6 class="text-white mb-1">Rating Petani</h6>
-                                    <small class="text-white-50">{{ $product->review_count ?? 0 }} Ulasan</small>
+                                    <small class="text-white-50">{{ $reviewCount }} Ulasan</small>
                                 </div>
                                 <div class="text-end">
                                     <div class="stars text-warning fs-5">
                                         @for($i = 1; $i <= 5; $i++)
-                                            <i class="fas fa-star {{ $i <= $product->rating ? '' : 'text-white-50' }}"></i>
+                                            <i class="fas fa-star {{ $i <= round($averageRating) ? '' : 'text-white-50' }}"></i>
                                         @endfor
                                     </div>
-                                    <span class="fw-bold text-white">{{ $product->rating }}/5.0</span>
+                                    <span class="fw-bold text-white">{{ number_format($averageRating, 1) }}/5.0</span>
                                 </div>
                             </div>
                         @endif

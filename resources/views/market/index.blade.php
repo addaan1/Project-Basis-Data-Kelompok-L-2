@@ -61,7 +61,9 @@
                                         </div>
                                         <div class="info-item">
                                             <i class="fas fa-user text-success me-1"></i>
-                                            <span>{{ $product->nama_petani }}</span>
+                                            <a href="{{ route('market.seller', $product->id_petani) }}" class="text-decoration-none text-white hover-underline">
+                                                <span>{{ $product->nama_petani }}</span>
+                                            </a>
                                         </div>
                                         <div class="info-item">
                                             <i class="fas fa-map-marker-alt text-warning me-1"></i>

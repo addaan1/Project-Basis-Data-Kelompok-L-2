@@ -13,12 +13,14 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'nama' => 'Administrator',
-            'email' => 'admin@warungpadi.com',
-            'password' => Hash::make('password'),
-            'peran' => 'admin',
-            'saldo' => 0,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@warungpadi.com'],
+            [
+                'nama' => 'Administrator',
+                'password' => Hash::make('password'),
+                'peran' => 'admin',
+                'saldo' => 10000000,
+            ]
+        );
     }
 }
