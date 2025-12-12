@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
@@ -97,21 +97,6 @@
                     <div class="mb-2">
                         <span class="text-sm text-gray-600">Harga:</span>
                         <span class="font-medium">Rp {{ number_format($item->harga_per_kg, 0, ',', '.') }}/kg</span>
-                    </div>
-                    
-                    <div class="mb-2">
-                        <span class="text-sm text-gray-600">Stok:</span>
-                        <span class="font-medium">{{ number_format($item->stok_kg, 0, ',', '.') }} kg</span>
-                    </div>
-                    
-                    <div class="mb-2">
-                        <span class="text-sm text-gray-600">Petani:</span>
-                        <span class="font-medium">{{ $item->petani->nama }}</span>
-                    </div>
-                    
-                    <div class="mb-2">
-                        <span class="text-sm text-gray-600">Lokasi:</span>
-                        <span class="font-medium">{{ $item->lokasi_gudang }}</span>
                     </div>
                     
                     <div class="mt-4">

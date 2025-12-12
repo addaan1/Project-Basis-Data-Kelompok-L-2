@@ -8,10 +8,10 @@
     <!-- Bootstrap 5.3 untuk konsistensi dan upgrade tampilan -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Poppins untuk konsistensi dengan halaman sebelum login -->
+    <!-- Elegant Typography: Playfair Display + Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Bootstrap Icons untuk icons modern -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -23,40 +23,119 @@
     <link href="{{ asset('css/output.css') }}" rel="stylesheet">
     <style>
         :root {
-            --primary-green: #28a745;
-            --secondary-green: #20c997;
-            --glass-bg: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.18);
-            --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --shadow-heavy: 0 4px 30px rgba(0, 0, 0, 0.2);
+            /* Rice Ecosystem Color Palette */
+            --rice-gold: #F4C430;
+            --rice-green: #8BC34A;
+            --earth-brown: #8D6E63;
+            --pure-white: #FFFFFF;
+            --deep-green: #2E7D32;
+            --soft-cream: #FFF8DC;
+            
+            /* Spacing System (8px grid) */
+            --space-xs: 0.5rem;  /* 8px */
+            --space-sm: 1rem;    /* 16px */
+            --space-md: 1.5rem;  /* 24px */
+            --space-lg: 2rem;    /* 32px */
+            --space-xl: 3rem;    /* 48px */
+            --space-2xl: 4rem;   /* 64px */
+            
+            /* Typography */
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.2);
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-blur: blur(20px);
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background-image: url('{{ asset('images/Background.png') }}');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #FFF8DC 0%, #F4E4C1 50%, #E8D4A0 100%);
+            position: relative;
             color: #333;
             overflow-x: hidden;
             min-height: 100vh;
             padding-top: 70px;
         }
         
-        /* Navbar Upgrade: Glassmorphism dengan animasi */
+        /* Dynamic Rice Field Pattern Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(90deg, rgba(139, 195, 74, 0.03) 0px, transparent 1px, transparent 40px, rgba(139, 195, 74, 0.03) 41px),
+                repeating-linear-gradient(0deg, rgba(139, 195, 74, 0.03) 0px, transparent 1px, transparent 40px, rgba(139, 195, 74, 0.03) 41px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: ricePattern 20s linear infinite;
+        }
+        
+        @keyframes ricePattern {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+        
+        /* Animated Gradient Overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(244, 196, 48, 0.1) 0%, 
+                rgba(139, 195, 74, 0.1) 50%, 
+                rgba(244, 196, 48, 0.1) 100%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Typography Enhancements */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        h1 { font-size: 2.5rem; line-height: 1.2; }
+        h2 { font-size: 2rem; line-height: 1.3; }
+        h3 { font-size: 1.75rem; line-height: 1.4; }
+        h4 { font-size: 1.5rem; line-height: 1.4; }
+        h5 { font-size: 1.25rem; line-height: 1.5; }
+        h6 { font-size: 1rem; line-height: 1.5; }
+        
+        /* Navbar Upgrade: Enhanced Glassmorphism */
         .navbar-custom {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--glass-border);
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-light);
+            padding: var(--space-sm) 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
         }
         
         .navbar-custom.scrolled {
-            background: rgba(255, 255, 255, 0.4);
-            padding: 0.5rem 0;
+            background: rgba(255, 248, 220, 0.95);
+            padding: var(--space-xs) 0;
+            box-shadow: var(--shadow-lg);
         }
         
         .navbar-brand img {
@@ -69,12 +148,13 @@
         }
         
         .nav-link {
-            color: #fff !important;
-            font-weight: 500;
-            margin: 0 15px;
-            transition: all 0.3s ease;
+            color: var(--deep-green) !important;
+            font-weight: 600;
+            margin: 0 var(--space-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            font-family: var(--font-body);
         }
         
         .nav-link::before {
@@ -83,9 +163,9 @@
             bottom: 0;
             left: -100%;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
-            transition: left 0.3s ease;
+            height: 3px;
+            background: linear-gradient(90deg, var(--rice-gold), var(--rice-green));
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .nav-link:hover::before {
@@ -93,7 +173,7 @@
         }
         
         .nav-link:hover {
-            color: var(--primary-green) !important;
+            color: var(--rice-gold) !important;
             transform: translateY(-2px);
         }
         
@@ -101,34 +181,35 @@
         .user-greeting {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #fff;
-            font-weight: 500;
+            gap: var(--space-xs);
+            color: var(--deep-green);
+            font-weight: 600;
             background: var(--glass-bg);
-            padding: 8px 15px;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .user-greeting:hover {
-            background: rgba(255, 255, 255, 0.35);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-light);
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         
         .user-avatar {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            background: linear-gradient(135deg, var(--rice-gold), var(--rice-green));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-weight: 600;
-            font-size: 1rem;
+            color: var(--pure-white);
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-sm);
         }
         
         /* Toggle Button Upgrade */
@@ -554,7 +635,10 @@
         <div class="sidebar" id="sidebar">
             <div class="logo">
                 @auth
-                    @if(Auth::user()->peran == 'petani')
+                    @if(Auth::user()->peran == 'admin')
+                        <img src="{{ asset('images/logo default.png') }}" alt="Logo Admin">
+                        <span>ADMIN</span>
+                     @elseif(Auth::user()->peran == 'petani')
                         <img src="{{ asset('images/logo petani.png') }}" alt="Logo Petani">
                         <span>PETANI</span>
                     @elseif(Auth::user()->peran == 'pengepul')
@@ -579,7 +663,14 @@
 
             <h4>Dashboard</h4>
             <ul>
-                <li><a href="{{ route('dashboard') }}" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                @if(Auth::check() && Auth::user()->peran == 'admin')
+                    <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="fas fa-th-large"></i> Dashboard Admin</a></li>
+                    <li><a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}"><i class="fas fa-users"></i> Users</a></li>
+                    <li><a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="{{ route('admin.transactions.index') }}" class="{{ request()->routeIs('admin.transactions.*') ? 'active' : '' }}"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                @else
+                    <li><a href="{{ route('dashboard') }}" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                @endif
             </ul>
 
             <h4>List Menu</h4>

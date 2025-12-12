@@ -13,7 +13,7 @@
                     <i class="fas fa-file-contract me-1"></i>Total: {{ $negotiations->count() }}
                 </span>
                 @if(auth()->user()->peran == 'pengepul')
-                    <a href="{{ route('pasar.index') }}" class="btn-back-to-market">
+                    <a href="{{ route('market.index') }}" class="btn-back-to-market">
                         <i class="fas fa-store me-1"></i>Kembali ke Pasar
                     </a>
                 @endif
@@ -27,7 +27,7 @@
                     <h4 class="text-white mb-2">Belum ada negosiasi yang tercatat</h4>
                     <p class="text-light">Mulai dengan menawarkan harga pada produk di pasar.</p>
                     @if(auth()->user()->peran == 'pengepul')
-                        <a href="{{ route('pasar.index') }}" class="btn btn-outline-light mt-3">
+                        <a href="{{ route('market.index') }}" class="btn btn-outline-light mt-3">
                             <i class="fas fa-store me-1"></i>Cari Produk untuk Negosiasi
                         </a>
                     @endif
@@ -86,15 +86,15 @@
 
 <style>
     .negotiation-card {
-        background: linear-gradient(135deg, #4CAF50, #81C784);
-        backdrop-filter: blur(10px);
-        border: 1px solid #FF9800;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+        background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(244, 196, 48, 0.15));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(244, 196, 48, 0.3);
+        border-radius: 24px;
+        box-shadow: var(--shadow-md);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
-        color: #fff;
+        padding: var(--space-lg);
     }
     
     .negotiation-card::before {
@@ -104,12 +104,13 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #FF9800, #4CAF50);
+        background: linear-gradient(90deg, var(--rice-gold), var(--rice-green));
     }
     
     .negotiation-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--rice-gold);
     }
     
     .title-box {
@@ -150,21 +151,22 @@
     .btn-back-to-market {
         display: inline-flex;
         align-items: center;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #FF9800, #FFB74D);
-        color: #fff;
+        padding: var(--space-xs) var(--space-md);
+        background: linear-gradient(135deg, var(--rice-gold), var(--rice-green));
+        color: var(--pure-white);
         font-weight: 600;
-        border-radius: 12px;
-        transition: all 0.3s ease;
+        border-radius: 50px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
-        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        box-shadow: var(--shadow-sm);
+        font-family: var(--font-body);
     }
     
     .btn-back-to-market:hover {
-        background: linear-gradient(135deg, #F57C00, #FF8F00);
+        background: linear-gradient(135deg, var(--rice-green), var(--rice-gold));
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
-        color: #fff;
+        box-shadow: var(--shadow-md);
+        color: var(--pure-white);
     }
     
     .empty-state {

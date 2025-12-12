@@ -19,18 +19,19 @@ class ProdukBeras extends Model {
     protected $fillable = [
         'nama_produk',
         'jenis_beras',
+        'kualitas',
         'harga',
         'nama_petani',
         'lokasi_gudang',
         'stok',
         'deskripsi',
         'foto',
-        'id_user'
+        'id_petani'
     ];
     
-    // Relasi dengan user (pemilik produk)
-    public function user() {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    // Relasi dengan petani (pemilik produk)
+    public function petani() {
+        return $this->belongsTo(User::class, 'id_petani', 'id_user');
     }
     
     // Relasi dengan transaksi
@@ -41,5 +42,10 @@ class ProdukBeras extends Model {
     // Relasi dengan negosiasi
     public function negosiasi() {
         return $this->hasMany(Negosiasi::class, 'id_produk', 'id_produk');
+    }
+
+    // Relasi dengan rating
+    public function rating() {
+        return $this->hasMany(Rating::class, 'id_produk', 'id_produk');
     }
 }

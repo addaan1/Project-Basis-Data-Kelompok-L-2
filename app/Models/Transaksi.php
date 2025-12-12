@@ -23,6 +23,7 @@ class Transaksi extends Model
     protected $fillable = [
         'id_penjual',
         'id_pembeli',
+        'id_produk',
         'id_pasar',
         'id_wallet',
         'jumlah',
@@ -36,6 +37,11 @@ class Transaksi extends Model
         'payment_method',
         'reference_code',
         'user_id',
+    ];
+
+    protected $casts = [
+        'payment_method' => 'encrypted',
+        'reference_code' => 'encrypted',
     ];
 
     // Relasi ke User sebagai penjual

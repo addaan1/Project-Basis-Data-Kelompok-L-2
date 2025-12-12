@@ -18,8 +18,8 @@
                         <h5 class="card-title mb-0">Saldo</h5>
                         <i class="fas fa-coins fs-3 text-success"></i>
                     </div>
-                    <h2 class="mb-2 text-white">Rp 5.000.000</h2>
-                    <p class="card-text text-light">Terakhir diperbarui: 2 jam yang lalu</p>
+                    <h2 id="saldoValue" class="mb-2 text-white">Rp {{ number_format($saldo ?? 0, 0, ',', '.') }}</h2>
+                    <p id="saldoUpdatedAt" class="card-text text-light">Terakhir diperbarui: {{ isset($lastUpdate) ? $lastUpdate->diffForHumans() : 'Baru saja' }}</p>
                     <a href="{{ route('saldo') }}" class="btn btn-sm btn-outline-light mt-2">Lihat Detail</a>
                 </div>
             </div>
@@ -33,15 +33,24 @@
                         <h5 class="card-title mb-0">Aktivitas Transaksi</h5>
                         <i class="fas fa-exchange-alt fs-3 text-primary"></i>
                     </div>
-                    <div class="transaction-list">
-                        <div class="transaction-item d-flex justify-content-between mb-2">
-                            <span>Pembelian Padi</span>
-                            <span class="text-danger">-Rp 2.000.000</span>
-                        </div>
-                        <div class="transaction-item d-flex justify-content-between mb-2">
-                            <span>Penjualan Padi</span>
-                            <span class="text-success">+Rp 3.500.000</span>
-                        </div>
+                    <div id="activityList" class="transaction-list">
+                        @forelse($activities ?? [] as $index => $activity)
+                            <div class="transaction-item d-flex justify-content-between mb-2" style="animation-delay: {{ $index * 0.1 }}s;">
+                                <span>{{ $activity->description }}</span>
+                                @php
+                                    $amount = (float) ($activity->amount ?? 0);
+                                    $formatted = 'Rp ' . number_format(abs($amount), 0, ',', '.');
+                                    $sign = in_array($activity->type, ['sale','topup']) ? '+' : '-';
+                                    $cls = $activity->type === 'sale' ? 'text-success' : ($activity->type === 'purchase' ? 'text-danger' : ($activity->type === 'topup' ? 'text-info' : 'text-warning'));
+                                @endphp
+                                <span class="{{ $cls }}">{{ $sign }}{{ $formatted }}</span>
+                            </div>
+                        @empty
+                            <div class="transaction-item d-flex justify-content-between mb-2">
+                                <span>Belum ada aktivitas</span>
+                                <span class="text-light">-</span>
+                            </div>
+                        @endforelse
                     </div>
                     <a href="{{ route('transaksi.index') }}" class="btn btn-sm btn-outline-light mt-3">Lihat Semua</a>
                 </div>
@@ -56,15 +65,21 @@
                         <h5 class="card-title mb-0">Status Negosiasi</h5>
                         <i class="fas fa-comments fs-3 text-warning"></i>
                     </div>
-                    <div class="negotiation-list">
-                        <div class="negotiation-item d-flex justify-content-between mb-2">
-                            <span>Pembelian 2 ton</span>
-                            <span class="badge bg-warning text-dark">Menunggu</span>
-                        </div>
-                        <div class="negotiation-item d-flex justify-content-between mb-2">
-                            <span>Penjualan 1 ton</span>
-                            <span class="badge bg-success">Disetujui</span>
-                        </div>
+                    <div id="negotiationList" class="negotiation-list">
+                        @forelse($negotiationsSummary ?? [] as $index => $n)
+                            @php
+                                $badgeClass = ($n->status === 'Menunggu') ? 'bg-warning text-dark' : (($n->status === 'Disetujui') ? 'bg-success' : 'bg-secondary');
+                            @endphp
+                            <div class="negotiation-item d-flex justify-content-between mb-2" style="animation-delay: {{ $index * 0.1 }}s;">
+                                <span>{{ $n->label }} {{ $n->jumlah_kg }} kg</span>
+                                <span class="badge {{ $badgeClass }}">{{ $n->status }}</span>
+                            </div>
+                        @empty
+                            <div class="negotiation-item d-flex justify-content-between mb-2">
+                                <span>Belum ada negosiasi terkini</span>
+                                <span class="badge bg-secondary">-</span>
+                            </div>
+                        @endforelse
                     </div>
                     <a href="{{ route('negosiasi.index') }}" class="btn btn-sm btn-outline-light mt-3">Lihat Semua</a>
                 </div>
@@ -79,11 +94,11 @@
                         <h5 class="card-title mb-0">Inventaris Padi</h5>
                         <i class="fas fa-boxes fs-3 text-info"></i>
                     </div>
-                    <h2 class="mb-2 text-white">5 Ton</h2>
+                    <h2 id="inventoryValue" class="mb-2 text-white">{{ number_format(($inventoryTon ?? 0), 2, ',', '.') }} Ton</h2>
                     <div class="progress mb-2" style="height: 10px; background-color: rgba(255, 255, 255, 0.2);">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 65%; background: linear-gradient(90deg, #17a2b8, #20c997);" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div id="inventoryProgress" class="progress-bar bg-info" role="progressbar" style="width: {{ $capacityPercent ?? 0 }}%; background: linear-gradient(90deg, #17a2b8, #20c997);" aria-valuenow="{{ $capacityPercent ?? 0 }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <p class="card-text text-light">65% dari kapasitas gudang</p>
+                    <p id="inventoryCapacityText" class="card-text text-light">{{ $capacityPercent ?? 0 }}% dari kapasitas gudang</p>
                     <a href="{{ route('inventory.index') }}" class="btn btn-sm btn-outline-light mt-2">Kelola Inventaris</a>
                 </div>
             </div>
@@ -253,4 +268,58 @@
             }
         }
     </style>
+    <script>
+        async function fetchDashboardData() {
+            try {
+                const res = await fetch('{{ route('dashboard.data') }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!res.ok) return;
+                const data = await res.json();
+                const saldoEl = document.getElementById('saldoValue');
+                const saldoUpdatedEl = document.getElementById('saldoUpdatedAt');
+                const actList = document.getElementById('activityList');
+                const negoList = document.getElementById('negotiationList');
+                const invVal = document.getElementById('inventoryValue');
+                const invProg = document.getElementById('inventoryProgress');
+                const invText = document.getElementById('inventoryCapacityText');
+
+                if (saldoEl) saldoEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(data.saldo || 0));
+                if (saldoUpdatedEl) saldoUpdatedEl.textContent = 'Terakhir diperbarui: ' + new Date(data.lastUpdate).toLocaleString('id-ID');
+
+                if (actList) {
+                    if (Array.isArray(data.activities) && data.activities.length) {
+                        actList.innerHTML = data.activities.map((a) => {
+                            const amount = Math.abs(Number(a.amount || 0));
+                            const sign = (a.type === 'sale' || a.type === 'topup') ? '+' : '-';
+                            const cls = a.type === 'sale' ? 'text-success' : (a.type === 'purchase' ? 'text-danger' : (a.type === 'topup' ? 'text-info' : 'text-warning'));
+                            return `<div class="transaction-item d-flex justify-content-between mb-2"><span>${a.description}</span><span class="${cls}">${sign}Rp ${new Intl.NumberFormat('id-ID').format(amount)}</span></div>`;
+                        }).join('');
+                    } else {
+                        actList.innerHTML = `<div class="transaction-item d-flex justify-content-between mb-2"><span>Belum ada aktivitas</span><span class="text-light">-</span></div>`;
+                    }
+                }
+
+                if (negoList) {
+                    if (Array.isArray(data.negotiations) && data.negotiations.length) {
+                        negoList.innerHTML = data.negotiations.map((n) => {
+                            const badgeClass = (n.status === 'Menunggu') ? 'bg-warning text-dark' : ((n.status === 'Disetujui') ? 'bg-success' : 'bg-secondary');
+                            return `<div class="negotiation-item d-flex justify-content-between mb-2"><span>${n.label} ${n.jumlah_kg} kg</span><span class="badge ${badgeClass}">${n.status}</span></div>`;
+                        }).join('');
+                    } else {
+                        negoList.innerHTML = `<div class="negotiation-item d-flex justify-content-between mb-2"><span>Belum ada negosiasi terkini</span><span class="badge bg-secondary">-</span></div>`;
+                    }
+                }
+
+                const ton = (Number(data.inventoryKg || 0) / 1000).toFixed(2);
+                if (invVal) invVal.textContent = `${ton.replace('.', ',')} Ton`;
+                if (invProg) {
+                    invProg.style.width = `${Number(data.capacityPercent || 0)}%`;
+                    invProg.setAttribute('aria-valuenow', String(Number(data.capacityPercent || 0)));
+                }
+                if (invText) invText.textContent = `${Number(data.capacityPercent || 0)}% dari kapasitas gudang`;
+            } catch (e) {
+                // silently ignore
+            }
+        }
+        setInterval(fetchDashboardData, 15000);
+    </script>
 @endsection

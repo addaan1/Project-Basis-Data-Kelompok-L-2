@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('negosiasis', function (Blueprint $table) {
-            $table->foreignId('id_petani')->constrained('users')->onDelete('cascade');
+            // PERBAIKAN DI SINI: Cek dulu apakah kolom sudah ada
+            if (!Schema::hasColumn('negosiasis', 'id_petani')) {
+                // FIXED: id_petani references id_user on users table
+                $table->foreignId('id_petani')->constrained('users', 'id_user')->onDelete('cascade');
+            }
         });
     }
 
@@ -22,8 +26,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('negosiasis', function (Blueprint $table) {
-            $table->dropForeign(['id_petani']);
-            $table->dropColumn('id_petani');
+            // Cek dulu sebelum hapus agar tidak error saat rollback
+            if (Schema::hasColumn('negosiasis', 'id_petani')) {
+                // Drop foreign key dulu (biasanya format: nama_table_nama_kolom_foreign)
+                // Kita gunakan array syntax agar Laravel otomatis mencari nama indexnya
+                $table->dropForeign(['id_petani']); 
+                $table->dropColumn('id_petani');
+            }
         });
     }
 };

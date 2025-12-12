@@ -106,6 +106,15 @@ class NegosiasiController extends Controller
             return redirect()->route('negosiasi.show', $negosiasi)
                 ->with('error', 'Stok produk tidak mencukupi');
         }
+
+        // Cek saldo pembeli (pengepul)
+        $buyer = User::find($negosiasi->id_pengepul);
+        $totalHarga = $negosiasi->harga_penawaran * $negosiasi->jumlah_kg;
+
+        if (!$buyer || $buyer->saldo < $totalHarga) {
+            return redirect()->route('negosiasi.show', $negosiasi)
+                ->with('error', 'Saldo pembeli tidak mencukupi untuk transaksi ini');
+        }
         
         DB::beginTransaction();
         try {
@@ -113,25 +122,45 @@ class NegosiasiController extends Controller
             $negosiasi->update(['status' => 'diterima']);
             
             // Kurangi stok produk
-            $produk->update(['stok_kg' => $produk->stok_kg - $negosiasi->jumlah_kg]);
+            $produk->decrement('stok_kg', $negosiasi->jumlah_kg);
+
+            // Proses Keuangan
+            // 1. Kurangi saldo pembeli
+            $buyer->decrement('saldo', $totalHarga);
+
+            // 2. Tambah saldo penjual (petani)
+            $seller = Auth::user();
+            $seller->increment('saldo', $totalHarga);
             
-            // Buat transaksi
-            Transaksi::create([
+            // 3. Catat Pengeluaran Pembeli
+            \App\Models\Expenditure::create([
+                'user_id' => $buyer->id_user,
+                'amount' => $totalHarga,
+                'description' => 'Pembelian via Negosiasi #' . $negosiasi->id,
+                'date' => now(),
+                'status' => 'completed',
+            ]);
+
+            // Buat transaksi (Langsung Disetujui/Selesai karena sudah dibayar)
+            $trx = Transaksi::create([
                 'id_pembeli' => $negosiasi->id_pengepul,
                 'id_penjual' => $negosiasi->id_petani,
                 'id_produk' => $negosiasi->id_produk,
                 'jumlah' => $negosiasi->jumlah_kg,
-                'harga_satuan' => $negosiasi->harga_penawaran,
-                'total_harga' => $negosiasi->harga_penawaran * $negosiasi->jumlah_kg,
-                'status_transaksi' => 'menunggu_pembayaran',
+                'harga_awalan' => $negosiasi->harga_awal,
+                'harga_akhir' => $negosiasi->harga_penawaran, // Harga deal
+                'tanggal' => now(),
+                'jenis_transaksi' => 'jual', // Petani menjual
+                'status_transaksi' => 'disetujui', // Langsung sukses
                 'type' => 'purchase',
-                'description' => 'Pembelian produk melalui negosiasi',
+                'description' => 'Pembelian produk melalui negosiasi (Diterima)',
+                'user_id' => $buyer->id_user,
             ]);
             
             DB::commit();
             
             return redirect()->route('negosiasi.show', $negosiasi)
-                ->with('success', 'Negosiasi berhasil diterima');
+                ->with('success', 'Negosiasi diterima. Transaksi berhasil dibuat dan saldo diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('negosiasi.show', $negosiasi)

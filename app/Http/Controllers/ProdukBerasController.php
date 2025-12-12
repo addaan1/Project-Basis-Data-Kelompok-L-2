@@ -43,7 +43,7 @@ class ProdukBerasController extends Controller
         ]);
 
         $data = $request->all();
-        $data['id_user'] = Auth::id();
+        $data['id_petani'] = Auth::id();
 
         // Upload foto jika ada
         if ($request->hasFile('foto')) {

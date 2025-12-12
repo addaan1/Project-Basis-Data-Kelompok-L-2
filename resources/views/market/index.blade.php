@@ -61,7 +61,9 @@
                                         </div>
                                         <div class="info-item">
                                             <i class="fas fa-user text-success me-1"></i>
-                                            <span>{{ $product->nama_petani }}</span>
+                                            <a href="{{ route('market.seller', $product->id_petani) }}" class="text-decoration-none text-white hover-underline">
+                                                <span>{{ $product->nama_petani }}</span>
+                                            </a>
                                         </div>
                                         <div class="info-item">
                                             <i class="fas fa-map-marker-alt text-warning me-1"></i>
@@ -183,15 +185,15 @@
 
 <style>
     .market-card {
-        background: linear-gradient(135deg, #4CAF50, #81C784);
-        backdrop-filter: blur(10px);
-        border: 1px solid #FF9800;
-        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(244, 196, 48, 0.15));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(244, 196, 48, 0.3);
+        border-radius: 24px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
-        color: #fff;
+        padding: var(--space-lg);
     }
     
     .market-card::before {
@@ -201,12 +203,13 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #FF9800, #4CAF50);
+        background: linear-gradient(90deg, var(--rice-gold), var(--rice-green));
     }
     
     .market-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(-8px);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        border-color: var(--rice-gold);
     }
     
     .title-box {
@@ -250,21 +253,23 @@
     }
     
     .product-card {
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.25);
+        border: 1px solid rgba(244, 196, 48, 0.2);
+        border-radius: 16px;
         overflow: hidden;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(5px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
         height: 100%;
         display: flex;
         flex-direction: column;
+        box-shadow: var(--shadow-sm);
     }
     
     .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg);
+        background: rgba(255, 255, 255, 0.35);
+        border-color: var(--rice-gold);
     }
     
     .product-image {
@@ -298,11 +303,12 @@
     }
     
     .product-title {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #fff;
-        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--deep-green);
+        margin-bottom: var(--space-sm);
         line-height: 1.3;
+        font-family: var(--font-heading);
     }
     
     .product-info {

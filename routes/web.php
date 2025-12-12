@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 // ini punya adi
 // Controller dari Breeze
 use App\Http\Controllers\ProfileController;
-
+// hey hey hey
 // Controller Kustom Kita
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\MarketController;
@@ -30,12 +30,21 @@ Route::get('/about-us', [WelcomeController::class, 'about'])->name('about');
 Route::middleware(['auth'])->group(function () {
     Route::post('/market/{market}/buy', [MarketController::class, 'buy'])->name('market.buy');
     Route::post('/market/{market}/negotiate', [MarketController::class, 'negotiate'])->name('market.negotiate');
+    Route::get('/market/seller/{id}', [MarketController::class, 'seller'])->name('market.seller');
     Route::resource('market', MarketController::class);
 });
 Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');
 Route::get('/contact-us', function () {
     return view('contact-us');
 })->name('contact-us');
+
+// Admin Routes
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
+    Route::resource('transactions', \App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show', 'update']);
+});
 
 
 /*
@@ -47,6 +56,7 @@ Route::get('/contact-us', function () {
 */
 Route::prefix('app')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/data', [DashboardController::class, 'data'])->name('dashboard.data');
 
     // Rute untuk Fitur Dashboard
     Route::get('/saldo', [SettingsController::class, 'saldo'])->name('saldo');
@@ -71,6 +81,12 @@ Route::prefix('app')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('pasar', PasarController::class);
     Route::resource('inventory', InventoryController::class);
     Route::resource('transaksi', TransaksiController::class);
+    Route::middleware(['role:petani'])->group(function () {
+        Route::post('/transaksi/{transaksi}/approve', [TransaksiController::class, 'approve'])->name('transaksi.approve');
+        Route::post('/transaksi/{transaksi}/reject', [TransaksiController::class, 'reject'])->name('transaksi.reject');
+        Route::get('/transaksi/{transaksi}/history', [TransaksiController::class, 'history'])->name('transaksi.history');
+    });
+    Route::get('/transaksi/notifications', [TransaksiController::class, 'notifications'])->name('transaksi.notifications');
 });
 
 

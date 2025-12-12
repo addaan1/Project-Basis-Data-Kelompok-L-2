@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transaksis', function (Blueprint $table) {
-            //
+            $table->unsignedBigInteger('id_pasar')->nullable()->change();
+            $table->unsignedBigInteger('id_wallet')->nullable()->change();
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transaksis', function (Blueprint $table) {
-            //
+            $table->unsignedBigInteger('id_pasar')->nullable(false)->change();
+            $table->unsignedBigInteger('id_wallet')->nullable(false)->change();
         });
     }
 };
