@@ -46,7 +46,7 @@ class UserSeeder extends Seeder {
             'id_user' => 5,
             'nama' => 'Andi Pembeli',
             'email' => 'pembeli@warungpadi.com',
-            'peran' => 'distributor', // Using distributor as 'regular' for now based on enum
+            'peran' => 'distributor', 
             'password' => Hash::make('password'),
             'saldo' => 1000000,
             'created_at' => now(),
