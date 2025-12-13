@@ -57,7 +57,7 @@ class TransaksiController extends Controller
     public function approve(Transaksi $transaksi)
     {
         $seller = Auth::user();
-        if ($transaksi->id_penjual !== $seller->id_user) { abort(403); }
+        if ((int)$transaksi->id_penjual !== (int)$seller->id_user) { abort(403); }
 
         DB::beginTransaction();
         try {
@@ -67,14 +67,8 @@ class TransaksiController extends Controller
             $seller->saldo = (float) ($seller->saldo ?? 0) + $total;
             $seller->save();
 
-            if ($transaksi->id_produk) {
-                $product = \App\Models\ProdukBeras::find($transaksi->id_produk);
-                if ($product) {
-                    $qty = (int) $transaksi->jumlah;
-                    if ($product->stok < $qty) { throw new \RuntimeException('Stok tidak mencukupi untuk menyetujui transaksi'); }
-                    $product->decrement('stok', $qty);
-                }
-            }
+            // Note: Stok sudah dipotong saat transaksi dibuat (Reserve Stock).
+            // Jadi tidak perlu dipotong lagi disini.
 
             $transaksi->status_transaksi = 'disetujui';
             $transaksi->save();
@@ -104,7 +98,7 @@ class TransaksiController extends Controller
     public function reject(Transaksi $transaksi)
     {
         $seller = Auth::user();
-        if ($transaksi->id_penjual !== $seller->id_user) { abort(403); }
+        if ((int)$transaksi->id_penjual !== (int)$seller->id_user) { abort(403); }
 
         DB::beginTransaction();
         try {
@@ -115,6 +109,14 @@ class TransaksiController extends Controller
             if ($buyer) {
                 $buyer->saldo = (float) ($buyer->saldo ?? 0) + $total; // release hold
                 $buyer->save();
+            }
+
+            // Kembalikan Stok (Refund Stock)
+            if ($transaksi->id_produk) {
+               $product = \App\Models\ProdukBeras::find($transaksi->id_produk);
+               if ($product) {
+                   $product->increment('stok', (int) $transaksi->jumlah);
+               }
             }
 
             \App\Models\Expenditure::where('user_id', $transaksi->id_pembeli)
@@ -145,7 +147,7 @@ class TransaksiController extends Controller
     public function history(Transaksi $transaksi)
     {
         $user = Auth::user();
-        if ($transaksi->id_penjual !== $user->id_user && $transaksi->id_pembeli !== $user->id_user) {
+        if ((int)$transaksi->id_penjual !== (int)$user->id_user && (int)$transaksi->id_pembeli !== (int)$user->id_user) {
             abort(403);
         }
 

@@ -3,68 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventory;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InventoryController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $inventory = Inventory::with('user')->latest()->get();
-        return view('inventory.index', compact('inventory'));
+        $inventories = Inventory::where('id_user', Auth::id())->latest()->get();
+        return view('inventory.index', compact('inventories'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        $users = User::all();
-        return view('inventory.create', compact('users'));
+        return view('inventory.create');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $request->validate([
+            'jenis_beras' => 'required|string|max:255',
+            'kualitas' => 'required|string|in:Premium,Medium,Standard',
             'jumlah' => 'required|integer|min:1',
             'tanggal_masuk' => 'required|date',
-            'id_user' => 'required|exists:users,id_user',
+            'keterangan' => 'nullable|string',
+            'foto' => 'nullable|image', // Future proofing
         ]);
 
-        Inventory::create($request->all());
+        // Check if existing inventory for this type/quality exists, if so check if we should merge or create new?
+        // For simplicity now, we create new batch or merge if exact same batch logic needed.
+        // Let's Merge for simpler UX -> "Total Inventory of Pandan Wangi"
+        
+        $existing = Inventory::where('id_user', Auth::id())
+            ->where('jenis_beras', $request->jenis_beras)
+            ->where('kualitas', $request->kualitas)
+            ->first();
 
-        return redirect()->route('inventory.index')
-                         ->with('success', 'Data inventory baru berhasil ditambahkan.');
+        if ($existing) {
+            $existing->increment('jumlah', $request->jumlah);
+            // Update timestamp maybe?
+        } else {
+            Inventory::create([
+                'id_user' => Auth::id(),
+                'jenis_beras' => $request->jenis_beras,
+                'kualitas' => $request->kualitas,
+                'jumlah' => $request->jumlah,
+                'tanggal_masuk' => $request->tanggal_masuk,
+                'keterangan' => $request->keterangan,
+            ]);
+        }
+
+        return redirect()->route('inventory.index')->with('success', 'Stok berhasil ditambahkan ke gudang.');
     }
 
-    public function show(Inventory $inventory)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
-        // Not used
-    }
-
-    public function edit(Inventory $inventory)
-    {
-        $users = User::all();
-        return view('inventory.edit', compact('inventory', 'users'));
-    }
-
-    public function update(Request $request, Inventory $inventory)
-    {
-        $request->validate([
-            'jumlah' => 'required|integer|min:1',
-            'tanggal_masuk' => 'required|date',
-            'tanggal_keluar' => 'nullable|date|after_or_equal:tanggal_masuk',
-            'id_user' => 'required|exists:users,id_user',
-        ]);
-
-        $inventory->update($request->all());
-
-        return redirect()->route('inventory.index')
-                         ->with('success', 'Data inventory berhasil diperbarui.');
-    }
-
-    public function destroy(Inventory $inventory)
-    {
+        $inventory = Inventory::where('id_user', Auth::id())->findOrFail($id);
         $inventory->delete();
 
-        return redirect()->route('inventory.index')
-                         ->with('success', 'Data inventory berhasil dihapus.');
+        return redirect()->route('inventory.index')->with('success', 'Item inventaris dihapus.');
     }
 }

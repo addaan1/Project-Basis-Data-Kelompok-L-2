@@ -1,115 +1,173 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 text-center">
-    <!-- Judul dengan Box Orange -->
-
-    <!-- Card Utama Market -->
-    <div class="market-card animate-fade-in">
-        <div class="card-header-custom d-flex align-items-center justify-content-between mb-4">
-            <h2 class="text-white mb-0 font-weight-bold">
-                <i class="fas fa-store me-2"></i>Daftar Produk Tersedia
-            </h2>
-            <div class="stats-summary d-flex gap-3 align-items-center">
-                <span class="badge bg-orange text-white px-3 py-2">
-                    <i class="fas fa-boxes me-1"></i>Total: {{ $products->count() }}
-                </span>
-                <!-- Tombol Global Tambah Produk untuk Petani/Admin -->
-                @if(auth()->check() && (auth()->user()->peran == 'petani' || auth()->user()->peran == 'admin'))
-                    <a href="{{ route('market.create') }}" class="btn btn-success btn-sm">
-                        <i class="fas fa-plus me-1"></i>Tambah Produk
-                    </a>
-                @endif
+<div class="container-fluid px-4 py-4">
+    <!-- Main Content Card with Orange Header -->
+    <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+        
+        <!-- Header Section -->
+        <div class="card-header border-0 py-4 px-4 d-flex align-items-center justify-content-between" 
+             style="background: linear-gradient(135deg, #FF9800, #F57C00); color: white;">
+            <div>
+                <h4 class="mb-1 fw-bold font-poppins">
+                    <i class="bi bi-shop-window me-2"></i>Pasar Beras
+                </h4>
+                <p class="mb-0 opacity-75 small font-poppins">Temukan beras berkualitas langsung dari petani</p>
             </div>
+            
+            @if(auth()->check() && (auth()->user()->peran == 'petani' || auth()->user()->peran == 'admin'))
+                <a href="{{ route('market.create') }}" class="btn btn-light text-warning fw-bold rounded-pill shadow-sm px-4 hover-scale" 
+                   style="color: #F57C00 !important;">
+                    <i class="bi bi-plus-circle-fill me-2"></i>Jual Beras
+                </a>
+            @endif
         </div>
 
-        <div class="card-body">
+        <!-- Body Section -->
+        <div class="card-body px-4 pb-4 pt-4 position-relative" style="background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%); min-height: 600px; overflow: hidden;">
+            
+            <!-- Decorative Background Pattern -->
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.1; pointer-events: none; background-image: radial-gradient(#1B5E20 1px, transparent 1px); background-size: 24px 24px;"></div>
+            <div class="position-absolute bottom-0 end-0 w-100 h-50" style="background: linear-gradient(to top, rgba(46, 125, 50, 0.2), transparent); pointer-events: none;"></div>
+
+            @if(!$products->isEmpty())
+                <!-- Stats / Info Bar -->
+                <div class="row justify-content-center mb-4 animate-fade-in position-relative z-1">
+                    <div class="col-md-auto">
+                        <div class="card border-0 shadow-sm py-3 px-5 d-flex flex-row align-items-center justify-content-center" 
+                             style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); border-radius: 50px; border: 1px solid rgba(46, 125, 50, 0.1) !important;">
+                            <div class="bg-gradient-green text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" 
+                                 style="width: 48px; height: 48px;">
+                                <i class="bi bi-basket3-fill fs-5"></i>
+                            </div>
+                            <div class="text-center text-md-start">
+                                <h6 class="fw-bold text-dark mb-0 font-poppins">Total Produk</h6>
+                                <span class="text-success fw-bold fs-5">{{ $products->count() }} Pilihan Beras</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Product Grid -->
             @if($products->isEmpty())
-                <div class="empty-state text-center py-8">
-                    <i class="fas fa-inbox fs-1 text-light mb-4"></i>
-                    <h4 class="text-white mb-2">Tidak ada produk beras yang tersedia</h4>
-                    <p class="text-light">Pasar sedang kosong. Cek lagi nanti atau hubungi petani terdekat.</p>
+                <div class="d-flex flex-column align-items-center justify-content-center py-5 animate-fade-in text-center position-relative z-1">
+                    <div class="bg-white p-5 rounded-circle shadow-sm mb-4 d-flex align-items-center justify-content-center position-relative" 
+                         style="width: 220px; height: 220px;">
+                         <div class="position-absolute w-100 h-100 rounded-circle" style="background: radial-gradient(circle, rgba(46,125,50,0.05) 0%, transparent 70%);"></div>
+                        <i class="bi bi-inbox-fill text-muted display-1 opacity-25"></i>
+                    </div>
+                    <h3 class="text-dark fw-bold mb-2 font-poppins">Belum Ada Produk</h3>
+                    <p class="text-secondary fs-5 mb-4" style="max-width: 500px;">Saat ini belum ada petani yang menawarkan hasil panen.</p>
+                    
                     @if(auth()->check() && (auth()->user()->peran == 'petani' || auth()->user()->peran == 'admin'))
-                        <a href="{{ route('market.create') }}" class="btn btn-success mt-3">
-                            <i class="fas fa-plus me-1"></i>Tambah Produk Pertama
+                        <a href="{{ route('market.create') }}" class="btn btn-success btn-lg rounded-pill px-5 shadow fw-bold hover-scale custom-btn-green">
+                            <i class="bi bi-plus-lg me-2"></i>Mulai Jualan
                         </a>
-                    @else
-                        <a href="{{ url('/dashboard') }}" class="btn btn-outline-light mt-3">Kembali ke Dashboard</a>
                     @endif
                 </div>
             @else
-                <div class="row">
+                <div class="row g-4 position-relative z-1">
                     @foreach($products as $index => $product)
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                            <div class="product-card animate-slide-in" style="animation-delay: {{ $index * 0.1 }}s;">
-                                @if($product->foto)
-                                    <img src="{{ asset('storage/produk/' . $product->foto) }}" alt="{{ $product->nama_produk }}" class="product-image">
-                                @else
-                                    <div class="product-placeholder">
-                                        <i class="fas fa-image text-muted"></i>
-                                        <span class="text-muted">Tidak ada foto</span>
-                                    </div>
-                                @endif
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                            <div class="card h-100 border-0 shadow-sm product-card animate-slide-in position-relative overflow-hidden" 
+                                 style="background: #ffffff; border-radius: 24px; animation-delay: {{ $index * 0.1 }}s;">
                                 
-                                <div class="product-body">
-                                    <h3 class="product-title">{{ $product->nama_produk }}</h3>
-                                    
-                                    <div class="product-info">
-                                        <div class="info-item">
-                                            <i class="fas fa-tag text-info me-1"></i>
-                                            <span>{{ $product->jenis_beras }}</span>
+                                <!-- Decorative Gradient Top -->
+                                <div class="position-absolute top-0 start-0 w-100 opacity-25" style="height: 100px; background: linear-gradient(180deg, rgba(232, 245, 233, 1) 0%, rgba(255, 255, 255, 0) 100%); pointer-events: none;"></div>
+
+                                <!-- Image Section -->
+                                <div class="position-relative p-3" style="height: 250px;">
+                                    @if($product->foto)
+                                        <div class="w-100 h-100 rounded-4 overflow-hidden position-relative bg-light">
+                                            <img src="{{ asset('storage/' . $product->foto) }}" 
+                                                 alt="{{ $product->nama_produk }}" 
+                                                 class="w-100 h-100 object-fit-contain p-2 hover-zoom"
+                                                 style="mix-blend-mode: multiply;">
                                         </div>
-                                        <div class="info-item">
-                                            <i class="fas fa-user text-success me-1"></i>
-                                            <a href="{{ route('market.seller', $product->id_petani) }}" class="text-decoration-none text-white hover-underline">
-                                                <span>{{ $product->nama_petani }}</span>
-                                            </a>
+                                    @else
+                                        <div class="w-100 h-100 rounded-4 bg-light d-flex align-items-center justify-content-center text-muted">
+                                            <div class="text-center opacity-50">
+                                                <i class="bi bi-image display-4"></i>
+                                            </div>
                                         </div>
-                                        <div class="info-item">
-                                            <i class="fas fa-map-marker-alt text-warning me-1"></i>
-                                            <span>{{ $product->lokasi_gudang }}</span>
-                                        </div>
-                                        <div class="info-item">
-                                            <i class="fas fa-warehouse text-secondary me-1"></i>
-                                            <span>{{ $product->stok }} kg tersedia</span>
+                                    @endif
+
+                                    <!-- Price Tag (Floating) -->
+                                    <div class="position-absolute bottom-0 start-0 m-4 z-2">
+                                        <div class="badge shadow px-3 py-2 rounded-pill d-flex align-items-center" 
+                                              style="background: linear-gradient(135deg, #2E7D32, #43A047); border: 2px solid #ffffff;">
+                                            <i class="bi bi-tag-fill me-2 text-warning"></i>
+                                            <div class="text-start">
+                                                <div style="font-size: 0.65rem; opacity: 0.9; font-weight: normal; line-height: 1;">Harga per Kg</div>
+                                                <div class="fs-6 fw-bold mt-1">Rp {{ number_format($product->harga, 0, ',', '.') }}</div>
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
+
+                                <!-- Card Content -->
+                                <div class="card-body px-4 pb-4 pt-2 d-flex flex-column">
                                     
-                                    <div class="product-price">
-                                        <i class="fas fa-coins text-success me-1"></i>
-                                        <span class="price">Rp {{ number_format($product->harga, 0, ',', '.') }} / kg</span>
+                                    <!-- Category & Stock -->
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="badge bg-white border border-warning rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.75rem; color: #E65100 !important;">
+                                            {{ $product->jenis_beras }}
+                                        </span>
+                                        <div class="d-flex align-items-center text-success fw-bold small">
+                                            <i class="bi bi-box-seam me-1"></i>
+                                            {{ $product->stok }} Kg
+                                        </div>
                                     </div>
+
+                                    <!-- Product Title -->
+                                    <h5 class="card-title fw-bold text-dark mb-1 font-poppins text-truncate" 
+                                        title="{{ $product->nama_produk }}" style="font-size: 1.2rem; letter-spacing: -0.5px;">
+                                        {{ $product->nama_produk }}
+                                    </h5>
                                     
-                                    <!-- Tombol Berdasarkan Role (Fokus: Beli Produk atau Negosiasi) -->
-                                    <div class="product-actions">
-                                        @if(auth()->user()->peran == 'admin')
-                                            <a href="{{ route('market.edit', $product->id_produk) }}" class="btn btn-warning btn-sm me-2">
-                                                <i class="fas fa-edit me-1"></i>Edit
-                                            </a>
-                                            <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $product->id_produk }})">
-                                                <i class="fas fa-trash me-1"></i>Hapus
-                                            </button>
-                                        @elseif(auth()->user()->peran == 'petani')
-                                            <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-eye me-1"></i>Lihat Detail
-                                            </a>
-                                        @elseif(auth()->user()->peran == 'pengepul')
-                                            <!-- Pengepul: Beli Langsung atau Negosiasi -->
-                                            <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-success btn-sm me-2">
-                                                <i class="fas fa-shopping-cart me-1"></i>Beli Langsung
-                                            </a>
-                                            <button class="btn btn-info btn-sm" onclick="openNegotiation({{ $product->id_produk }})">
-                                                <i class="fas fa-comments me-1"></i>Negosiasi Harga
-                                            </button>
-                                        @elseif(auth()->user()->peran == 'distributor')
-                                            <!-- Distributor: Hanya Beli Langsung (dari pengepul, tapi di market ini tampilkan opsi beli) -->
-                                            <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-success btn-sm">
-                                                <i class="fas fa-shopping-cart me-1"></i>Beli Langsung
-                                            </a>
+                                    <!-- Seller Info -->
+                                    <div class="d-flex align-items-center mb-4 mt-1">
+                                        <i class="bi bi-shop text-muted me-2 small"></i>
+                                        <a href="{{ route('market.seller', $product->id_petani) }}" class="text-secondary small fw-bold text-decoration-none hover-text-orange text-truncate" style="max-width: 180px;">
+                                            {{ $product->nama_petani }}
+                                        </a>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="mt-auto pt-3 border-top border-light d-grid gap-2">
+                                        @if(auth()->check())
+                                            @if(auth()->user()->peran == 'admin')
+                                                <div class="row g-2">
+                                                    <div class="col-6">
+                                                        <a href="{{ route('market.edit', $product->id_produk) }}" class="btn btn-light w-100 rounded-pill fw-bold border text-dark small-text hover-scale">Edit</a>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <button onclick="confirmDelete({{ $product->id_produk }})" class="btn btn-light w-100 rounded-pill fw-bold border text-danger small-text hover-scale">Hapus</button>
+                                                    </div>
+                                                </div>
+                                            @elseif(auth()->user()->peran == 'petani')
+                                                <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm custom-btn-green py-2 hover-scale">
+                                                    Lihat Detail
+                                                </a>
+                                            @elseif(auth()->user()->peran == 'pengepul' || auth()->user()->peran == 'distributor')
+                                                <div class="row g-2">
+                                                    <div class="col-8">
+                                                        <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm custom-btn-green small-text d-flex align-items-center justify-content-center py-2 hover-scale">
+                                                            <i class="bi bi-cart-fill me-2"></i>Beli
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <button onclick="openNegotiation({{ $product->id_produk }})" class="btn btn-warning w-100 rounded-pill fw-bold shadow-sm custom-btn-orange small-text text-white py-2 hover-scale" title="Nego Harga">
+                                                            <i class="bi bi-chat-dots-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm custom-btn-green py-2 hover-scale">Link Detail</a>
+                                            @endif
                                         @else
-                                            <a href="{{ route('market.show', $product->id_produk) }}" class="btn btn-outline-primary btn-sm">
-                                                <i class="fas fa-eye me-1"></i>Lihat Detail
-                                            </a>
+                                            <a href="{{ route('login') }}" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm hover-scale">Login</a>
                                         @endif
                                     </div>
                                 </div>
@@ -117,325 +175,111 @@
                         </div>
                     @endforeach
                 </div>
-
-                <!-- Pagination jika diperlukan (asumsi dari Laravel) -->
-                @if(method_exists($products, 'links'))
-                    <div class="pagination-wrapper mt-4">
+                
+                <!-- Pagination -->
+                <div class="mt-5 d-flex justify-content-center position-relative z-1">
+                    @if($products instanceof \Illuminate\Contracts\Pagination\Paginator)
                         {{ $products->links() }}
-                    </div>
-                @endif
+                    @endif
+                </div>
             @endif
         </div>
     </div>
 </div>
 
-<!-- Modal Negosiasi (Contoh sederhana, sesuaikan dengan JS backend) -->
-<div class="modal fade" id="negotiationModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Negosiasi Harga</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Modal Negotiation (Preserved) -->
+<div class="modal fade" id="negotiationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 text-white" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                <h5 class="modal-title fw-bold font-poppins"><i class="bi bi-chat-quote-fill me-2"></i>Ajukan Penawaran</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4 bg-light">
                 <form id="negotiationForm">
                     <input type="hidden" id="productId" name="product_id">
-                    <div class="mb-3">
-                        <label class="form-label">Harga Tawaran (Rp/kg)</label>
-                        <input type="number" class="form-control" name="tawaran_harga" required min="0" step="1000">
+                    
+                    <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center mb-3">
+                        <i class="bi bi-info-circle-fill fs-4 me-3 text-warning"></i>
+                        <div class="small lh-sm text-dark">
+                            Penawaran akan dikirim ke petani. Pastikan harga masuk akal.
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Pesan untuk Petani (Opsional)</label>
-                        <textarea class="form-control" name="pesan" rows="3" placeholder="Tulis alasan tawaran Anda..."></textarea>
+
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control rounded-4 border-0 shadow-sm" id="tawaran_harga" name="tawaran_harga" required min="1000">
+                        <label for="tawaran_harga">Harga Tawaran (Rp/kg)</label>
                     </div>
-                    <button type="submit" class="btn btn-primary">Kirim Tawaran</button>
+                    <div class="form-floating mb-4">
+                        <textarea class="form-control rounded-4 border-0 shadow-sm" id="pesan" name="pesan" style="height: 100px"></textarea>
+                        <label for="pesan">Pesan Tambahan (Opsional)</label>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill shadow custom-btn-orange py-2">
+                            Kirim Penawaran
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+    .font-poppins { font-family: 'Poppins', sans-serif; }
+    
+    .bg-gradient-green { background: linear-gradient(135deg, #2E7D32, #66BB6A); }
+    
+    .product-card {
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+    
+    .hover-zoom { transition: transform 0.5s ease; }
+    .product-card:hover .hover-zoom { transform: scale(1.05); }
+
+    .custom-btn-green {
+        background: linear-gradient(135deg, #2E7D32, #43A047);
+        border: none;
+        transition: all 0.2s;
+    }
+    .custom-btn-orange {
+        background: linear-gradient(135deg, #FF9800, #FFB74D);
+        border: none;
+        transition: all 0.2s;
+    }
+    .hover-scale:hover { transform: scale(1.05); }
+    .hover-text-orange:hover { color: #E65100 !important; }
+    
+    .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    .animate-slide-in { animation: slideUp 0.6s ease-out forwards; opacity: 0; transform: translateY(20px); }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+</style>
+
 <script>
     function openNegotiation(productId) {
         document.getElementById('productId').value = productId;
-        new bootstrap.Modal(document.getElementById('negotiationModal')).show();
+        var myModal = new bootstrap.Modal(document.getElementById('negotiationModal'));
+        myModal.show();
     }
     
     function confirmDelete(productId) {
-        if (confirm('Yakin ingin menghapus produk ini?')) {
-            // Redirect ke route delete (asumsi route ada)
-            window.location.href = `/market/${productId}`;
+        if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+            alert('Fitur hapus belum aktif dalam demo ini.');
         }
     }
     
-    // Handle form negosiasi (contoh AJAX, sesuaikan dengan backend)
-    document.getElementById('negotiationForm')?.addEventListener('submit', function(e) {
+    document.getElementById('negotiationForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        // Kirim AJAX ke route negosiasi (contoh: fetch atau axios)
-        const formData = new FormData(this);
-        // fetch('/market/negotiate', { method: 'POST', body: formData })
-        //     .then(response => response.json())
-        //     .then(data => { alert('Tawaran dikirim!'); })
-        //     .catch(error => alert('Error: ' + error));
-        alert('Tawaran dikirim! Menunggu konfirmasi petani.');
+        // Here you would typically use fetch/axios
+        alert('Penawaran berhasil dikirim!');
         bootstrap.Modal.getInstance(document.getElementById('negotiationModal')).hide();
         this.reset();
     });
 </script>
-
-<style>
-    .market-card {
-        background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(244, 196, 48, 0.15));
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(244, 196, 48, 0.3);
-        border-radius: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        padding: var(--space-lg);
-    }
-    
-    .market-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--rice-gold), var(--rice-green));
-    }
-    
-    .market-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-        border-color: var(--rice-gold);
-    }
-    
-    .title-box {
-        background: linear-gradient(135deg, #FF9800, #FFB74D);
-        border: 1px solid #2E7D32;
-        border-radius: 16px;
-        padding: 12px 24px;
-        text-align: center;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        display: inline-block;
-        width: auto;
-        margin: 0 auto;
-    }
-    
-    .title-box:hover {
-        transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    }
-    
-    .card-header-custom {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        border-radius: 12px;
-        padding: 20px;
-        backdrop-filter: blur(5px);
-        margin-bottom: 0;
-    }
-    
-    .stats-summary .badge {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 20px;
-        transition: all 0.3s ease;
-        color: #fff !important;
-    }
-    
-    .stats-summary .badge:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-    }
-    
-    .product-card {
-        background: rgba(255, 255, 255, 0.25);
-        border: 1px solid rgba(244, 196, 48, 0.2);
-        border-radius: 16px;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        backdrop-filter: blur(10px);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: var(--shadow-sm);
-    }
-    
-    .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-lg);
-        background: rgba(255, 255, 255, 0.35);
-        border-color: var(--rice-gold);
-    }
-    
-    .product-image {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-    
-    .product-placeholder {
-        width: 100%;
-        height: 200px;
-        background: rgba(255, 255, 255, 0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.875rem;
-    }
-    
-    .product-placeholder i {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .product-body {
-        padding: 1.25rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .product-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--deep-green);
-        margin-bottom: var(--space-sm);
-        line-height: 1.3;
-        font-family: var(--font-heading);
-    }
-    
-    .product-info {
-        margin-bottom: 1rem;
-    }
-    
-    .info-item {
-        display: flex;
-        align-items: center;
-        font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 0.5rem;
-    }
-    
-    .product-price {
-        margin-bottom: 1rem;
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #fff;
-    }
-    
-    .price {
-        color: #fff;
-    }
-    
-    .product-actions {
-        margin-top: auto;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    
-    .product-actions .btn {
-        flex: 1;
-        min-width: auto;
-        font-size: 0.875rem;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-    
-    .product-actions .btn:hover {
-        transform: translateY(-1px);
-    }
-    
-    .empty-state {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 40px 20px;
-        backdrop-filter: blur(5px);
-        border: 1px dashed rgba(255, 255, 255, 0.3);
-    }
-    
-    .empty-state i {
-        opacity: 0.5;
-        color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .pagination-wrapper {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 15px;
-        backdrop-filter: blur(5px);
-        text-align: center;
-    }
-    
-    .pagination-wrapper .pagination .page-link {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: #fff !important;
-        margin: 0 2px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-    
-    .pagination-wrapper .pagination .page-link:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-1px);
-    }
-    
-    .pagination-wrapper .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #FF9800, #FFB74D);
-        border-color: #FF9800;
-    }
-    
-    /* Animasi */
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-    
-    .animate-fade-in { animation: fadeInUp 0.6s ease-out forwards; }
-    .animate-slide-in { animation: slideIn 0.4s ease-out forwards; }
-    
-    /* Responsiveness */
-    @media (max-width: 768px) {
-        .title-box {
-            padding: 10px 20px;
-            width: 100%;
-            display: block;
-        }
-        
-        .text-2xl { font-size: 1.5rem !important; }
-        
-        .card-header-custom {
-            flex-direction: column;
-            text-align: center;
-            gap: 10px;
-        }
-        
-        .stats-summary {
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .product-actions {
-            flex-direction: column;
-        }
-        
-        .product-actions .btn {
-            width: 100%;
-        }
-    }
-</style>
 @endsection

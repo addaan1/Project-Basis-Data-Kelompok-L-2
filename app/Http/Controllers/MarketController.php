@@ -14,7 +14,7 @@ class MarketController extends Controller
 {
     public function index()
     {
-        $products = ProdukBeras::all();
+        $products = ProdukBeras::paginate(12);
         return view('market.index', compact('products'));
     }
 
@@ -46,6 +46,21 @@ class MarketController extends Controller
         if ($request->hasFile('foto')) {
             $fotoPath = $request->file('foto')->store('produk', 'public');
         }
+
+        $inventory = \App\Models\Inventory::where('id_user', Auth::id())
+            ->where('jenis_beras', $request->jenis_beras)
+            ->where('kualitas', $request->kualitas)
+            ->first();
+
+        // Check if inventory exists and has enough stock
+        if (!$inventory || $inventory->jumlah < $request->stok) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Stok gudang tidak mencukupi untuk jenis beras dan kualitas ini. Stok tersedia: ' . ($inventory ? $inventory->jumlah : 0) . ' kg.');
+        }
+
+        // Deduct from Inventory (Move to Market Etalase)
+        $inventory->decrement('jumlah', $request->stok);
 
         ProdukBeras::create([
             'nama_produk' => $request->nama_produk,
@@ -115,6 +130,9 @@ class MarketController extends Controller
             $buyer->saldo = (float) $buyer->saldo - $total; // hold saldo
             $buyer->save();
 
+            // Potong Stok Langsung (Reserve Stock)
+            $product->decrement('stok', $jumlah);
+
             TransaksiHistory::create([
                 'id_transaksi' => $trx->id_transaksi,
                 'status_before' => null,
@@ -152,40 +170,27 @@ class MarketController extends Controller
             $offer = (float) $request->input('tawaran_harga');
             $message = (string) $request->input('pesan', '');
 
-            $trx = Transaksi::create([
-                'id_penjual' => $sellerId,
-                'id_pembeli' => $buyerId,
-                'jumlah' => $jumlah,
-                'harga_awalan' => (float) $product->harga,
-                'harga_akhir' => $offer,
-                'tanggal' => now()->toDateString(),
-                'jenis_transaksi' => 'market_negotiation',
-                'status_transaksi' => 'dalam_proses',
-                'type' => 'purchase',
-                'description' => 'Negosiasi harga: '.($message ?: '-'),
-                'user_id' => $buyerId,
-            ]);
-
-            DB::table('negosiasi_hargas')->insert([
-                'id_transaksi' => $trx->id_transaksi,
-                'id_user_penawar' => $buyerId,
-                'harga_tawaran' => $offer,
-                'catatan' => $message,
-                'created_at' => now(),
-                'updated_at' => now(),
+            // Use the standard Negosiasi Model
+            \App\Models\Negosiasi::create([
+                'id_produk' => $product->id_produk,
+                'id_pengepul' => $buyerId,
+                'id_petani' => $sellerId,
+                'harga_penawaran' => $offer,
+                'harga_awal' => $product->harga, // Save initial price
+                'jumlah_kg' => $jumlah,
+                'pesan' => $message,
+                'status' => 'dalam_proses',
             ]);
 
             DB::commit();
 
             return redirect()->route('market.show', ['market' => $product->id_produk])
-                ->with('status', 'Tawaran negosiasi telah dikirim dan sedang diproses');
+                ->with('status', 'Tawaran negosiasi telah dikirim! Cek menu Negosiasi untuk memantau.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Market negotiate error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect()->route('market.index')->with('error', 'Gagal mengirim negosiasi: '.$e->getMessage());
         }
-
-
     }
 
     public function seller($id)

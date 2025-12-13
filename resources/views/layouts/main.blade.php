@@ -57,15 +57,17 @@
         
         body {
             font-family: var(--font-body);
-            background: linear-gradient(135deg, #FFF8DC 0%, #F4E4C1 50%, #E8D4A0 100%);
+            /* Global Background Image from Assets */
+            background: url("{{ asset('images/Background.png') }}") no-repeat center center fixed;
+            background-size: cover;
             position: relative;
             color: #333;
             overflow-x: hidden;
             min-height: 100vh;
             padding-top: 70px;
         }
-        
-        /* Dynamic Rice Field Pattern Background */
+
+        /* Overlay - Reduced opacity to let the 'ladang' colors shine */
         body::before {
             content: '';
             position: fixed;
@@ -73,38 +75,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                repeating-linear-gradient(90deg, rgba(139, 195, 74, 0.03) 0px, transparent 1px, transparent 40px, rgba(139, 195, 74, 0.03) 41px),
-                repeating-linear-gradient(0deg, rgba(139, 195, 74, 0.03) 0px, transparent 1px, transparent 40px, rgba(139, 195, 74, 0.03) 41px);
-            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.15); /* Very light overlay, almost transparent */
             z-index: -1;
-            animation: ricePattern 20s linear infinite;
-        }
-        
-        @keyframes ricePattern {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(40px); }
-        }
-        
-        /* Animated Gradient Overlay */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, 
-                rgba(244, 196, 48, 0.1) 0%, 
-                rgba(139, 195, 74, 0.1) 50%, 
-                rgba(244, 196, 48, 0.1) 100%);
-            z-index: -1;
-            animation: gradientShift 15s ease infinite;
-        }
-        
-        @keyframes gradientShift {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+            /* backdrop-filter: blur(2px);  Reduced blur to keep background details visible */
         }
         
         /* Typography Enhancements */
@@ -114,6 +87,45 @@
             letter-spacing: -0.02em;
         }
         
+        /* Standardized Design Tokens based on 'Saldo' Page */
+        :root {
+            /* Rice Ecosystem Color Palette */
+            --rice-gold: #FF9800; /* Matching Saldo Orange */
+            --rice-green: #4CAF50; /* Matching Saldo Green */
+            --rice-green-light: #81C784;
+            --earth-brown: #8D6E63;
+            --pure-white: #FFFFFF;
+            --deep-green: #2E7D32;
+            
+            /* Gradients */
+            --gradient-green: linear-gradient(135deg, #4CAF50, #81C784);
+            --gradient-orange: linear-gradient(135deg, #FF9800, #FFB74D);
+            
+            /* Spacing System (8px grid) */
+            --space-xs: 0.5rem;  /* 8px */
+            --space-sm: 1rem;    /* 16px */
+            --space-md: 1.5rem;  /* 24px */
+            --space-lg: 2rem;    /* 32px */
+            --space-xl: 3rem;    /* 48px */
+            --space-2xl: 4rem;   /* 64px */
+            
+            /* Typography */
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.2);
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.85); /* More opaque for contrast against img */
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-blur: blur(12px);
+            --glass-strong: rgba(255, 255, 255, 0.95);
+        }
+        
         h1 { font-size: 2.5rem; line-height: 1.2; }
         h2 { font-size: 2rem; line-height: 1.3; }
         h3 { font-size: 1.75rem; line-height: 1.4; }
@@ -121,21 +133,22 @@
         h5 { font-size: 1.25rem; line-height: 1.5; }
         h6 { font-size: 1rem; line-height: 1.5; }
         
-        /* Navbar Upgrade: Enhanced Glassmorphism */
+        /* Navbar Upgrade: Enhanced Glassmorphism & Theme Integrated */
         .navbar-custom {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
+            /* Glassmorphism Green/Orange */
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(244, 196, 48, 0.15));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: none; /* Removed border as requested */
             padding: var(--space-sm) 0;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-sm);
         }
         
         .navbar-custom.scrolled {
-            background: rgba(255, 248, 220, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             padding: var(--space-xs) 0;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
         }
         
         .navbar-brand img {
@@ -148,33 +161,35 @@
         }
         
         .nav-link {
-            color: var(--deep-green) !important;
-            font-weight: 600;
+            color: #1B5E20 !important; /* Extremely dark green for contrast */
+            font-weight: 700; /* Bolder */
             margin: 0 var(--space-sm);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: hidden;
             font-family: var(--font-body);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5); /* Subtle rim for legibility */
         }
         
         .nav-link::before {
             content: '';
             position: absolute;
             bottom: 0;
-            left: -100%;
-            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--rice-gold), var(--rice-green));
-            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--rice-gold); /* Orange hint */
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
         
         .nav-link:hover::before {
-            left: 0;
+            width: 80%;
         }
         
         .nav-link:hover {
-            color: var(--rice-gold) !important;
-            transform: translateY(-2px);
+            color: #E65100 !important; /* Deep Orange on hover */
+            transform: translateY(-1px);
         }
         
         /* User Greeting Section */
@@ -184,32 +199,30 @@
             gap: var(--space-xs);
             color: var(--deep-green);
             font-weight: 600;
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.6);
             padding: var(--space-xs) var(--space-sm);
             border-radius: 50px;
-            backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(5px);
             border: 1px solid var(--glass-border);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .user-greeting:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.9);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-sm);
         }
         
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--rice-gold), var(--rice-green));
+            background: var(--gradient-green);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--pure-white);
             font-weight: 700;
-            font-size: 1.1rem;
-            box-shadow: var(--shadow-sm);
         }
         
         /* Toggle Button Upgrade */
@@ -240,11 +253,15 @@
             padding-top: 0;
         }
         
-        /* Sidebar Upgrade: Lebih Smooth, Glass Effect */
+        /* Sidebar Upgrade: Glass Effect matching theme */
+        /* Sidebar Upgrade: Glass Effect matching theme */
         .sidebar {
             width: 280px;
-            background: white;
-            border-right: 1px solid var(--glass-border);
+            /* Glassmorphism Green/Orange */
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(244, 196, 48, 0.15));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(244, 196, 48, 0.3);
             padding: 2rem 0;
             position: fixed;
             left: 0;
@@ -253,7 +270,7 @@
             overflow-y: auto;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 1000;
-            box-shadow: var(--shadow-heavy);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
         }
         
         .sidebar.hidden {
@@ -264,10 +281,9 @@
             display: flex;
             align-items: center;
             padding: 0 1.5rem 1.5rem;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid rgba(0,0,0,0.05); /* Subtle border */
             margin-bottom: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0 0 20px 20px;
+            background: transparent;
             position: relative;
         }
         
@@ -276,13 +292,13 @@
             height: 45px;
             margin-right: 12px;
             border-radius: 10px;
-            box-shadow: var(--shadow-light);
+            box-shadow: var(--shadow-sm);
         }
         
         .logo span {
             font-size: 1.4rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            background: var(--gradient-green);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -293,36 +309,35 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid var(--glass-border);
-            color: #333;
+            color: var(--deep-green);
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.8rem;
         }
         
         .sidebar-collapse-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--rice-green);
+            color: white;
             transform: scale(1.1);
-            box-shadow: var(--shadow-light);
-            color: var(--primary-green);
         }
         
         .sidebar h4 {
             padding: 0 1.5rem;
             margin: 1.5rem 0 0.75rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #6c757d; /* Darker color for white background */
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--rice-gold); /* Orange section headers */
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
         }
         
         .sidebar ul {
@@ -338,97 +353,72 @@
         .sidebar a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 1rem 1.5rem;
             text-decoration: none;
-            color: #333; /* Darker color for white background */
+            color: #1B5E20; /* Dark Green Text */
             transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            position: relative;
-            overflow: hidden;
+            font-weight: 600;
+            margin: 4px 12px;
+            border-radius: 12px; /* Rounded pill shape */
+            border-left: none; /* Removing old left border style */
         }
         
-        .sidebar a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent); /* Subtle hover effect */
-            transition: left 0.5s;
-        }
-        
-        .sidebar a:hover::before {
-            left: 100%;
-        }
-        
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: rgba(0, 0, 0, 0.05); /* Subtle background on hover/active */
-            color: var(--primary-green); /* Green color for active/hover */
-            border-left-color: var(--primary-green);
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.6);
+            color: #E65100; /* Deep Orange */
             transform: translateX(5px);
-            box-shadow: none; /* Remove shadow for simple links */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .sidebar a.active {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Green Gradient Active */
+            color: #fff !important; /* White Text */
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
         }
         
         .sidebar a i {
-            margin-right: 12px;
-            width: 20px;
-            font-size: 1.1rem;
-            transition: transform 0.3s ease;
+            width: 24px;
+            margin-right: 16px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #FF9800; /* Orange Icons by default */
+            transition: color 0.3s ease;
         }
         
         .sidebar a:hover i {
-            transform: scale(1.1);
+            color: #E65100;
         }
 
-        .sidebar-button {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            margin: 0.5rem 1.5rem;
-            text-decoration: none;
-            color: #fff;
-            border-radius: 25px;
-            background: linear-gradient(to right, #FFD700, #FFA500); /* Yellow to Orange gradient */
-            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
-            transition: all 0.3s ease;
+        .sidebar a.active i {
+            color: #fff; /* White Icons on Active */
         }
 
-        .sidebar-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
-        }
-
-        .sidebar-button i {
-            margin-right: 12px;
-            width: 20px;
-            font-size: 1.1rem;
-            color: #ff12;
+        .logout-container {
+            padding: 1.5rem;
+            margin-top: auto;
         }
         
         .logout {
-            width: calc(100% - 3rem); /* Adjust width for padding */
-            margin: 2rem 1.5rem 0;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #28a745, #20c997); /* Green gradient */
-            border: none;
-            color: #fff;
-            text-align: center; /* Center text for button */
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #fff;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            text-align: center;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center; /* Center content */
+            justify-content: center;
             transition: all 0.3s ease;
-            border-radius: 25px; /* Rounded corners */
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            border-radius: 8px;
+            font-weight: 600;
         }
         
         .logout:hover {
+            background-color: #dc3545;
+            color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-            background: linear-gradient(135deg, #20c997, #28a745); /* Slightly different gradient on hover */
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
         }
         
         /* Main Content Upgrade */
@@ -438,6 +428,7 @@
             padding: 2rem;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             min-height: 100vh;
+            background: transparent; /* Transparent to show 'Background.png' */
         }
         
         .main-content.expanded {
@@ -491,24 +482,72 @@
             font-size: 0.9rem;
         }
         
+        /* Global Card Style - 'Saldo' Theme */
         .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-heavy);
-            transition: all 0.3s ease;
-            min-height: 500px;
+            background: linear-gradient(135deg, #4CAF50, #81C784); /* Green Gradient Body */
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: white; /* Default text white */
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 24px;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #FF9800, #FFB74D); /* Orange Gradient Header */
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Adjusting text muted to be readable on green */
+        .text-muted {
+            color: rgba(255, 255, 255, 0.8) !important;
         }
         
-        /* Animasi Loading/Entrance */
+        .text-dark {
+            color: white !important;
+        }
+
+        /* Inner containers like lists and tables need to handle the transparency */
+        .list-group-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            margin-bottom: 8px;
+            border-radius: 10px !important;
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Table styles adjusted for green background */
+        .table {
+            color: white;
+        }
+        .table thead th {
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+        .table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Badges need to pop */
+        .badge {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -572,6 +611,41 @@
             top: 0;
             width: 100%;
             z-index: 999;
+        }
+
+        /* --- Global Form Theme Overrides (Green/Orange) --- */
+        /* --- Global Form Theme Overrides (Green/Orange) --- */
+        .form-control,
+        .form-select {
+            color: #000 !important; /* Force Black Text */
+        }
+
+        .form-control:focus, 
+        .form-select:focus {
+            border-color: #4CAF50 !important; /* Green Border */
+            box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25) !important; /* Green Glow */
+            color: #000 !important; /* Ensure text remains black on focus */
+        }
+        
+        .form-check-input:checked {
+            background-color: #4CAF50 !important;
+            border-color: #4CAF50 !important;
+        }
+
+        .form-select {
+             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%232E7D32' stroke='%232E7D32' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        }
+        
+        /* Dropdown Optgroup Styling - Make categories visible */
+        optgroup {
+            color: #2E7D32; /* Dark Green */
+            font-weight: 800;
+            background-color: #fff;
+        }
+
+        option {
+            color: #333; /* Dark text for items */
+            font-weight: normal;
         }
     </style>
 </head>
@@ -675,29 +749,30 @@
 
             <h4>List Menu</h4>
             <ul>
-                <li><a href="{{ route('saldo') }}" class="sidebar-button"><i class="fas fa-coins"></i> Saldo</a></li>
-                <li><a href="{{ route('transaksi.index') }}" class="sidebar-button"><i class="fas fa-exchange-alt"></i> Aktivitas Transaksi</a></li>
-                <li><a href="{{ route('negosiasi') }}" class="sidebar-button"><i class="fas fa-comments"></i> Status Negosiasi</a></li>
-                <li><a href="{{ route('inventory.index') }}" class="sidebar-button"><i class="fas fa-boxes"></i> Inventaris</a></li>
+                @if(Auth::check() && Auth::user()->peran == 'petani')
+                    <li><a href="{{ route('market.create') }}" class="{{ request()->routeIs('market.create') ? 'active' : '' }}"><i class="fas fa-plus-circle"></i> Jual Beras</a></li>
+                @elseif(Auth::check() && Auth::user()->peran == 'pengepul')
+                    <li><a href="{{ route('market.index') }}" class="{{ request()->routeIs('market.index') ? 'active' : '' }}"><i class="fas fa-shopping-basket"></i> Pasar Beras</a></li>
+                @endif
+                <li><a href="{{ route('saldo') }}" class="{{ request()->routeIs('saldo') ? 'active' : '' }}"><i class="fas fa-coins"></i> Saldo</a></li>
+                <li><a href="{{ route('transaksi.index') }}" class="{{ request()->routeIs('transaksi.*') ? 'active' : '' }}"><i class="fas fa-exchange-alt"></i> Aktivitas Transaksi</a></li>
+                <li><a href="{{ route('negosiasi.index') }}" class="{{ request()->routeIs('negosiasi.*') ? 'active' : '' }}"><i class="fas fa-comments"></i> Status Negosiasi</a></li>
+                <li><a href="{{ route('inventory.index') }}" class="{{ request()->routeIs('inventory.*') ? 'active' : '' }}"><i class="fas fa-boxes"></i> Inventaris</a></li>
             </ul>
 
             <h4>Setting</h4>
             <ul>
-                <li><a href="{{ route('settings.index') }}" class="sidebar-button"><i class="fas fa-user-cog"></i> Pengaturan Akun</a></li>
-                <li><a href="{{ route('ewallet') }}" class="sidebar-button"><i class="fas fa-wallet"></i> Pengaturan E-Wallet</a></li>
-                <!-- Tambahkan link berikut di sidebar menu -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('topup.index') }}">
-                        <i class="fas fa-wallet"></i>
-                        <span>Top-up Saldo</span>
-                    </a>
-                </li>
+                <li><a href="{{ route('settings.index') }}" class="{{ request()->routeIs('settings.*') ? 'active' : '' }}"><i class="fas fa-user-cog"></i> Pengaturan Akun</a></li>
+                <li><a href="{{ route('ewallet') }}" class="{{ request()->routeIs('ewallet') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Pengaturan E-Wallet</a></li>
+                <li><a href="{{ route('topup.index') }}" class="{{ request()->routeIs('topup.*') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Top-up Saldo</a></li>
             </ul>
 
-            <form action="{{ url('/logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </form>
+            <div class="logout-container">
+                <form action="{{ url('/logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</button>
+                </form>
+            </div>
         </div> <!-- Close sidebar -->
 
         <!-- Main Content -->

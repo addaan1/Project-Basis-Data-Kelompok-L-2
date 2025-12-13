@@ -1,136 +1,136 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="container py-5">
+<div class="container py-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-9">
-            <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
-                <div class="card-header bg-white py-3 pl-4">
-                    <h5 class="mb-0 fw-bold" style="color: #2E7D32;">Tambah Produk Baru</h5>
+        <div class="col-lg-10">
+            <!-- Glassmorphism Card -->
+            <div class="card border-0 shadow-lg" style="border-radius: 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+                
+                <!-- Gradient Header (Green for Growth/Agriculture) -->
+                <div class="card-header border-0 py-4 px-5 position-relative" style="background: linear-gradient(135deg, #2E7D32, #66BB6A); border-radius: 20px 20px 0 0;">
+                    <div class="d-flex align-items-center justify-content-between position-relative z-1">
+                        <div>
+                            <h4 class="mb-1 fw-bold text-white"><i class="bi bi-basket2-fill me-2"></i>Jual Beras Baru</h4>
+                            <p class="mb-0 text-white-50 small">Isi formulir di bawah untuk menawarkan hasil panen Anda.</p>
+                        </div>
+                        <div class="p-3 bg-white bg-opacity-25 rounded-circle text-white">
+                            <i class="bi bi-shop-window" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body p-4" style="background-color: #fcfcfc;">
+
+                <div class="card-body p-5">
                     <form method="POST" action="{{ route('market.store') }}" enctype="multipart/form-data">
                         @csrf
 
-                        {{-- Petani Name is auto-filled by Auth --}}
-                        <div class="mb-4">
-                            <label class="form-label text-muted small text-uppercase fw-bold">Penjual (Anda)</label>
-                            <input type="text" class="form-control" value="{{ Auth::user()->nama }}" disabled readonly style="background-color: #e9ecef;">
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="nama_produk" class="form-label fw-bold">Nama Produk</label>
-                            <input id="nama_produk" type="text" class="form-control @error('nama_produk') is-invalid @enderror" name="nama_produk" value="{{ old('nama_produk') }}" required placeholder="Contoh: Beras Pandan Wangi Super">
-                            @error('nama_produk')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label for="jenis_beras" class="form-label fw-bold">Jenis Beras</label>
-                                <select id="jenis_beras" class="form-select @error('jenis_beras') is-invalid @enderror" name="jenis_beras" required onchange="updateQuality()">
-                                    <option value="">Pilih Jenis Beras</option>
-                                    {{-- 30 Varieties --}}
-                                    <optgroup label="Premium">
-                                        <option value="Pandan Wangi">Pandan Wangi</option>
-                                        <option value="Rojolele">Rojolele</option>
-                                        <option value="Menthik Wangi">Menthik Wangi</option>
-                                        <option value="Menthik Susu">Menthik Susu</option>
-                                        <option value="Beras Merah">Beras Merah</option>
-                                        <option value="Beras Hitam">Beras Hitam</option>
-                                        <option value="Beras Coklat">Beras Coklat</option>
-                                        <option value="Beras Ketan Putih">Beras Ketan Putih</option>
-                                        <option value="Beras Ketan Hitam">Beras Ketan Hitam</option>
-                                        <option value="Sintanur">Sintanur</option>
-                                        <option value="Hibrida Sembada">Hibrida Sembada</option>
-                                        <option value="Hibrida Mapa">Hibrida Mapa</option>
-                                        <option value="Beras Basmati">Beras Basmati</option>
-                                        <option value="Beras Japonica">Beras Japonica</option>
-                                        <option value="Beras Jasmine">Beras Jasmine</option>
-                                        <option value="Beras Ketan">Beras Ketan</option>
-                                    </optgroup>
-                                    <optgroup label="Medium">
-                                        <option value="IR 64">IR 64 (Setra Ramos)</option>
-                                        <option value="IR 42">IR 42 (Pera)</option>
-                                        <option value="Cisadane">Cisadane</option>
-                                        <option value="Ciherang">Ciherang</option>
-                                        <option value="Inpari 32">Inpari 32</option>
-                                        <option value="Inpari 42">Inpari 42</option>
-                                        <option value="Batang Lembang">Batang Lembang</option>
-                                        <option value="Ciliwung">Ciliwung</option>
-                                        <option value="Way Apo Buru">Way Apo Buru</option>
-                                        <option value="Memberamo">Memberamo</option>
-                                        <option value="Inpara">Inpara</option>
-                                        <option value="Inpago">Inpago</option>
-                                        <option value="Beras Pecah Kulit">Beras Pecah Kulit</option>
-                                    </optgroup>
-                                    <optgroup label="Standard">
-                                        <option value="Beras Menir">Beras Menir</option>
-                                    </optgroup>
-                                </select>
-                                @error('jenis_beras')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                        <!-- Section: Info Penjual -->
+                        <div class="mb-4 p-3 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-10 d-flex align-items-center">
+                            <div class="bg-white p-2 rounded-circle shadow-sm me-3 text-success">
+                                <i class="bi bi-person-badge-fill fs-4"></i>
                             </div>
-                            <div class="col-md-6">
-                                <label for="kualitas" class="form-label fw-bold">Kualitas (Otomatis)</label>
-                                <input id="kualitas" type="text" class="form-control @error('kualitas') is-invalid @enderror" name="kualitas" value="{{ old('kualitas') }}" readonly required style="background-color: #e9ecef;">
-                                @error('kualitas')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <div>
+                                <small class="text-uppercase fw-bold text-success d-block" style="font-size: 0.75rem; letter-spacing: 1px;">Penjual</small>
+                                <span class="fw-bold text-dark fs-5">{{ Auth::user()->name ?? Auth::user()->nama }}</span>
                             </div>
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label for="harga" class="form-label fw-bold">Harga per Kg (Rp)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input id="harga" type="number" class="form-control @error('harga') is-invalid @enderror" name="harga" value="{{ old('harga') }}" required min="0" placeholder="0">
+                        <!-- Main Form Grid -->
+                        <div class="row g-4">
+                            <!-- Left Column: Details -->
+                            <div class="col-md-8">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control form-control-lg rounded-4 fw-bold text-dark fs-5" id="nama_produk" name="nama_produk" value="{{ old('nama_produk') }}" placeholder="Contoh: Beras Pandan Wangi Super" required style="border: 1px solid #ced4da;">
+                                    <label for="nama_produk" class="text-secondary opacity-75 fw-bold"><i class="bi bi-tag-fill me-2 text-success fs-5"></i>Nama Produk</label>
+                                    @error('nama_produk') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                                 </div>
-                                @error('harga')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select form-select-lg rounded-4 fw-bold text-dark fs-5" id="jenis_beras" name="jenis_beras" required onchange="updateQuality()" style="border: 1px solid #ced4da;">
+                                                <option value="" selected disabled>Pilih Jenis</option>
+                                                <optgroup label="Premium">
+                                                    <option value="Pandan Wangi">Pandan Wangi</option>
+                                                    <option value="Rojolele">Rojolele</option>
+                                                    <option value="Menthik Wangi">Menthik Wangi</option>
+                                                    <option value="Beras Merah">Beras Merah</option>
+                                                    <option value="Beras Hitam">Beras Hitam</option>
+                                                </optgroup>
+                                                <optgroup label="Medium">
+                                                    <option value="IR 64">IR 64 (Setra Ramos)</option>
+                                                    <option value="Ciherang">Ciherang</option>
+                                                    <option value="Inpari 32">Inpari 32</option>
+                                                </optgroup>
+                                                <optgroup label="Lainnya">
+                                                    <option value="Beras Ketan">Beras Ketan</option>
+                                                    <option value="Beras Menir">Beras Menir</option>
+                                                </optgroup>
+                                            </select>
+                                            <label for="jenis_beras" class="text-secondary opacity-75 fw-bold"><i class="bi bi-grid-fill me-2 text-success fs-5"></i>Jenis Beras</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-lg rounded-4 bg-light fs-5" id="kualitas" name="kualitas" value="{{ old('kualitas') }}" readonly placeholder="Otomatis" style="border: 1px solid #e9ecef;">
+                                            <label for="kualitas" class="text-secondary opacity-75 fw-bold"><i class="bi bi-award-fill me-2 text-warning fs-5"></i>Kualitas</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control form-control-lg rounded-4 text-dark fs-5" placeholder="Jelaskan detail produk..." id="deskripsi" name="deskripsi" style="height: 160px; border: 1px solid #ced4da;" required>{{ old('deskripsi') }}</textarea>
+                                    <label for="deskripsi" class="text-secondary opacity-75 fw-bold"><i class="bi bi-file-text-fill me-2 text-success fs-5"></i>Deskripsi Produk</label>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="stok" class="form-label fw-bold">Stok Tersedia (Kg)</label>
-                                <input id="stok" type="number" class="form-control @error('stok') is-invalid @enderror" name="stok" value="{{ old('stok') }}" required min="0" placeholder="0">
-                                @error('stok')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+
+                            <!-- Right Column: Price & Photo -->
+                            <div class="col-md-4">
+                                <div class="p-4 rounded-4 bg-white h-100 shadow-sm border border-light">
+                                    <h6 class="fw-bold text-success mb-3 small text-uppercase letter-spacing-1"><i class="bi bi-currency-dollar me-2"></i>Harga & Stok</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-secondary">Harga per Kg</label>
+                                        <div class="input-group input-group-lg shadow-sm rounded-4">
+                                            <span class="input-group-text bg-success text-white border-0 fw-bold fs-5">Rp</span>
+                                            <input type="number" class="form-control border-0 bg-light fw-bold text-dark fs-5" name="harga" value="{{ old('harga') }}" required min="0" placeholder="0">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-secondary">Stok Tersedia</label>
+                                        <div class="input-group input-group-lg shadow-sm rounded-4">
+                                            <input type="number" class="form-control border-0 bg-light fw-bold text-dark fs-5" name="stok" value="{{ old('stok') }}" required min="0" placeholder="0">
+                                            <span class="input-group-text bg-warning text-dark border-0 fw-bold fs-5">Kg</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-secondary">Lokasi Gudang</label>
+                                        <input type="text" class="form-control form-control-lg rounded-4 border-light bg-light text-dark fs-5" name="lokasi_gudang" value="{{ old('lokasi_gudang') }}" required placeholder="Kota/Kabupaten">
+                                    </div>
+
+                                    <hr class="my-4 border-secondary border-opacity-10">
+
+                                    <label class="form-label small fw-bold mb-2 text-secondary"><i class="bi bi-camera-fill me-2"></i>Foto Produk</label>
+                                    <div class="upload-box position-relative rounded-4 border-2 border-dashed border-success border-opacity-25 p-4 text-center bg-light transition-all hover-scale" onclick="document.getElementById('foto').click()" style="cursor: pointer;">
+                                        <i class="bi bi-cloud-arrow-up-fill text-success fs-1 mb-2 opacity-50"></i>
+                                        <p class="small text-muted mb-0 fw-medium">Upload Foto</p>
+                                        <input type="file" id="foto" name="foto" class="d-none" accept="image/*" onchange="previewImage(this)">
+                                        <img id="preview" src="" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover rounded-4 d-none">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="lokasi_gudang" class="form-label fw-bold">Lokasi Gudang</label>
-                            <input id="lokasi_gudang" type="text" class="form-control @error('lokasi_gudang') is-invalid @enderror" name="lokasi_gudang" value="{{ old('lokasi_gudang') }}" required placeholder="Contoh: Gudang KUD Jaya Makmur, Karawang">
-                            @error('lokasi_gudang')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="deskripsi" class="form-label fw-bold">Deskripsi Produk</label>
-                            <textarea id="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" required rows="4" placeholder="Jelaskan detail produk Anda...">{{ old('deskripsi') }}</textarea>
-                            @error('deskripsi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="foto" class="form-label fw-bold">Foto Produk</label>
-                            <input id="foto" type="file" class="form-control @error('foto') is-invalid @enderror" name="foto" accept="image/*">
-                            <small class="text-muted">Format: JPG, JPEG, PNG. Maks: 2MB</small>
-                            @error('foto')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 mt-5">
-                            <a href="{{ route('market.index') }}" class="btn btn-light border px-4">Batal</a>
-                            <button type="submit" class="btn btn-success px-5 fw-bold">
-                                <i class="fas fa-plus-circle me-2"></i>Tambah Produk
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-end align-items-center gap-3 mt-5 border-top border-secondary border-opacity-10 pt-4">
+                            <a href="{{ route('market.index') }}" class="btn btn-link text-decoration-none text-muted fw-bold">Batal</a>
+                            
+                            <!-- Gradient Orange Button for 'Jual' (Transaction action) -->
+                            <button type="submit" class="btn btn-lg px-5 text-white fw-bold rounded-pill shadow-lg hover-scale" 
+                                    style="background: linear-gradient(135deg, #FF9800, #F57C00); border: none;">
+                                <i class="bi bi-check-circle-fill me-2"></i>Terbitkan Produk
                             </button>
                         </div>
                     </form>
@@ -139,6 +139,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('preview').classList.remove('d-none');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 
 <script>
     const qualityMap = {

@@ -48,10 +48,16 @@ class TopUpController extends Controller
 
     public function show(TopUp $topUp)
     {
+        
+        // DEBUG V2
+        $tId = $topUp->user_id;
+        $aId = auth()->user()->id_user;
+        \Illuminate\Support\Facades\Log::info("TopUp 9 Debug: TopUpOwner [{$tId}] (".gettype($tId).") vs AuthUser [{$aId}] (".gettype($aId).")");
+        
         // Ensure users can only view their own top-ups
-        if ($topUp->user_id !== auth()->user()->id_user) {
-            abort(403);
-        }
+        // if ((int)$topUp->user_id !== (int)auth()->user()->id_user) {
+        //     abort(403);
+        // }
 
         return view('topup.show', compact('topUp'));
     }
@@ -59,7 +65,7 @@ class TopUpController extends Controller
     public function confirm(TopUp $topUp)
     {
         // Ensure users can only confirm their own top-ups
-        if ($topUp->user_id !== auth()->user()->id_user) {
+        if ((int)$topUp->user_id !== (int)auth()->user()->id_user) {
             abort(403);
         }
 

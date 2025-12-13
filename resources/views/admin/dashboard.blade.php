@@ -1,114 +1,208 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2 class="fw-bold text-dark">Admin Dashboard</h2>
-            <p class="text-secondary">Welcome back, Administrator. Here's what's happening today.</p>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card bg-primary text-white h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #0d6efd, #0a58ca);">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-people-fill me-2"></i>Total Users</h5>
-                    <h2 class="display-4 fw-bold mt-3">{{ $totalUsers }}</h2>
-                    <p class="card-text small opacity-75">Registered users on platform</p>
-                </div>
+<div class="container-fluid p-4">
+    <!-- Hero Section (Admin) -->
+    <div class="card border-0 mb-5 shadow-lg overflow-hidden" 
+         style="border-radius: 20px; background: linear-gradient(135deg, #212121, #424242); color: white;">
+        <div class="card-body p-4 p-lg-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div class="text-center text-md-start">
+                <h1 class="display-6 fw-bold mb-2">
+                    <i class="bi bi-shield-lock me-2 text-danger"></i>Admin Console
+                </h1>
+                <p class="lead mb-0 opacity-75">
+                    Monitoring Kesehatan Sistem & Aktivitas User
+                </p>
             </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card bg-success text-white h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #198754, #157347);">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-basket-fill me-2"></i>Total Products</h5>
-                    <h2 class="display-4 fw-bold mt-3">{{ $totalProducts }}</h2>
-                    <p class="card-text small opacity-75">Active listings in market</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card bg-warning text-dark h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #ffc107, #ffca2c);">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-currency-exchange me-2"></i>Transactions</h5>
-                    <h2 class="display-4 fw-bold mt-3">{{ $totalTransactions }}</h2>
-                    <p class="card-text small opacity-75">Total transactions processed</p>
-                </div>
+            <div>
+                <button class="btn btn-outline-light btn-lg rounded-pill px-4 shadow-sm hover-scale" onclick="window.location.reload()">
+                    <i class="bi bi-arrow-clockwise me-2"></i> Live Refresh
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions & Recent -->
-    <div class="row">
-        <div class="col-md-8 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold">Recent Transactions</h5>
+    <!-- System Health Stats (ETL + Realtime) -->
+    <div class="row g-4 mb-4">
+        <!-- GMV (Gross Merchandise Value) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden stat-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3 opacity-10">
+                        <i class="bi bi-currency-dollar display-4 text-success"></i>
+                    </div>
+                    <p class="text-uppercase small fw-bold text-muted mb-1">Total GMV (System)</p>
+                    <h3 class="fw-bold text-dark mb-1">Rp {{ number_format($adminStats['gmv'] ?? 0, 0, ',', '.') }}</h3>
+                    <small class="text-success fw-bold">
+                        <i class="bi bi-graph-up-arrow me-1"></i>
+                        Perputaran Uang
+                    </small>
                 </div>
-                <div class="card-body p-0">
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-success" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total User Base -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden stat-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3 opacity-10">
+                        <i class="bi bi-people display-4 text-primary"></i>
+                    </div>
+                    <p class="text-uppercase small fw-bold text-muted mb-1">Total Pengguna</p>
+                    <h3 class="fw-bold text-dark mb-1">{{ number_format($adminStats['total_users'] ?? 0) }}</h3>
+                    <small class="text-primary fw-bold">
+                        <span class="badge bg-primary-subtle text-primary rounded-pill">+{{ $adminStats['new_users_today'] ?? 0 }} Hari Ini</span>
+                    </small>
+                </div>
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-primary" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Transactions -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden stat-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3 opacity-10">
+                        <i class="bi bi-receipt display-4 text-info"></i>
+                    </div>
+                    <p class="text-uppercase small fw-bold text-muted mb-1">Transaksi Hari Ini</p>
+                    <h3 class="fw-bold text-dark mb-1">{{ number_format($adminStats['total_tx_today'] ?? 0) }}</h3>
+                    <small class="text-info fw-bold">
+                        Activity Feed
+                    </small>
+                </div>
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-info" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Disputes/Nego -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden stat-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3 opacity-10">
+                        <i class="bi bi-exclamation-triangle display-4 text-warning"></i>
+                    </div>
+                    <p class="text-uppercase small fw-bold text-muted mb-1">Negosiasi Menunggu</p>
+                    <h3 class="fw-bold text-dark mb-1">{{ number_format($adminStats['pending_nego'] ?? 0) }}</h3>
+                    <small class="text-warning fw-bold">
+                        Potential bottlenecks
+                    </small>
+                </div>
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-warning" style="width: 50%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Tools & Tables -->
+    <div class="row g-4">
+        <!-- User Management (Quick View) -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-bottom-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Manajemen Pengguna</h5>
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                        <i class="bi bi-people-fill me-1"></i> Lihat Semua
+                    </a>
+                </div>
+                <div class="card-body p-4">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
+                        <table class="table table-hover align-middle">
+                            <thead class="bg-light text-uppercase small text-muted">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Buyer</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
+                                    <th class="border-0 rounded-start">User</th>
+                                    <th class="border-0">Role</th>
+                                    <th class="border-0">Status</th>
+                                    <th class="border-0 rounded-end text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($recentTransactions as $transaction)
+                                <!-- Dummy Data for Preview/Visual Consistency -->
                                 <tr>
-                                    <td>#{{ $transaction->id_transaksi ?? $transaction->id }}</td>
-                                    <td>{{ $transaction->user->nama ?? 'Unknown' }}</td>
-                                    <td>Rp {{ number_format($transaction->total_harga ?? 0, 0, ',', '.') }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $transaction->status == 'completed' ? 'success' : ($transaction->status == 'pending' ? 'warning' : 'secondary') }}">
-                                            {{ ucfirst($transaction->status) }}
-                                        </span>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary-subtle text-primary rounded-circle p-2 me-3">
+                                                <i class="bi bi-person fw-bold"></i>
+                                            </div>
+                                            <div>
+                                                <span class="d-block fw-bold">Admin System</span>
+                                                <small class="text-muted">admin@warungpadi.com</small>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td>{{ $transaction->created_at->format('d M Y') }}</td>
+                                    <td><span class="badge bg-dark rounded-pill">Admin</span></td>
+                                    <td><span class="badge bg-success-subtle text-success rounded-pill">Active</span></td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-light text-muted"><i class="bi bi-three-dots"></i></button>
+                                    </td>
                                 </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">No recent transactions found.</td>
-                                </tr>
-                                @endforelse
                             </tbody>
                         </table>
+                        <div class="text-center mt-3 p-3 bg-light rounded-3">
+                             <small class="text-muted">Fitur manajemen user lengkap tersedia di menu "Users"</small>
+                        </div>
                     </div>
-                </div>
-                <div class="card-footer bg-white text-center py-3">
-                    <a href="{{ route('admin.transactions.index') }}" class="text-decoration-none fw-semibold">View All Transactions <i class="bi bi-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold">Quick Actions</h5>
+
+        <!-- Quick Links -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                 <div class="card-header bg-white border-bottom-0 p-4 pb-0">
+                    <h5 class="fw-bold mb-0">Control Panel</h5>
                 </div>
-                <div class="list-group list-group-flush">
-                    <a href="{{ route('admin.users.index') }}" class="list-group-item list-group-item-action py-3 d-flex align-items-center">
-                        <div class="bg-light rounded-circle p-2 me-3 text-primary"><i class="bi bi-person-plus-fill"></i></div>
-                        <div>
-                            <h6 class="mb-0">Manage Users</h6>
-                            <small class="text-muted">View, edit, or delete users</small>
-                        </div>
-                    </a>
-                    <a href="{{ route('admin.products.index') }}" class="list-group-item list-group-item-action py-3 d-flex align-items-center">
-                        <div class="bg-light rounded-circle p-2 me-3 text-success"><i class="bi bi-box-seam-fill"></i></div>
-                        <div>
-                            <h6 class="mb-0">Manage Products</h6>
-                            <small class="text-muted">Review market listings</small>
-                        </div>
-                    </a>
+                <div class="card-body p-4">
+                     <div class="d-grid gap-3">
+                        <a href="#" class="btn btn-outline-dark text-start p-3 border rounded-3 d-flex align-items-center hover-shadow">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-database-check fs-5 text-secondary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Database Backup</div>
+                                <small class="text-muted">Download SQL Dump</small>
+                            </div>
+                        </a>
+
+                        <a href="{{ route('dashboard.data') }}" class="btn btn-outline-dark text-start p-3 border rounded-3 d-flex align-items-center hover-shadow">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-braces fs-5 text-secondary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Raw JSON API</div>
+                                <small class="text-muted">Debug dashboard data</small>
+                            </div>
+                        </a>
+                        
+                        <a href="javascript:void(0)" onclick="alert('SystemLogs module coming soon')" class="btn btn-outline-dark text-start p-3 border rounded-3 d-flex align-items-center hover-shadow">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-terminal fs-5 text-secondary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">System Logs</div>
+                                <small class="text-muted">View laravel.log</small>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .stat-card { transition: transform 0.2s; }
+    .stat-card:hover { transform: translateY(-5px); }
+    .hover-shadow:hover { background-color: #f8f9fa; border-color: transparent; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .bg-primary-subtle { background-color: rgba(13, 110, 253, 0.1) !important; }
+    .bg-success-subtle { background-color: rgba(25, 135, 84, 0.1) !important; }
+</style>
 @endsection

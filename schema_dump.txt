@@ -1,0 +1,35 @@
+Array
+(
+    [Table] => transaksis
+    [Create Table] => CREATE TABLE `transaksis` (
+  `id_transaksi` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id_penjual` bigint(20) unsigned NOT NULL,
+  `id_pembeli` bigint(20) unsigned NOT NULL,
+  `id_pasar` bigint(20) unsigned DEFAULT NULL,
+  `id_wallet` bigint(20) unsigned DEFAULT NULL,
+  `jumlah` int(11) NOT NULL,
+  `harga_awalan` decimal(15,2) NOT NULL,
+  `harga_akhir` decimal(15,2) NOT NULL,
+  `tanggal` date NOT NULL,
+  `jenis_transaksi` enum('jual','beli') NOT NULL,
+  `status_transaksi` enum('pending','confirmed','cancelled') NOT NULL,
+  `type` enum('purchase','sale','topup','expenditure') DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `payment_method` enum('bank','mini_market') DEFAULT NULL,
+  `reference_code` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id_transaksi`),
+  KEY `transaksis_id_penjual_foreign` (`id_penjual`),
+  KEY `transaksis_id_pembeli_foreign` (`id_pembeli`),
+  KEY `transaksis_id_pasar_foreign` (`id_pasar`),
+  KEY `transaksis_id_wallet_foreign` (`id_wallet`),
+  KEY `transaksis_user_id_foreign` (`user_id`),
+  CONSTRAINT `transaksis_id_pasar_foreign` FOREIGN KEY (`id_pasar`) REFERENCES `pasars` (`id_pasar`),
+  CONSTRAINT `transaksis_id_pembeli_foreign` FOREIGN KEY (`id_pembeli`) REFERENCES `users` (`id_user`),
+  CONSTRAINT `transaksis_id_penjual_foreign` FOREIGN KEY (`id_penjual`) REFERENCES `users` (`id_user`),
+  CONSTRAINT `transaksis_id_wallet_foreign` FOREIGN KEY (`id_wallet`) REFERENCES `e_wallets` (`id_wallet`),
+  CONSTRAINT `transaksis_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+)

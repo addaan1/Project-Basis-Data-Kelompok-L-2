@@ -40,7 +40,7 @@
                         <div class="col-md-6 mb-4">
                             <div class="card border-0 shadow-sm h-100 product-card-hover">
                                 @if($product->foto)
-                                    <img src="{{ asset('storage/produk/' . $product->foto) }}" class="card-img-top" alt="{{ $product->nama_produk }}" style="height: 200px; object-fit: cover;">
+                                    <img src="{{ asset('storage/' . $product->foto) }}" class="card-img-top" alt="{{ $product->nama_produk }}" style="height: 200px; object-fit: cover;">
                                 @else
                                     <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                                         <i class="fas fa-image text-muted fa-3x"></i>

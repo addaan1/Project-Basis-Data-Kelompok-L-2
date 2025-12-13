@@ -7,6 +7,7 @@ class DatabaseSeeder extends Seeder {
             UserSeeder::class,
             AdminSeeder::class,
             ProductSeeder::class,
+            TransaksiSeeder::class,
         ]);
     }
 }

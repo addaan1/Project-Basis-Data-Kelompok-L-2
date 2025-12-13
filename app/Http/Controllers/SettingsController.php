@@ -74,7 +74,26 @@ class SettingsController extends Controller
 
     public function ewallet()
     {
-        return view('ewallet');
+        $user = auth()->user();
+        return view('ewallet', compact('user'));
+    }
+
+    public function updateEwallet(Request $request)
+    {
+        $request->validate([
+            'bank_name' => 'required|string',
+            'account_number' => 'required|numeric',
+            'account_name' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+        $user->update([
+            'bank_name' => $request->bank_name,
+            'account_number' => $request->account_number,
+            'account_name' => $request->account_name,
+        ]);
+
+        return redirect()->back()->with('success', 'Pengaturan E-Wallet berhasil disimpan.');
     }
 
     // Anda bisa menambahkan metode updateBackground di sini jika diperlukan
