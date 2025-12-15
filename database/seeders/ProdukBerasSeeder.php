@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\ProdukBeras;
+use App\Models\User;
 
 class ProdukBerasSeeder extends Seeder
 {
@@ -18,7 +19,7 @@ class ProdukBerasSeeder extends Seeder
             'stok'          => 1000,
             'deskripsi'     => 'Beras putih kualitas medium',
             'foto'          => null,
-            'id_user'       => 1, // pastikan user dengan id_user=1 ada
+            'id_user'       => User::where('peran', 'petani')->first()->id_user ?? 1,
         ]);
 
         ProdukBeras::create([
@@ -30,7 +31,7 @@ class ProdukBerasSeeder extends Seeder
             'stok'          => 500,
             'deskripsi'     => 'Beras wangi khas Cianjur, pulen dan harum',
             'foto'          => null,
-            'id_user'       => 1,
+            'id_user'       => User::where('peran', 'petani')->first()->id_user ?? 1,
         ]);
 
         ProdukBeras::create([
@@ -42,7 +43,7 @@ class ProdukBerasSeeder extends Seeder
             'stok'          => 300,
             'deskripsi'     => 'Beras merah sehat, cocok untuk diet',
             'foto'          => null,
-            'id_user'       => 1,
+            'id_user'       => User::where('peran', 'petani')->first()->id_user ?? 1,
         ]);
     }
 }

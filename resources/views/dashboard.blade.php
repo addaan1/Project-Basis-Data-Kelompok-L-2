@@ -132,39 +132,6 @@
         </div>
     </div>
 
-    <!-- Charts Row -->
-    <div class="row g-4 mb-5">
-        <!-- Income vs Expense Chart -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0">Tren Keuangan</h5>
-                    <div class="btn-group" role="group" aria-label="Time Filter">
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn active" data-range="30d" onclick="updateChartFilter(this, '30d')">30 Hari</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-range="24h" onclick="updateChartFilter(this, '24h')">24 Jam</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-range="4w" onclick="updateChartFilter(this, '4w')">4 Minggu</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-range="12m" onclick="updateChartFilter(this, '12m')">12 Bulan</button>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <div id="financeChart" style="min-height: 350px;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Volume Chart -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-header bg-white border-0 p-4 pb-0">
-                    <h5 class="fw-bold mb-0">Volume Transaksi (kg)</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div id="volumeChart" style="min-height: 350px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Main Content Row: Activity & Quick Actions -->
     <div class="row g-4">
         <!-- Recent Activity Feed -->
@@ -305,146 +272,6 @@
 </style>
 
 <script>
-    let financeChart, volumeChart;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Data from Controller
-        const chartData = @json($chartData ?? []);
-
-        // 1. Finance Chart (Line/Area)
-        if (chartData.labels && chartData.labels.length > 0) {
-            const financeOptions = {
-                series: [{
-                    name: 'Pemasukan',
-                    data: chartData.income
-                }, {
-                    name: 'Pengeluaran',
-                    data: chartData.expense
-                }],
-                chart: {
-                    type: 'area',
-                    height: 350,
-                    toolbar: { show: false },
-                    fontFamily: 'Inter, sans-serif'
-                },
-                colors: ['#4CAF50', '#F44336'], // Green, Red
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.3,
-                    }
-                },
-                xaxis: {
-                    categories: chartData.labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function (value) {
-                            return new Intl.NumberFormat('id-ID', { notation: "compact" }).format(value);
-                        }
-                    }
-                },
-                grid: {
-                    strokeDashArray: 4,
-                    yaxis: { lines: { show: true } }
-                },
-                tooltip: { y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } } }
-            };
-
-            financeChart = new ApexCharts(document.querySelector("#financeChart"), financeOptions);
-            financeChart.render();
-
-            // 2. Volume Chart (Bar)
-            const volumeOptions = {
-                series: [{
-                    name: 'Terjual (Kg)',
-                    data: chartData.kg_sold
-                }, {
-                    name: 'Dibeli (Kg)',
-                    data: chartData.kg_bought
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: { show: false },
-                    fontFamily: 'Inter, sans-serif'
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        horizontal: false,
-                        columnWidth: '55%',
-                    }
-                },
-                dataLabels: { enabled: false },
-                colors: ['#FF9800', '#2196F3'], // Orange, Blue
-                xaxis: {
-                    categories: chartData.labels,
-                },
-                legend: { position: 'bottom' },
-                tooltip: { y: { formatter: function (val) { return val + " Kg" } } }
-            };
-
-            volumeChart = new ApexCharts(document.querySelector("#volumeChart"), volumeOptions);
-            volumeChart.render();
-        }
-        }
-    });
-
-    async function updateChartFilter(btn, range) {
-        // UI Update
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'btn-secondary'));
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.add('btn-outline-secondary'));
-        
-        // Highlight active buttons (sync across charts if we had multiple sets, but here we share)
-        document.querySelectorAll(`button[data-range="${range}"]`).forEach(b => {
-             b.classList.add('active', 'btn-secondary');
-             b.classList.remove('btn-outline-secondary');
-        });
-
-        // Fetch Data
-        try {
-            const response = await fetch(`{{ route('dashboard.chart-data') }}?range=${range}`);
-            const data = await response.json();
-
-            if (financeChart) {
-                financeChart.updateOptions({
-                    xaxis: { categories: data.labels }
-                });
-                financeChart.updateSeries([{
-                    name: 'Pemasukan',
-                    data: data.income
-                }, {
-                    name: 'Pengeluaran',
-                    data: data.expense
-                }]);
-            }
-
-            if (volumeChart) {
-                volumeChart.updateOptions({
-                    xaxis: { categories: data.labels }
-                });
-                volumeChart.updateSeries([{
-                     name: 'Terjual (Kg)',
-                     data: data.kg_sold
-                }, {
-                     name: 'Dibeli (Kg)',
-                     data: data.kg_bought
-                }]);
-            }
-
-        } catch (error) {
-            console.error('Error fetching chart data:', error);
-            alert('Gagal memuat data grafik.');
-        }
-    }
-
     async function fetchDashboardData() {
         try {
             const res = await fetch('{{ route('dashboard.data') }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
@@ -454,6 +281,9 @@
             // Update Saldo
             const saldoEl = document.getElementById('saldoValue');
             if (saldoEl) saldoEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(data.saldo || 0));
+            
+            // Update activity list if needed (simplified for brevity, can expand)
+            // ... (rest of logic same as before, just class updates)
         } catch (e) {
             console.error(e);
         }

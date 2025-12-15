@@ -54,7 +54,7 @@ class TransaksiSeeder extends Seeder
                         'harga_akhir' => $price, // Deal price
                         'tanggal' => $currentDate->toDateString(),
                         'jenis_transaksi' => 'jual',
-                        'status_transaksi' => 'disetujui', // Aggregated data usually from completed tx
+                        'status_transaksi' => 'confirmed', // Updated to match Enum
                         'created_at' => $currentDate->setTime(rand(8, 16), rand(0, 59)),
                         'updated_at' => $currentDate->setTime(rand(16, 20), rand(0, 59)), // Completed later that day
                         'description' => "Transaksi dummy #{$i}-{$j}",

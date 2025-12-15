@@ -432,6 +432,8 @@ class DashboardService
                        return $md >= $weekStart->toDateString() && $md <= $weekEnd->toDateString();
                    });
                    
+                   \Illuminate\Support\Facades\Log::info("4W Loop: Week {$weekStart->toDateString()} - {$weekEnd->toDateString()} | Matches: " . $weekMetrics->count());
+                   
                    $income[] = $weekMetrics->sum('total_income');
                    $expense[] = $weekMetrics->sum('total_expense');
                    $sold[] = $weekMetrics->sum('total_kg_sold');

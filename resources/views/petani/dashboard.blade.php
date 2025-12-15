@@ -101,39 +101,6 @@
             </div>
         </div>
     </div>
-     <!-- Charts Row -->
-    <div class="row g-4 mb-4">
-        <!-- Finance Chart -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-header bg-white border-bottom-0 p-4 pb-0 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0">Tren Pendapatan</h5>
-                    <div class="btn-group" role="group" aria-label="Time Filter">
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn active" data-range="30d" onclick="updateChartFilter(this, '30d')">30 Hari</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-range="24h" onclick="updateChartFilter(this, '24h')">24 Jam</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-range="4w" onclick="updateChartFilter(this, '4w')">4 Minggu</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-range="12m" onclick="updateChartFilter(this, '12m')">12 Bulan</button>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <div id="financeChart" style="min-height: 350px;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Volume Chart -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-header bg-white border-bottom-0 p-4 pb-0">
-                    <h5 class="fw-bold mb-0">Volume Panen Terjual</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div id="volumeChart" style="min-height: 350px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
      <!-- Main Content Row -->
     <div class="row g-4">
         <!-- Recent Activity Feed -->
@@ -193,14 +160,14 @@
 
         <!-- Negotiation Status Table -->
         <div class="col-lg-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 text-white" style="background: linear-gradient(135deg, #66bb6a, #43a047);">
-                <div class="card-header border-0 bg-transparent p-4 pb-0">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-chat-dots me-2"></i>Status Negosiasi</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Status Negosiasi</h5>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-borderless align-middle mb-0">
-                            <thead class="small text-uppercase text-white-50" style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                        <table class="table align-middle mb-0">
+                            <thead class="text-white-50 small text-uppercase" style="border-bottom: 1px solid rgba(255,255,255,0.2);">
                                 <tr>
                                     <th class="ps-0">Partner</th>
                                     <th>Jml (Kg)</th>
@@ -212,40 +179,32 @@
                                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                         <td class="ps-0 py-3">
                                             <div class="d-flex align-items-center">
-                                                <div class="bg-white rounded-circle p-2 me-3 text-success d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                    <i class="bi bi-person-fill fs-5"></i>
+                                                <div class="bg-white rounded-circle p-2 me-2 text-primary">
+                                                    <i class="bi bi-person-fill"></i>
                                                 </div>
                                                 <div>
-                                                    <span class="d-block fw-bold">{{ $neg->label }}</span>
-                                                    <small class="text-white-50" style="font-size: 0.75rem;">{{ $neg->product_name }}</small>
+                                                    <span class="d-block fw-bold text-white">{{ $neg->label }}</span>
+                                                    <small class="text-white-50" style="font-size: 0.75rem;">Negosiasi</small>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="py-3 fw-medium">{{ number_format($neg->jumlah_kg) }}</td>
+                                        <td class="py-3 fw-medium text-white">{{ number_format($neg->jumlah_kg) }}</td>
                                         <td class="text-end pe-0 py-3">
                                             @php
                                                 $statusClass = match($neg->status) {
                                                     'Menunggu' => 'bg-warning text-dark',
-                                                    'Disetujui' => 'bg-white text-success',
+                                                    'Disetujui' => 'bg-success text-white',
                                                     'Ditolak' => 'bg-danger text-white',
                                                     default => 'bg-secondary text-white'
                                                 };
-                                                $iconStatus = match($neg->status) {
-                                                    'Menunggu' => 'bi-hourglass-split',
-                                                    'Disetujui' => 'bi-check-circle-fill',
-                                                    'Ditolak' => 'bi-x-circle-fill',
-                                                    default => 'bi-question-circle'
-                                                };
                                             @endphp
-                                            <span class="badge {{ $statusClass }} rounded-pill px-3 py-2 shadow-sm">
-                                                <i class="bi {{ $iconStatus }} me-1"></i> {{ $neg->status }}
-                                            </span>
+                                            <span class="badge {{ $statusClass }} rounded-pill px-3 py-2">{{ $neg->status }}</span>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="3" class="text-center py-5">
-                                            <div class="text-white-50 opacity-50 mb-3">
+                                            <div class="text-white-50 opacity-50 mb-2">
                                                 <i class="bi bi-inbox fs-1"></i>
                                             </div>
                                             <p class="text-white-50 small mb-0">Tidak ada negosiasi aktif</p>
@@ -256,7 +215,7 @@
                         </table>
                     </div>
                      <div class="mt-4 text-center">
-                        <a href="{{ route('negosiasi.index') }}" class="btn btn-sm btn-light rounded-pill px-4 text-success fw-bold shadow-sm hover-scale">
+                        <a href="{{ route('negosiasi.index') }}" class="btn btn-sm btn-light rounded-pill px-4 text-success fw-bold">
                             Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -286,134 +245,4 @@
     .bg-warning-subtle { background-color: rgba(255, 193, 7, 0.1) !important; }
     .bg-secondary-subtle { background-color: rgba(108, 117, 125, 0.1) !important; }
 </style>
-
-<script>
-    let financeChart, volumeChart;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const chartData = @json($chartData ?? []);
-
-        if (chartData.labels && chartData.labels.length > 0) {
-            // 1. Finance Chart
-            var financeOptions = {
-                series: [{
-                    name: 'Pendapatan',
-                    data: chartData.income
-                }, {
-                    name: 'Pengeluaran',
-                    data: chartData.expense
-                }],
-                chart: {
-                    type: 'area',
-                    height: 350,
-                    toolbar: { show: false },
-                    fontFamily: 'Instrument Sans, sans-serif'
-                },
-                colors: ['#4caf50', '#f44336'],
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.3,
-                    }
-                },
-                xaxis: {
-                    categories: chartData.labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function (val) {
-                            return new Intl.NumberFormat('id-ID', { notation: "compact" }).format(val);
-                        }
-                    }
-                },
-                grid: {
-                    strokeDashArray: 4,
-                },
-                tooltip: { y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } } }
-            };
-            financeChart = new ApexCharts(document.querySelector("#financeChart"), financeOptions);
-            financeChart.render();
-
-            // 2. Volume Chart
-            var volumeOptions = {
-                series: [{
-                    name: 'Terjual (Kg)',
-                    data: chartData.kg_sold
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: { show: false },
-                    fontFamily: 'Instrument Sans, sans-serif'
-                },
-                colors: ['#8bc34a'],
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: '55%',
-                        borderRadius: 4
-                    },
-                },
-                dataLabels: { enabled: false },
-                xaxis: {
-                    categories: chartData.labels,
-                },
-                legend: { position: 'bottom' },
-                tooltip: { y: { formatter: function (val) { return val + " Kg" } } }
-            };
-            volumeChart = new ApexCharts(document.querySelector("#volumeChart"), volumeOptions);
-            volumeChart.render();
-        }
-    });
-
-    async function updateChartFilter(btn, range) {
-        // UI Update
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'btn-secondary'));
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.add('btn-outline-secondary'));
-        
-        document.querySelectorAll(`button[data-range="${range}"]`).forEach(b => {
-             b.classList.add('active', 'btn-secondary');
-             b.classList.remove('btn-outline-secondary');
-        });
-
-        // Fetch Data
-        try {
-            const response = await fetch(`{{ route('dashboard.chart-data') }}?range=${range}`);
-            const data = await response.json();
-
-            if (financeChart) {
-                financeChart.updateOptions({
-                    xaxis: { categories: data.labels }
-                });
-                financeChart.updateSeries([{
-                    name: 'Pendapatan',
-                    data: data.income
-                }, {
-                    name: 'Pengeluaran',
-                    data: data.expense
-                }]);
-            }
-
-            if (volumeChart) {
-                volumeChart.updateOptions({
-                    xaxis: { categories: data.labels }
-                });
-                volumeChart.updateSeries([{
-                     name: 'Terjual (Kg)',
-                     data: data.kg_sold
-                }]);
-            }
-
-        } catch (error) {
-            console.error('Error fetching chart data:', error);
-            alert('Gagal memuat data grafik.');
-        }
-    }
-</script>
 @endsection

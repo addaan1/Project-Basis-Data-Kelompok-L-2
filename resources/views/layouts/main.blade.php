@@ -757,21 +757,17 @@
                 @elseif(Auth::check() && Auth::user()->peran == 'pengepul')
                     <li><a href="{{ route('market.index') }}" class="{{ request()->routeIs('market.index') ? 'active' : '' }}"><i class="fas fa-shopping-basket"></i> Pasar Beras</a></li>
                 @endif
-                @if(Auth::user()->peran !== 'admin')
-                    <li><a href="{{ route('saldo') }}" class="{{ request()->routeIs('saldo') ? 'active' : '' }}"><i class="fas fa-coins"></i> Saldo</a></li>
-                    <li><a href="{{ route('transaksi.index') }}" class="{{ request()->routeIs('transaksi.*') ? 'active' : '' }}"><i class="fas fa-exchange-alt"></i> Aktivitas Transaksi</a></li>
-                    <li><a href="{{ route('negosiasi.index') }}" class="{{ request()->routeIs('negosiasi.*') ? 'active' : '' }}"><i class="fas fa-comments"></i> Status Negosiasi</a></li>
-                    <li><a href="{{ route('inventory.index') }}" class="{{ request()->routeIs('inventory.*') ? 'active' : '' }}"><i class="fas fa-boxes"></i> Inventaris</a></li>
-                @endif
+                <li><a href="{{ route('saldo') }}" class="{{ request()->routeIs('saldo') ? 'active' : '' }}"><i class="fas fa-coins"></i> Saldo</a></li>
+                <li><a href="{{ route('transaksi.index') }}" class="{{ request()->routeIs('transaksi.*') ? 'active' : '' }}"><i class="fas fa-exchange-alt"></i> Aktivitas Transaksi</a></li>
+                <li><a href="{{ route('negosiasi.index') }}" class="{{ request()->routeIs('negosiasi.*') ? 'active' : '' }}"><i class="fas fa-comments"></i> Status Negosiasi</a></li>
+                <li><a href="{{ route('inventory.index') }}" class="{{ request()->routeIs('inventory.*') ? 'active' : '' }}"><i class="fas fa-boxes"></i> Inventaris</a></li>
             </ul>
 
             <h4>Setting</h4>
             <ul>
                 <li><a href="{{ route('settings.index') }}" class="{{ request()->routeIs('settings.*') ? 'active' : '' }}"><i class="fas fa-user-cog"></i> Pengaturan Akun</a></li>
-                @if(Auth::user()->peran !== 'admin')
-                    <li><a href="{{ route('ewallet') }}" class="{{ request()->routeIs('ewallet') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Pengaturan E-Wallet</a></li>
-                    <li><a href="{{ route('topup.index') }}" class="{{ request()->routeIs('topup.*') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Top-up Saldo</a></li>
-                @endif
+                <li><a href="{{ route('ewallet') }}" class="{{ request()->routeIs('ewallet') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Pengaturan E-Wallet</a></li>
+                <li><a href="{{ route('topup.index') }}" class="{{ request()->routeIs('topup.*') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Top-up Saldo</a></li>
             </ul>
 
             <div class="logout-container">

@@ -13,7 +13,9 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         // Petani ID is 2 (from UserSeeder)
-        $petaniId = 2;
+        // Petani ID (Get dynamically)
+        $petani = \App\Models\User::where('peran', 'petani')->first();
+        $petaniId = $petani ? $petani->id_user : 1;
 
         ProdukBeras::create([
             'nama_produk' => 'Beras Pandan Wangi',
