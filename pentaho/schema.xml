@@ -1,0 +1,103 @@
+<Schema name="WarungPadi">
+  <!-- Shared Dimensions -->
+  <Dimension type="TimeDimension" name="Waktu">
+    <Hierarchy hasAll="true" allMemberName="All Periods" primaryKey="id_waktu">
+      <Table name="dim_waktu"/>
+      <Level name="Tahun" column="tahun" type="Numeric" uniqueMembers="true" levelType="TimeYears"/>
+      <Level name="Bulan" column="bulan" type="Numeric" uniqueMembers="false" levelType="TimeMonths"/>
+      <Level name="Hari" column="hari" type="Numeric" uniqueMembers="false" levelType="TimeDays"/>
+    </Hierarchy>
+  </Dimension>
+
+  <Dimension name="Users">
+    <Hierarchy hasAll="true" allMemberName="All Users" primaryKey="sk_user">
+      <Table name="dim_users"/>
+      <Level name="Peran" column="peran" type="String" uniqueMembers="false"/>
+      <Level name="Nama" column="nama" type="String" uniqueMembers="true"/>
+    </Hierarchy>
+  </Dimension>
+
+  <Dimension name="Produk">
+    <Hierarchy hasAll="true" allMemberName="All Products" primaryKey="sk_produk">
+      <Table name="dim_produk"/>
+      <Level name="Jenis Beras" column="jenis_beras" type="String" uniqueMembers="false"/>
+      <Level name="Kualitas" column="kualitas" type="String" uniqueMembers="false"/>
+      <Level name="Nama Produk" column="nama_produk" type="String" uniqueMembers="true"/>
+    </Hierarchy>
+  </Dimension>
+
+  <!-- Cube: Transaksi -->
+  <Cube name="Transaksi">
+    <Table name="fact_transaksi"/>
+    
+    <DimensionUsage name="Waktu" source="Waktu" foreignKey="sk_waktu"/>
+    
+    <!-- Role-Playing Dimensions for Users -->
+    <DimensionUsage name="Penjual" source="Users" foreignKey="sk_penjual"/>
+    <DimensionUsage name="Pembeli" source="Users" foreignKey="sk_pembeli"/>
+    
+    <DimensionUsage name="Produk" source="Produk" foreignKey="sk_produk"/>
+    
+    <Measure name="Jumlah Kg" column="jumlah_kg" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Nilai Transaksi" column="nilai_transaksi" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Jumlah Transaksi" column="no_transaksi_asli" aggregator="count" formatString="#,###"/>
+  </Cube>
+
+  <!-- Cube: User Daily Metrics -->
+  <Cube name="User Daily Metrics">
+    <Table name="fact_user_daily_metrics"/>
+    
+    <!-- Degenerate Time Dimension (Date) -->
+    <Dimension name="Date" type="TimeDimension">
+       <Hierarchy hasAll="true" allMemberName="All Dates">
+         <Level name="Date" column="date" type="Date" uniqueMembers="true" levelType="TimeDays"/>
+       </Hierarchy>
+    </Dimension>
+
+    <!-- User Dimension linked by Natural Key (since fact uses user_id, not sk_user) -->
+    <Dimension name="User" foreignKey="user_id">
+        <Hierarchy hasAll="true" allMemberName="All Users" primaryKey="id_user_asli">
+            <Table name="dim_users"/>
+            <Level name="Peran" column="peran" type="String" uniqueMembers="false"/>
+            <Level name="Nama" column="nama" type="String" uniqueMembers="true"/>
+        </Hierarchy>
+    </Dimension>
+
+    <Measure name="Total Income" column="total_income" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Total Expense" column="total_expense" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Total Kg Sold" column="total_kg_sold" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Total Kg Bought" column="total_kg_bought" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Transaction Count Metrics" column="transaction_count" aggregator="sum" formatString="#,###"/>
+  </Cube>
+
+
+  <!-- Cube: Negosiasi -->
+  <Cube name="Negosiasi">
+    <Table name="fact_negosiasi"/>
+    
+    <DimensionUsage name="Waktu" source="Waktu" foreignKey="sk_waktu"/>
+    
+    <!-- User Dimensions -->
+    <DimensionUsage name="Pengaju" source="Users" foreignKey="sk_pengaju"/>
+    <DimensionUsage name="Penerima" source="Users" foreignKey="sk_penerima"/>
+    
+    <DimensionUsage name="Produk" source="Produk" foreignKey="sk_produk"/>
+    
+    <Measure name="Rata-rata Harga Tawaran" column="harga_tawaran" aggregator="avg" formatString="#,###.00"/>
+    <Measure name="Rata-rata Harga Deal" column="harga_deal" aggregator="avg" formatString="#,###.00"/>
+    <Measure name="Total Negosiasi" column="status_akhir" aggregator="count" formatString="#,###"/>
+  </Cube>
+
+  <!-- Cube: Stok Snapshot -->
+  <Cube name="Stok Snapshot">
+    <Table name="fact_stok_snapshot"/>
+    
+    <DimensionUsage name="Waktu" source="Waktu" foreignKey="sk_waktu"/>
+    <DimensionUsage name="Produk" source="Produk" foreignKey="sk_produk"/>
+    <DimensionUsage name="Pemilik" source="Users" foreignKey="sk_pemilik"/>
+    
+    <!-- Sum is appropriate if we want to see total stock of all users. If drill down to user, it still works. -->
+    <Measure name="Total Stok" column="stok_akhir_hari" aggregator="sum" formatString="#,###"/>
+  </Cube>
+
+</Schema>
