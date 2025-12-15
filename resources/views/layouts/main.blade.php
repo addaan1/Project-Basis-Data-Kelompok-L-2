@@ -19,6 +19,9 @@
     <!-- Font Awesome jika diperlukan, tapi prioritas Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     <!-- Custom CSS untuk upgrade tampilan (glassmorphism, animasi, dll.) -->
     <link href="{{ asset('css/output.css') }}" rel="stylesheet">
     <style>

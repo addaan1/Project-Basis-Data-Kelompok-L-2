@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Common Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/data', [DashboardController::class, 'data'])->name('dashboard.data');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartDataResponse'])->name('dashboard.chart-data');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
