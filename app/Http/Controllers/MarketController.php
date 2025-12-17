@@ -101,6 +101,8 @@ class MarketController extends Controller
                 throw new \Exception("Produk tidak ditemukan atau sedang sibuk.");
             }
             
+            $jumlah = (int) $request->input('jumlah');
+            
             // Re-check stock after lock
             if ($productLocked->stok < $jumlah) {
                  throw new \RuntimeException("Stok tidak mencukupi (Tersisa: {$productLocked->stok})");
@@ -109,7 +111,7 @@ class MarketController extends Controller
             $buyer = Auth::user();
             $buyerId = $buyer->id_user;
             $sellerId = $productLocked->id_petani;
-            $jumlah = (int) $request->input('jumlah');
+            // $jumlah definition moved up
             $hargaSatuan = (float) $productLocked->harga;
             $total = $hargaSatuan * $jumlah;
 
@@ -126,38 +128,44 @@ class MarketController extends Controller
                 'harga_akhir' => $hargaSatuan,
                 'tanggal' => now()->toDateString(),
                 'jenis_transaksi' => 'beli',
-                'status_transaksi' => 'menunggu_pembayaran',
+                'status_transaksi' => 'disetujui', // Auto-Approve for Direct Buy
                 'type' => 'purchase',
                 'description' => 'Pembelian langsung produk beras: '.$productLocked->nama_produk,
-                // 'user_id' => $buyerId, // Cleanup redundant column
             ]);
 
+            // 1. Catat Pengeluaran Pembeli (Completed)
             \App\Models\Expenditure::create([
                 'user_id' => $buyerId,
                 'amount' => $total,
-                'description' => 'Hold transaksi #'.$trx->id_transaksi,
+                'description' => 'Pembelian langsung transaksi #'.$trx->id_transaksi,
                 'date' => now()->toDateString(),
-                'status' => 'pending',
+                'status' => 'completed',
             ]);
 
-            $buyer->saldo = (float) $buyer->saldo - $total; // hold saldo
-            $buyer->save();
+            // 2. Potong Saldo Pembeli
+            $buyer->decrement('saldo', $total);
 
-            // Potong Stok Langsung (Reserve Stock) - Handled by Observer
-            // $product->decrement('stok', $jumlah);
+            // 3. Tambah Saldo Penjual
+            $seller = \App\Models\User::find($sellerId);
+            if ($seller) {
+                $seller->increment('saldo', $total);
+            }
+
+            // 4. Potong Stok (Handled by Observer on Create, but explicit check doesn't hurt if observer is missing)
+            // Assuming Observer handles decrement based on creation. W're just confirming flow.
 
             TransaksiHistory::create([
                 'id_transaksi' => $trx->id_transaksi,
                 'status_before' => null,
-                'status_after' => 'menunggu_pembayaran',
+                'status_after' => 'disetujui',
                 'changed_by' => $buyerId,
-                'note' => 'Pembelian dibuat, saldo buyer di-hold',
+                'note' => 'Pembelian langsung berhasil. Saldo ditransfer.',
             ]);
 
             DB::commit();
 
             return redirect()->route('market.show', ['market' => $product->id_produk])
-                ->with('status', 'Pembelian berhasil dibuat, menunggu konfirmasi penjual');
+                ->with('status', 'Pembelian berhasil! Transaksi telah disetujui.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Market buy error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);

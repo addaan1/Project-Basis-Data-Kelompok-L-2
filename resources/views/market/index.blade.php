@@ -236,7 +236,7 @@
     </div>
 </div>
 
-<!-- Modal Negotiation (Preserved) -->
+<!-- Modal Negotiation -->
 <div class="modal fade" id="negotiationModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
@@ -245,7 +245,8 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 bg-light">
-                <form id="negotiationForm">
+                <form id="negotiationForm" method="POST">
+                    @csrf
                     <input type="hidden" id="productId" name="product_id">
                     
                     <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center mb-3">
@@ -259,6 +260,12 @@
                         <input type="number" class="form-control rounded-4 border-0 shadow-sm" id="tawaran_harga" name="tawaran_harga" required min="1000">
                         <label for="tawaran_harga">Harga Tawaran (Rp/kg)</label>
                     </div>
+                    
+                    <div class="form-floating mb-3">
+                         <input type="number" class="form-control rounded-4 border-0 shadow-sm" id="jumlah" name="jumlah" required min="1" placeholder="Jumlah (Kg)">
+                         <label for="jumlah">Jumlah (Kg)</label>
+                    </div>
+
                     <div class="form-floating mb-4">
                         <textarea class="form-control rounded-4 border-0 shadow-sm" id="pesan" name="pesan" style="height: 100px"></textarea>
                         <label for="pesan">Pesan Tambahan (Opsional)</label>
@@ -274,92 +281,11 @@
     </div>
 </div>
 
-<style>
-    .font-poppins { font-family: 'Poppins', sans-serif; }
-    
-    .bg-gradient-green { background: linear-gradient(135deg, #2E7D32, #66BB6A); }
-    
-    .product-card {
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-    }
-    
-    .hover-zoom { transition: transform 0.5s ease; }
-    .product-card:hover .hover-zoom { transform: scale(1.05); }
-
-    .custom-btn-green {
-        background: linear-gradient(135deg, #2E7D32, #43A047);
-        border: none;
-        transition: all 0.2s;
-    }
-    .custom-btn-orange {
-        background: linear-gradient(135deg, #FF9800, #FFB74D);
-        border: none;
-        transition: all 0.2s;
-    }
-    .hover-scale:hover { transform: scale(1.05); }
-    .hover-text-orange:hover { color: #E65100 !important; }
-    
-    .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
-    .animate-slide-in { animation: slideUp 0.6s ease-out forwards; opacity: 0; transform: translateY(20px); }
-    
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-    
-    /* Custom Pagination Styles */
-    .pagination-custom {
-        gap: 8px;
-    }
-    
-    .pagination-custom .page-item .page-link {
-        border: 2px solid #2E7D32;
-        color: #2E7D32;
-        background: white;
-        border-radius: 12px;
-        padding: 10px 18px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
-        min-width: 48px;
-        text-align: center;
-    }
-    
-    .pagination-custom .page-item .page-link:hover {
-        background: linear-gradient(135deg, #2E7D32, #43A047);
-        color: white;
-        border-color: #2E7D32;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-    }
-    
-    .pagination-custom .page-item.active .page-link {
-        background: linear-gradient(135deg, #2E7D32, #43A047);
-        color: white;
-        border-color: #2E7D32;
-        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-    }
-    
-    .pagination-custom .page-item.disabled .page-link {
-        background: #f5f5f5;
-        border-color: #e0e0e0;
-        color: #9e9e9e;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
-    
-    .pagination-custom .page-item:first-child .page-link,
-    .pagination-custom .page-item:last-child .page-link {
-        padding: 10px 20px;
-    }
-
-</style>
-
 <script>
     function openNegotiation(productId) {
         document.getElementById('productId').value = productId;
+        // Dynamically set form action
+        document.getElementById('negotiationForm').action = "{{ url('/market') }}/" + productId + "/negotiate";
         var myModal = new bootstrap.Modal(document.getElementById('negotiationModal'));
         myModal.show();
     }
@@ -369,13 +295,5 @@
             alert('Fitur hapus belum aktif dalam demo ini.');
         }
     }
-    
-    document.getElementById('negotiationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Here you would typically use fetch/axios
-        alert('Penawaran berhasil dikirim!');
-        bootstrap.Modal.getInstance(document.getElementById('negotiationModal')).hide();
-        this.reset();
-    });
 </script>
 @endsection

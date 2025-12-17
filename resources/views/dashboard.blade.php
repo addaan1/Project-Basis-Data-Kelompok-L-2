@@ -118,18 +118,23 @@
                             <tr>
                                 <td class="ps-4 border-bottom-0">
                                     <div class="d-flex align-items-center">
-                                         <div class="icon-box-sm rounded-circle me-3 flex-shrink-0 {{ match($activity->type) {
-                                            'sale' => 'bg-success-subtle text-success',
-                                            'purchase' => 'bg-danger-subtle text-danger',
-                                            'topup' => 'bg-info-subtle text-info',
-                                            default => 'bg-light text-secondary'
-                                        } }}">
-                                            <i class="bi {{ match($activity->type) {
-                                                'sale' => 'bi-arrow-up-right',
-                                                'purchase' => 'bi-arrow-down-left',
-                                                'topup' => 'bi-wallet2',
-                                                default => 'bi-circle'
-                                            } }}"></i>
+                                         <div class="rounded-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-light" 
+                                            style="width: 40px; height: 40px;">
+                                            @php
+                                                $iconColor = match($activity->type) {
+                                                    'sale' => 'text-success',
+                                                    'purchase' => 'text-primary',
+                                                    'topup' => 'text-info',
+                                                    default => 'text-danger'
+                                                };
+                                                $icon = match($activity->type) {
+                                                    'sale' => 'bi-arrow-up-right',
+                                                    'purchase' => 'bi-arrow-down-left',
+                                                    'topup' => 'bi-wallet2',
+                                                    default => 'bi-circle'
+                                                };
+                                            @endphp
+                                            <i class="bi {{ $icon }} fs-5 {{ $iconColor }}"></i>
                                         </div>
                                         <div>
                                             <h6 class="mb-0 text-dark fw-bold small">{{ Str::limit($activity->description, 30) }}</h6>
@@ -140,11 +145,11 @@
                                 <td class="border-bottom-0 text-secondary small">
                                     {{ isset($activity->date) ? \Carbon\Carbon::parse($activity->date)->format('d M, H:i') : '-' }}
                                 </td>
-                                <td class="border-bottom-0 text-end fw-bold {{ in_array($activity->type, ['sale', 'topup']) ? 'text-success' : 'text-danger' }} small">
+                                <td class="border-bottom-0 text-end fw-bold text-dark small">
                                     {{ in_array($activity->type, ['sale', 'topup']) ? '+' : '-' }} Rp {{ number_format(abs($activity->amount ?? 0), 0, ',', '.') }}
                                 </td>
                                 <td class="pe-4 border-bottom-0 text-center">
-                                    <span class="badge bg-success-subtle text-success rounded-pill px-2">Selesai</span>
+                                    <span class="badge bg-success text-white rounded-pill px-2">Selesai</span>
                                 </td>
                             </tr>
                             @empty

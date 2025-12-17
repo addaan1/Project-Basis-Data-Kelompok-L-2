@@ -36,7 +36,7 @@ class TransaksiController extends Controller
         }
 
         $transactions = $query->with(['pembeli'])
-            ->orderByDesc('tanggal')
+            ->orderByDesc('created_at')
             ->paginate(10)
             ->through(function ($trx) {
                 return (object) [

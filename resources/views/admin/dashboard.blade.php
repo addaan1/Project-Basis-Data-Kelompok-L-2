@@ -2,23 +2,88 @@
 
 @section('content')
 <div class="container-fluid p-4">
-    <!-- Hero Section (Admin) -->
-    <div class="card border-0 mb-5 shadow-lg overflow-hidden" 
-         style="border-radius: 20px; background: linear-gradient(135deg, #43a047, #2e7d32); color: white;">
-        <div class="card-body p-4 p-lg-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <div class="text-center text-md-start">
-                <h1 class="display-6 fw-bold mb-2">
-                    <i class="bi bi-shield-lock me-2 text-white-50"></i>Admin Console
-                </h1>
-                <p class="lead mb-0 opacity-75">
-                    Monitoring Kesehatan Sistem & Aktivitas User
-                </p>
-            </div>
-            <div>
-                <button class="btn btn-light text-success fw-bold btn-lg rounded-pill px-4 shadow-sm hover-scale" onclick="window.location.reload()">
-                    <i class="bi bi-arrow-clockwise me-2"></i> Live Refresh
-                </button>
-
+    <!-- Welcome Section (Premium Hero) -->
+    <div class="card border-0 mb-4 shadow-lg overflow-hidden position-relative hero-card" style="border-radius: 24px; background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #43a047 100%); min-height: 180px;">
+        
+        <!-- Floating Decorative Elements -->
+        <div class="position-absolute" style="top: 20px; right: 40px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(40px); animation: float 6s ease-in-out infinite;"></div>
+        <div class="position-absolute" style="bottom: 30px; left: 60px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); border-radius: 50%; filter: blur(30px); animation: float 8s ease-in-out infinite reverse;"></div>
+        
+        <div class="card-body p-4 py-md-4 px-md-5 position-relative">
+            <div class="row align-items-center">
+                <!-- Left: Title & Info -->
+                <div class="col-md-7">
+                    <div class="d-flex align-items-start mb-3">
+                        <!-- Animated Icon -->
+                        <div class="icon-container bg-white rounded-4 p-3 shadow-lg me-3 position-relative" style="width: 64px; height: 64px;">
+                            <i class="bi bi-shield-lock-fill fs-3 text-success position-absolute top-50 start-50 translate-middle"></i>
+                            <div class="pulse-ring" style="border-color: rgba(76, 175, 80, 0.4);"></div>
+                        </div>
+                        
+                        <div class="flex-grow-1">
+                            <!-- Greeting with Animation -->
+                            <div class="greeting-text mb-2" style="animation: slideInLeft 0.6s ease-out;">
+                                <p class="text-white mb-1 d-flex align-items-center" style="font-size: 0.9rem; letter-spacing: 0.5px;">
+                                    <i class="bi bi-stars me-2 text-warning"></i>
+                                    <span class="fw-medium opacity-90">Selamat datang kembali,</span>
+                                </p>
+                                <h3 class="text-white fw-bold mb-0 h4" style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    {{ auth()->user()->nama }}
+                                </h3>
+                            </div>
+                            
+                            <!-- Dashboard Title -->
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="badge bg-white bg-opacity-25 text-white px-3 py-1 rounded-pill">
+                                    <i class="bi bi-grid-fill me-1"></i>
+                                    Console
+                                </div>
+                                <div class="badge bg-light text-success px-3 py-1 rounded-pill fw-bold">
+                                    Administrator
+                                </div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <p class="text-white mb-0 small opacity-90 fw-normal">
+                                <i class="bi bi-check-circle-fill me-1 text-success-subtle"></i>
+                                Monitoring Kesehatan Sistem & Aktivitas User
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Actions & Quick Stats -->
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <div class="d-flex flex-column align-items-md-end gap-3">
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light fw-bold rounded-pill px-4 py-2 shadow-sm hover-lift d-flex align-items-center text-success" onclick="window.location.reload()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                <span>Live Refresh</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Quick Info Card -->
+                        <div class="glass-card rounded-4 px-4 py-3 shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between gap-4">
+                                <div class="text-start">
+                                    <p class="text-white-50 mb-1 small">System Time</p>
+                                    <p class="text-white mb-0 fw-bold">
+                                        <i class="bi bi-clock-fill me-1"></i>
+                                        {{ now()->format('H:i') }}
+                                    </p>
+                                </div>
+                                <div class="text-start">
+                                    <p class="text-white-50 mb-1 small">Date</p>
+                                    <p class="text-white mb-0 fw-bold">
+                                        <i class="bi bi-calendar-check-fill me-1"></i>
+                                        {{ now()->format('d M') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -263,12 +328,114 @@
 </div>
 
 <style>
+    /* Hero Card Effects */
+    .hero-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    /* Icon Container Effects */
+    .icon-container {
+        transition: all 0.3s ease;
+        animation: iconFadeIn 0.8s ease-out;
+    }
+    
+    .icon-container:hover {
+        transform: scale(1.05) rotate(5deg);
+    }
+    
+    @keyframes iconFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    /* Pulse Ring Animation */
+    .pulse-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        border: 3px solid rgba(76, 175, 80, 0.4);
+        border-radius: 16px;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0.5;
+        }
+    }
+    
+    /* Glass Card Effect */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    /* Hover Lift Effect */
+    .hover-lift {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+
     .stat-card { transition: transform 0.2s; }
     .stat-card:hover { transform: translateY(-5px); }
     .hover-shadow:hover { background-color: #f8f9fa; border-color: transparent; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
     .bg-primary-subtle { background-color: rgba(13, 110, 253, 0.1) !important; }
     .bg-success-subtle { background-color: rgba(25, 135, 84, 0.1) !important; }
     .hover-bg-light:hover { background-color: #f8f9fa; }
+    
+    /* ApexCharts Text Color Override */
+    .apexcharts-text,
+    .apexcharts-xaxis-label,
+    .apexcharts-yaxis-label,
+    .apexcharts-legend-text {
+        fill: #333333 !important;
+    }
+    
+    .apexcharts-gridline {
+        stroke: #e0e0e0 !important;
+    }
 </style>
 <script>
     let gmvChart; 
@@ -284,37 +451,78 @@
                     data: chartData.trend_gmv
                 }],
                 chart: {
-                    type: 'area', // Area for nice gradient look
+                    type: 'area', // Premium Area
                     height: 350,
                     toolbar: { show: false },
-                    fontFamily: 'Inter, sans-serif'
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    dropShadow: {
+                        enabled: true,
+                        top: 3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.1
+                    }
                 },
                 colors: ['#2E7D32'], // Official Green
-                stroke: { curve: 'smooth', width: 2 },
+                stroke: { 
+                    curve: 'smooth', 
+                    width: 3 
+                },
+                markers: {
+                    size: 5,
+                    colors: ['#2E7D32'],
+                    strokeColors: '#fff',
+                    strokeWidth: 2,
+                    hover: { size: 7 }
+                },
                 fill: {
                     type: 'gradient',
                     gradient: {
                         shadeIntensity: 1,
-                        opacityFrom: 0.7,
+                        opacityFrom: 0.6,
                         opacityTo: 0.1,
                     }
                 },
                 xaxis: {
                     categories: chartData.trend_labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
+                    axisBorder: { show: true, color: '#e0e0e0' },
+                    axisTicks: { show: true, color: '#e0e0e0' },
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
                 },
                 yaxis: {
                     labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        },
                         formatter: function (value) {
                             return new Intl.NumberFormat('id-ID', { notation: "compact" }).format(value);
                         }
                     }
                 },
                 grid: {
-                    strokeDashArray: 4,
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 3,
+                    xaxis: { lines: { show: true } },
+                    yaxis: { lines: { show: true } }
                 },
-                tooltip: { y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } } }
+                legend: {
+                   position: 'top',
+                   horizontalAlign: 'right',
+                   labels: { colors: '#333333' } 
+                },
+                tooltip: { 
+                    theme: 'dark',
+                    style: { fontSize: '14px', fontFamily: 'Instrument Sans, sans-serif' },
+                    y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } } 
+                }
             };
 
             gmvChart = new ApexCharts(document.querySelector("#gmvChart"), gmvOptions);
@@ -333,17 +541,40 @@
                 chart: {
                     type: 'donut',
                     height: 350,
-                    fontFamily: 'Inter, sans-serif'
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    dropShadow: {
+                        enabled: true,
+                        top: 2,
+                        left: 0,
+                        blur: 3,
+                        opacity: 0.1
+                    }
                 },
-                colors: ['#FFC107', '#4CAF50', '#2196F3', '#FF5722', '#9E9E9E'], // Colors mapping
+                colors: ['#FFC107', '#4CAF50', '#2196F3', '#FF5722', '#9E9E9E'], 
                 plotOptions: {
                     pie: {
                         donut: {
+                            size: '65%',
                             labels: {
                                 show: true,
+                                name: {
+                                   fontSize: '14px',
+                                   fontFamily: 'Instrument Sans, sans-serif',
+                                },
+                                value: {
+                                   fontSize: '24px',
+                                   fontFamily: 'Instrument Sans, sans-serif',
+                                   fontWeight: 700,
+                                   formatter: function(val) {
+                                       return val
+                                   }
+                                },
                                 total: {
                                     show: true,
                                     label: 'Total',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    color: '#666',
                                     formatter: function (w) {
                                         return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
                                     }
@@ -352,7 +583,21 @@
                         }
                     }
                 },
-                legend: { position: 'bottom' }
+                legend: { 
+                    position: 'bottom',
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    markers: { width: 10, height: 10, radius: 12 },
+                    itemMargin: { horizontal: 10, vertical: 5 }
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['#fff']
+                },
+                tooltip: {
+                    theme: 'dark',
+                    style: { fontSize: '14px', fontFamily: 'Instrument Sans, sans-serif' }
+                }
             };
 
             const statusChart = new ApexCharts(document.querySelector("#statusChart"), statusOptions);

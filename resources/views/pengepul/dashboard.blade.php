@@ -2,22 +2,88 @@
 
 @section('content')
 <div class="container-fluid p-4">
-    <!-- Hero Section (Pengepul) -->
-    <div class="card border-0 mb-5 shadow-lg overflow-hidden" 
-         style="border-radius: 20px; background: linear-gradient(135deg, #FF6F00, #FF8F00); color: white;">
-        <div class="card-body p-4 p-lg-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <div class="text-center text-md-start">
-                <h1 class="display-6 fw-bold mb-2">
-                    <i class="bi bi-shop-window me-2 text-white-50"></i>Dashboard Pengepul
-                </h1>
-                <p class="lead mb-0 fw-medium opacity-75">
-                    Moda Trading: Pantau arus kas, stok masuk, dan negosiasi pasar.
-                </p>
-            </div>
-            <div>
-                <button class="btn btn-light btn-lg text-warning fw-bold rounded-pill px-4 shadow-sm hover-scale" onclick="window.location.reload()">
-                    <i class="bi bi-arrow-clockwise me-2"></i> Refresh Pasar
-                </button>
+    <!-- Welcome Section (Premium Hero) -->
+    <div class="card border-0 mb-4 shadow-lg overflow-hidden position-relative hero-card" style="border-radius: 24px; background: linear-gradient(135deg, #FF6F00 0%, #F57C00 50%, #EF6C00 100%); min-height: 180px;">
+        
+        <!-- Floating Decorative Elements -->
+        <div class="position-absolute" style="top: 20px; right: 40px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(40px); animation: float 6s ease-in-out infinite;"></div>
+        <div class="position-absolute" style="bottom: 30px; left: 60px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); border-radius: 50%; filter: blur(30px); animation: float 8s ease-in-out infinite reverse;"></div>
+        
+        <div class="card-body p-4 py-md-4 px-md-5 position-relative">
+            <div class="row align-items-center">
+                <!-- Left: Title & Info -->
+                <div class="col-md-7">
+                    <div class="d-flex align-items-start mb-3">
+                        <!-- Animated Icon -->
+                        <div class="icon-container bg-white rounded-4 p-3 shadow-lg me-3 position-relative" style="width: 64px; height: 64px;">
+                            <i class="bi bi-shop-window fs-3 text-warning position-absolute top-50 start-50 translate-middle"></i>
+                            <div class="pulse-ring" style="border-color: rgba(255, 152, 0, 0.4);"></div>
+                        </div>
+                        
+                        <div class="flex-grow-1">
+                            <!-- Greeting with Animation -->
+                            <div class="greeting-text mb-2" style="animation: slideInLeft 0.6s ease-out;">
+                                <p class="text-white mb-1 d-flex align-items-center" style="font-size: 0.9rem; letter-spacing: 0.5px;">
+                                    <i class="bi bi-sun-fill me-2 text-warning-subtle"></i>
+                                    <span class="fw-medium opacity-90">Selamat datang kembali,</span>
+                                </p>
+                                <h3 class="text-white fw-bold mb-0 h4" style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    {{ auth()->user()->nama }}
+                                </h3>
+                            </div>
+                            
+                            <!-- Dashboard Title -->
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="badge bg-white bg-opacity-25 text-white px-3 py-1 rounded-pill">
+                                    <i class="bi bi-bar-chart-fill me-1"></i>
+                                    Dashboard
+                                </div>
+                                <div class="badge bg-light text-warning px-3 py-1 rounded-pill fw-bold">
+                                    Pengepul
+                                </div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <p class="text-white mb-0 small opacity-90 fw-normal">
+                                <i class="bi bi-check-circle-fill me-1 text-warning-subtle"></i>
+                                Pantau arus kas, stok masuk, dan negosiasi pasar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Actions & Quick Stats -->
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <div class="d-flex flex-column align-items-md-end gap-3">
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light fw-bold rounded-pill px-4 py-2 shadow-sm hover-lift d-flex align-items-center text-warning" onclick="window.location.reload()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                <span>Refresh Pasar</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Quick Info Card -->
+                        <div class="glass-card rounded-4 px-4 py-3 shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between gap-4">
+                                <div class="text-start">
+                                    <p class="text-white-50 mb-1 small">Last Update</p>
+                                    <p class="text-white mb-0 fw-bold">
+                                        <i class="bi bi-clock-fill me-1"></i>
+                                        {{ now()->format('H:i') }}
+                                    </p>
+                                </div>
+                                <div class="text-start">
+                                    <p class="text-white-50 mb-1 small">Tanggal</p>
+                                    <p class="text-white mb-0 fw-bold">
+                                        <i class="bi bi-calendar-fill me-1"></i>
+                                        {{ now()->format('d M') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -155,16 +221,16 @@
                 <div class="card-body p-4">
                     <div class="list-group list-group-flush">
                         @forelse($activities as $activity)
-                            <div class="list-group-item border-0 px-0 py-3 d-flex align-items-center">
+                            <div class="list-group-item px-3 py-3 d-flex align-items-center">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="activity-icon rounded-circle d-flex align-items-center justify-content-center bg-light"
-                                        style="width: 45px; height: 45px;">
+                                        style="width: 40px; height: 40px;">
                                         @php
                                             $iconColor = match($activity->type) {
                                                 'sale' => 'text-success',
-                                                'purchase' => 'text-primary', // Purchase is Primary (Blue) for Pengepul context usually means Stock In
+                                                'purchase' => 'text-primary',
                                                 'topup' => 'text-info',
-                                                default => 'text-secondary'
+                                                default => 'text-danger'
                                             };
                                             $icon = match($activity->type) {
                                                 'sale' => 'bi-arrow-up-right',
@@ -179,28 +245,28 @@
                                 <div class="flex-grow-1 min-width-0">
                                     <h6 class="mb-1 fw-bold text-dark">{{ $activity->description }}</h6>
                                     <small class="text-muted d-block">
-                                        <i class="bi bi-calendar-event me-1"></i>
-                                        {{ \Carbon\Carbon::parse($activity->date)->translatedFormat('d F Y, H:i') }}
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ \Carbon\Carbon::parse($activity->date)->format('d M Y, H:i') }}
                                     </small>
                                 </div>
                                 <div class="text-end ms-3">
                                     @php
-                                        // Logic Colors for Money: Green (In), Red (Out)
-                                        // Sale = Money In (Green). Purchase = Money Out (Red). Topup = Money In (Blue/Green).
-                                        $isMoneyIn = in_array($activity->type, ['sale', 'topup']);
-                                        $color = $isMoneyIn ? 'text-success' : 'text-danger';
-                                        $sign = $isMoneyIn ? '+' : '-';
+                                        // "Sale" in Petani is +
+                                        // For Pengepul: Sale (+), Topup (+), Purchase (-)
+                                        $sign = in_array($activity->type, ['sale', 'topup']) ? '+' : '-';
                                     @endphp
-                                    <span class="d-block fw-bold {{ $color }} fs-6">
+                                    <span class="d-block fw-bold text-dark">
                                         {{ $sign }} Rp {{ number_format($activity->amount, 0, ',', '.') }}
                                     </span>
-                                    <span class="badge bg-light text-secondary rounded-pill border mt-1">{{ ucfirst($activity->type) }}</span>
+                                    <span class="badge bg-success text-white rounded-pill mt-1">{{ ucfirst($activity->type) }}</span>
                                 </div>
                             </div>
                         @empty
-                            <div class="text-center py-5 opacity-50">
-                                <i class="bi bi-inbox-fill display-4 text-muted"></i>
-                                <p class="mt-3 text-muted">Belum ada transaksi jual-beli.</p>
+                            <div class="text-center py-5">
+                                <div class="mb-3 text-muted opacity-50">
+                                    <i class="bi bi-clipboard-x display-4"></i>
+                                </div>
+                                <h6 class="text-muted">Belum ada aktivitas tercatat.</h6>
                             </div>
                         @endforelse
                     </div>
@@ -268,6 +334,97 @@
 </div>
 
 <style>
+    /* Hero Card Effects */
+    .hero-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    /* Icon Container Effects */
+    .icon-container {
+        transition: all 0.3s ease;
+        animation: iconFadeIn 0.8s ease-out;
+    }
+    
+    .icon-container:hover {
+        transform: scale(1.05) rotate(5deg);
+    }
+    
+    @keyframes iconFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    /* Pulse Ring Animation */
+    .pulse-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        border: 3px solid rgba(255, 152, 0, 0.4);
+        border-radius: 16px;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0.5;
+        }
+    }
+    
+    /* Glass Card Effect */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    /* Hover Lift Effect */
+    .hover-lift {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    /* General Stats */
     .stat-card {
         transition: transform 0.2s;
     }
@@ -277,6 +434,18 @@
     .hover-scale:hover {
         transform: scale(1.02);
         transition: transform 0.2s;
+    }
+    
+    /* ApexCharts Text Color Override */
+    .apexcharts-text,
+    .apexcharts-xaxis-label,
+    .apexcharts-yaxis-label,
+    .apexcharts-legend-text {
+        fill: #333333 !important;
+    }
+    
+    .apexcharts-gridline {
+        stroke: #e0e0e0 !important;
     }
 </style>
 
@@ -297,43 +466,92 @@
                     data: chartData.expense
                 }],
                 chart: {
-                    type: 'area',
+                    type: 'area', // Premium Area Chart
                     height: 350,
                     toolbar: { show: false },
-                    fontFamily: 'Instrument Sans, sans-serif'
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    dropShadow: {
+                        enabled: true,
+                        top: 3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.1
+                    }
                 },
-                colors: ['#2e7d32', '#d32f2f'],
+                colors: ['#4caf50', '#f44336'], // Consistent Green/Red
                 dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
+                stroke: { 
+                    curve: 'smooth', 
+                    width: 3,
+                    lineCap: 'round'
+                },
+                markers: {
+                    size: 5,
+                    colors: ['#4caf50', '#f44336'],
+                    strokeColors: '#fff',
+                    strokeWidth: 2,
+                    hover: { size: 7 }
+                },
                 fill: {
                     type: 'gradient',
                     gradient: {
                         shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.3,
+                        opacityFrom: 0.6,
+                        opacityTo: 0.2,
                     }
                 },
                 xaxis: {
                     categories: chartData.labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
+                    axisBorder: { show: true, color: '#e0e0e0' },
+                    axisTicks: { show: true, color: '#e0e0e0' },
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
                 },
                 yaxis: {
                     labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        },
                         formatter: function (val) {
                             return new Intl.NumberFormat('id-ID', { notation: "compact" }).format(val);
                         }
                     }
                 },
                 grid: {
-                    strokeDashArray: 4,
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 3,
+                    xaxis: { lines: { show: true } },
+                    yaxis: { lines: { show: true } }
                 }, 
-                tooltip: { y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } } }
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    labels: { colors: '#333333' },
+                    markers: { width: 12, height: 12, radius: 3 }
+                },
+                tooltip: { 
+                    theme: 'dark',
+                    shared: false,
+                    intersect: true,
+                    style: { fontSize: '14px', fontFamily: 'Instrument Sans, sans-serif' },
+                    y: { 
+                        formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) },
+                        title: { formatter: (seriesName) => seriesName + ': ' } 
+                    },
+                    marker: { show: true }
+                }
             };
             financeChart = new ApexCharts(document.querySelector("#financeChart"), financeOptions);
             financeChart.render();
 
-            // 2. Volume Chart
+            // 2. Volume Chart (Buy vs Sell)
             var volumeOptions = {
                 series: [{
                     name: 'Stok Masuk (Beli)',
@@ -346,22 +564,76 @@
                     type: 'bar',
                     height: 350,
                     toolbar: { show: false },
-                    fontFamily: 'Instrument Sans, sans-serif'
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    dropShadow: {
+                        enabled: true,
+                        top: 3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.1
+                    }
                 },
-                colors: ['#0288d1', '#ed6c02'],
+                colors: ['#2196F3', '#FF9800'], // Blue (Buy), Orange (Sell) - Distinction from Income/Expense
                 plotOptions: {
                     bar: {
                         horizontal: false,
                         columnWidth: '55%',
-                        borderRadius: 4
+                        borderRadius: 6,
+                        borderRadiusApplication: 'end',
+                        dataLabels: { position: 'top' }
                     },
                 },
                 dataLabels: { enabled: false },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'light',
+                        type: 'vertical',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#64b5f6', '#ffb74d'], // Lighter variants
+                        opacityFrom: 0.9,
+                        opacityTo: 0.7,
+                    }
+                },
                 xaxis: {
                     categories: chartData.labels,
+                    axisBorder: { show: true, color: '#e0e0e0' },
+                    axisTicks: { show: true, color: '#e0e0e0' },
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
                 },
-                legend: { position: 'bottom' },
-                tooltip: { y: { formatter: function (val) { return val + " Kg" } } }
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 3,
+                    xaxis: { lines: { show: false } },
+                    yaxis: { lines: { show: true } }
+                },
+                legend: { 
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    labels: { colors: '#333333' }
+                },
+                tooltip: { 
+                    theme: 'dark',
+                    shared: false,
+                    intersect: true,
+                    style: { fontSize: '14px', fontFamily: 'Instrument Sans, sans-serif' },
+                    y: { formatter: function (val) { return val + " Kg" } }
+                }
             };
             volumeChart = new ApexCharts(document.querySelector("#volumeChart"), volumeOptions);
             volumeChart.render();

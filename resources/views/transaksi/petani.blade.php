@@ -113,18 +113,22 @@
                                         </td>
                                         <td class="py-3 text-end pe-3">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <form method="POST" action="{{ route('transaksi.approve', $trx->id) }}" onsubmit="return confirm('Setujui transaksi ini?')">
-                                                    @csrf
-                                                    <button class="btn btn-light text-success hover-scale rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Approve">
-                                                        <i class="bi bi-check-lg"></i>
-                                                    </button>
-                                                </form>
-                                                <form method="POST" action="{{ route('transaksi.reject', $trx->id) }}" onsubmit="return confirm('Tolak transaksi ini?')">
-                                                    @csrf
-                                                    <button class="btn btn-light text-danger hover-scale rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Reject">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
-                                                </form>
+                                                @if(in_array($trx->status, ['menunggu_pembayaran', 'negosiasi', 'dalam_proses']))
+                                                    <form method="POST" action="{{ route('transaksi.approve', $trx->id) }}" onsubmit="return confirm('Setujui transaksi ini?')">
+                                                        @csrf
+                                                        <button class="btn btn-light text-success hover-scale rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Approve">
+                                                            <i class="bi bi-check-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" action="{{ route('transaksi.reject', $trx->id) }}" onsubmit="return confirm('Tolak transaksi ini?')">
+                                                        @csrf
+                                                        <button class="btn btn-light text-danger hover-scale rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Reject">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                @elseif($trx->status == 'disetujui' || $trx->status == 'completed')
+                                                     <span class="text-white-50 small fst-italic me-2 align-self-center">Selesai</span>
+                                                @endif
                                                 <button class="btn btn-light text-primary hover-scale rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="openHistory({{ $trx->id }})" title="Riwayat">
                                                     <i class="bi bi-clock-history"></i>
                                                 </button>

@@ -16,6 +16,26 @@
         </div>
 
         <div class="card-body p-4">
+            <!-- Flash Message -->
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: rgba(46, 125, 50, 0.1); color: #2E7D32;">
+                    <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: rgba(220, 53, 69, 0.1); color: #c62828;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if(session('status'))
+                <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: rgba(13, 202, 240, 0.1); color: #0c5460;">
+                    <i class="bi bi-info-circle-fill me-2"></i> {{ session('status') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="row">
                 <div class="col-md-5 mb-4">
                     <div class="glass-panel p-3 mb-4">

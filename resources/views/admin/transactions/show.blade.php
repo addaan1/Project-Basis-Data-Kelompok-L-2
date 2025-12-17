@@ -52,11 +52,11 @@
 
                     <div class="mb-4">
                         <h6 class="text-muted text-uppercase small fw-bold">Product Details</h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-1"><strong>Product ID:</strong> {{ $transaction->id_produk ?? '-' }}</p>
-                            <p class="mb-1"><strong>Market:</strong> {{ $transaction->pasar->nama_pasar ?? '-' }}</p>
-                            <p class="mb-1"><strong>Quantity:</strong> {{ $transaction->jumlah ?? 0 }}</p>
-                            <p class="mb-0"><strong>Description:</strong> {{ $transaction->description ?? '-' }}</p>
+                        <div class="bg-light p-3 rounded" style="color: #212529 !important;">
+                            <p class="mb-1" style="color: #212529 !important;"><strong>Product ID:</strong> {{ $transaction->id_produk ?? '-' }}</p>
+                            <p class="mb-1" style="color: #212529 !important;"><strong>Market:</strong> {{ $transaction->pasar->nama_pasar ?? '-' }}</p>
+                            <p class="mb-1" style="color: #212529 !important;"><strong>Quantity:</strong> {{ $transaction->jumlah ?? 0 }}</p>
+                            <p class="mb-0" style="color: #212529 !important;"><strong>Description:</strong> {{ $transaction->description ?? '-' }}</p>
                         </div>
                     </div>
 
