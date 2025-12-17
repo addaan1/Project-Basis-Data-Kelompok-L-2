@@ -37,6 +37,7 @@
                                         <th>Jumlah</th>
                                         <th>Metode</th>
                                         <th>Status</th>
+                                        <th>Bukti</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -48,8 +49,15 @@
                                             <td>Rp {{ number_format($topUp->amount, 0, ',', '.') }}</td>
                                             <td>{{ $topUp->payment_method == 'bank' ? 'Bank Transfer' : 'Mini Market' }}</td>
                                             <td>
+                                                @if($topUp->bukti_transfer)
+                                                    <a href="{{ asset('storage/' . $topUp->bukti_transfer) }}" target="_blank" class="btn btn-sm btn-outline-secondary">Lihat</a>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
                                                 @if($topUp->status == 'pending')
-                                                    <span class="badge bg-warning">Menunggu</span>
+                                                    <span class="badge bg-warning">Menunggu Verifikasi</span>
                                                 @elseif($topUp->status == 'completed')
                                                     <span class="badge bg-success">Selesai</span>
                                                 @else
@@ -58,6 +66,12 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('topup.show', $topUp->id) }}" class="btn btn-sm btn-info">Detail</a>
+                                                @if(auth()->user()->peran === 'admin' && $topUp->status == 'pending')
+                                                    <form action="{{ route('topup.confirm', $topUp->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Verifikasi Top Up ini?');">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-success">Setujui</button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

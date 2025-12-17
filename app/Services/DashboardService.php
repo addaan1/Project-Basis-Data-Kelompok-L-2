@@ -414,25 +414,32 @@ class DashboardService
               for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
                     $dateStr = $date->toDateString();
                     $dates[] = $date->format('d M');
-                    $m = $metrics->first(fn($i) => substr($i->date, 0, 10) === $dateStr);
+                    
+                    // Filter using string comparison on Carbon object works if cast, but let's be safe
+                    $m = $metrics->first(function($item) use ($dateStr) {
+                         // Safely handle Carbon object or string
+                         $d = $item->date instanceof \Carbon\Carbon ? $item->date->toDateString() : substr($item->date, 0, 10);
+                         return $d === $dateStr;
+                    });
+
                     $income[] = $m ? (float)$m->total_income : 0;
                     $expense[] = $m ? (float)$m->total_expense : 0;
                     $sold[] = $m ? (int)$m->total_kg_sold : 0;
                     $bought[] = $m ? (int)$m->total_kg_bought : 0;
               }
           } elseif ($range === '4w') {
+               // Use strict object comparison
                for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
-                   $weekStart = $date->copy()->startOfWeek();
-                   $weekEnd = $date->copy()->endOfWeek();
-                   $dates[] = 'Week ' . $weekStart->week;
+                   $weekStart = $date->copy()->startOfWeek()->startOfDay();
+                   $weekEnd = $date->copy()->endOfWeek()->endOfDay();
                    
-                   // Filter metrics within this week using string comparison
+                   // Format Label: "17 Nov - 23 Nov"
+                   $dates[] = $weekStart->format('d M') . ' - ' . $weekEnd->format('d M'); 
+                   
                    $weekMetrics = $metrics->filter(function($m) use ($weekStart, $weekEnd) {
-                       $md = substr($m->date, 0, 10);
-                       return $md >= $weekStart->toDateString() && $md <= $weekEnd->toDateString();
+                       $d = $m->date instanceof \Carbon\Carbon ? $m->date->copy()->startOfDay() : Carbon::parse($m->date)->startOfDay();
+                       return $d->gte($weekStart) && $d->lte($weekEnd);
                    });
-                   
-                   \Illuminate\Support\Facades\Log::info("4W Loop: Week {$weekStart->toDateString()} - {$weekEnd->toDateString()} | Matches: " . $weekMetrics->count());
 
                    $income[] = $weekMetrics->sum('total_income');
                    $expense[] = $weekMetrics->sum('total_expense');
@@ -441,13 +448,13 @@ class DashboardService
                }
           } elseif ($range === '12m') {
                for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
-                   $monthStart = $date->copy()->startOfMonth();
-                   $monthEnd = $date->copy()->endOfMonth();
+                   $monthStart = $date->copy()->startOfMonth()->startOfDay();
+                   $monthEnd = $date->copy()->endOfMonth()->endOfDay();
                    $dates[] = $monthStart->format('M Y');
                    
                    $monthMetrics = $metrics->filter(function($m) use ($monthStart, $monthEnd) {
-                       $d = Carbon::parse($m->date);
-                       return $d->between($monthStart, $monthEnd);
+                       $d = $m->date instanceof \Carbon\Carbon ? $m->date->copy()->startOfDay() : Carbon::parse($m->date)->startOfDay();
+                       return $d->gte($monthStart) && $d->lte($monthEnd);
                    });
                    
                    $income[] = $monthMetrics->sum('total_income');
