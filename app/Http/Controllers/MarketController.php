@@ -128,38 +128,34 @@ class MarketController extends Controller
                 'harga_akhir' => $hargaSatuan,
                 'tanggal' => now()->toDateString(),
                 'jenis_transaksi' => 'beli',
-                'status_transaksi' => 'disetujui', // Auto-Approve for Direct Buy
+                'status_transaksi' => 'confirmed', // Menunggu Konfirmasi Petani
                 'type' => 'purchase',
                 'description' => 'Pembelian langsung produk beras: '.$productLocked->nama_produk,
             ]);
 
-            // 1. Catat Pengeluaran Pembeli (Completed)
+            // 1. Catat Pengeluaran Pembeli (PENDING / HOLD)
             \App\Models\Expenditure::create([
                 'user_id' => $buyerId,
                 'amount' => $total,
-                'description' => 'Pembelian langsung transaksi #'.$trx->id_transaksi,
+                'description' => 'Hold transaksi #'.$trx->id_transaksi, // Standard format for Controller to find
                 'date' => now()->toDateString(),
-                'status' => 'completed',
+                'status' => 'pending',
             ]);
 
-            // 2. Potong Saldo Pembeli
+            // 2. Potong Saldo Pembeli (Hold Dana)
             $buyer->decrement('saldo', $total);
 
-            // 3. Tambah Saldo Penjual
-            $seller = \App\Models\User::find($sellerId);
-            if ($seller) {
-                $seller->increment('saldo', $total);
-            }
+            // 3. Tambah Saldo Penjual -> DITUNDA sampai APPROVE (di TransaksiController)
+            // $seller->increment('saldo', $total);
 
-            // 4. Potong Stok (Handled by Observer on Create, but explicit check doesn't hurt if observer is missing)
-            // Assuming Observer handles decrement based on creation. W're just confirming flow.
+            // 4. Potong Stok (Handled by Observer)
 
             TransaksiHistory::create([
                 'id_transaksi' => $trx->id_transaksi,
                 'status_before' => null,
-                'status_after' => 'disetujui',
+                'status_after' => 'confirmed',
                 'changed_by' => $buyerId,
-                'note' => 'Pembelian langsung berhasil. Saldo ditransfer.',
+                'note' => 'Pembelian berhasil dibuat. Menunggu konfirmasi petani.',
             ]);
 
             DB::commit();

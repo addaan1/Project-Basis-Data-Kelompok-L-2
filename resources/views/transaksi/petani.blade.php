@@ -103,17 +103,17 @@
                                                 $statusIcon = 'bi-question-circle';
                                                 
                                                 if($trx->status=='disetujui' || $trx->status=='completed') { $statusClass = 'bg-success'; $statusIcon = 'bi-check-circle'; }
-                                                elseif($trx->status=='dalam_proses' || $trx->status=='menunggu_pembayaran' || $trx->status=='negosiasi') { $statusClass = 'bg-warning text-dark'; $statusIcon = 'bi-hourglass-split'; }
+                                                elseif($trx->status=='dalam_proses' || $trx->status=='menunggu_pembayaran' || $trx->status=='negosiasi' || $trx->status=='confirmed') { $statusClass = 'bg-warning text-dark'; $statusIcon = 'bi-hourglass-split'; }
                                                 elseif($trx->status=='ditolak') { $statusClass = 'bg-danger'; $statusIcon = 'bi-x-circle'; }
                                             @endphp
                                             <span class="badge {{ $statusClass }} rounded-pill py-2 px-3 shadow-sm border border-light border-opacity-25">
                                                 <i class="bi {{ $statusIcon }} me-1"></i>
-                                                {{ ['menunggu_pembayaran'=>'Menunggu','pending'=>'Menunggu'][$trx->status] ?? ucfirst(str_replace('_',' ', $trx->status)) }}
+                                                {{ ['menunggu_pembayaran'=>'Menunggu','pending'=>'Menunggu', 'confirmed' => 'Menunggu Konfirmasi'][$trx->status] ?? ucfirst(str_replace('_',' ', $trx->status)) }}
                                             </span>
                                         </td>
                                         <td class="py-3 text-end pe-3">
                                             <div class="d-flex justify-content-end gap-2">
-                                                @if(in_array($trx->status, ['menunggu_pembayaran', 'negosiasi', 'dalam_proses']))
+                                                @if(in_array($trx->status, ['menunggu_pembayaran', 'negosiasi', 'dalam_proses', 'confirmed']))
                                                     <form method="POST" action="{{ route('transaksi.approve', $trx->id) }}" onsubmit="return confirm('Setujui transaksi ini?')">
                                                         @csrf
                                                         <button class="btn btn-light text-success hover-scale rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Approve">

@@ -398,10 +398,10 @@ class DashboardService
          }
 
          // Non-Hourly: Use Fact Table + PHP Grouping
-         $endDate = Carbon::now();
-         if ($range === '4w') $startDate = Carbon::now()->subWeeks(4)->startOfWeek();
-         elseif ($range === '12m') $startDate = Carbon::now()->subMonths(12)->startOfMonth();
-         else $startDate = Carbon::now()->subDays(29); // 30d
+         $endDate = Carbon::today(); // Use today() for date-only calculation
+         if ($range === '4w') $startDate = Carbon::today()->subWeeks(4)->startOfWeek();
+         elseif ($range === '12m') $startDate = Carbon::today()->subMonths(12)->startOfMonth();
+         else $startDate = Carbon::today()->subDays(29); // 30d (today + 29 days back = 30 total)
 
          $metrics = FactUserDailyMetric::where('user_id', $user->id_user)
             ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
@@ -411,7 +411,7 @@ class DashboardService
           $dates = []; $income = []; $expense = []; $sold = []; $bought = [];
           
           if ($range === '30d') {
-              for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+              for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
                     $dateStr = $date->toDateString();
                     $dates[] = $date->format('d M');
                     
@@ -429,7 +429,7 @@ class DashboardService
               }
           } elseif ($range === '4w') {
                // Use strict object comparison
-               for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
+               for ($date = $startDate->copy(); $date <= $endDate; $date->addWeek()) {
                    $weekStart = $date->copy()->startOfWeek()->startOfDay();
                    $weekEnd = $date->copy()->endOfWeek()->endOfDay();
                    
@@ -448,7 +448,7 @@ class DashboardService
                    $bought[] = $weekMetrics->sum('total_kg_bought');
                }
           } elseif ($range === '12m') {
-               for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
+               for ($date = $startDate->copy(); $date <= $endDate; $date->addMonth()) {
                    $monthStart = $date->copy()->startOfMonth()->startOfDay();
                    $monthEnd = $date->copy()->endOfMonth()->endOfDay();
                    $dates[] = $monthStart->format('M Y');
@@ -499,10 +499,10 @@ class DashboardService
              }
         } else {
              // Non-hourly
-             $endDate = Carbon::now();
-             if ($range === '4w') $startDate = Carbon::now()->subWeeks(4)->startOfWeek();
-             elseif ($range === '12m') $startDate = Carbon::now()->subMonths(12)->startOfMonth();
-             else $startDate = Carbon::now()->subDays(29);
+             $endDate = Carbon::today();
+             if ($range === '4w') $startDate = Carbon::today()->subWeeks(4)->startOfWeek();
+             elseif ($range === '12m') $startDate = Carbon::today()->subMonths(12)->startOfMonth();
+             else $startDate = Carbon::today()->subDays(29);
 
              $query = FactUserDailyMetric::whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()]);
              
@@ -513,7 +513,7 @@ class DashboardService
                  $rows = $query->selectRaw('date, SUM(total_income) as total_gmv')
                     ->groupBy('date')->orderBy('date')->get();
                  
-                 for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+                 for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
                      $dStr = $date->toDateString();
                      $dates[] = $date->format('d M');
                      $r = $rows->first(fn($i) => substr($i->date, 0, 10) === $dStr);
@@ -524,7 +524,7 @@ class DashboardService
                  $rows = $query->selectRaw('date, SUM(total_income) as total_gmv')
                     ->groupBy('date')->orderBy('date')->get();
                  
-                 for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
+                 for ($date = $startDate->copy(); $date <= $endDate; $date->addWeek()) {
                      $ws = $date->copy()->startOfWeek();
                      $we = $date->copy()->endOfWeek();
                      $dates[] = 'Week ' . $ws->week;
@@ -535,7 +535,7 @@ class DashboardService
                  $rows = $query->selectRaw('date, SUM(total_income) as total_gmv')
                     ->groupBy('date')->orderBy('date')->get();
 
-                 for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
+                 for ($date = $startDate->copy(); $date <= $endDate; $date->addMonth()) {
                      $ms = $date->copy()->startOfMonth();
                      $me = $date->copy()->endOfMonth();
                      $dates[] = $ms->format('M Y');
