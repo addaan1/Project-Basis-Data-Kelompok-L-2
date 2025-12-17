@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('transaksis', 'id_produk')) {
-        Schema::table('transaksis', function (Blueprint $table) {
-            $table->foreignId('id_produk')->nullable()->after('id_pembeli')->constrained('produk_beras', 'id_produk');
+        Schema::table('top_ups', function (Blueprint $table) {
+            $table->string('bukti_transfer')->nullable()->after('payment_method');
         });
-        }
     }
 
     /**
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transaksis', function (Blueprint $table) {
-            //
+        Schema::table('top_ups', function (Blueprint $table) {
+            $table->dropColumn('bukti_transfer');
         });
     }
 };

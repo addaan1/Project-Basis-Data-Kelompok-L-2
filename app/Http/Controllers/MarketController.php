@@ -91,13 +91,26 @@ class MarketController extends Controller
                 'jumlah' => 'required|integer|min:1|max:'.$product->stok,
             ]);
 
-            DB::beginTransaction();
+        DB::beginTransaction();
+            
+            // LOCK THE PRODUCT ROW FOR UPDATE
+            // This prevents other transactions from modifying this product until we commit/rollback
+            $productLocked = ProdukBeras::where('id_produk', $product->id_produk)->lockForUpdate()->first();
+            
+            if (!$productLocked) {
+                throw new \Exception("Produk tidak ditemukan atau sedang sibuk.");
+            }
+            
+            // Re-check stock after lock
+            if ($productLocked->stok < $jumlah) {
+                 throw new \RuntimeException("Stok tidak mencukupi (Tersisa: {$productLocked->stok})");
+            }
 
             $buyer = Auth::user();
             $buyerId = $buyer->id_user;
-            $sellerId = $product->id_petani;
+            $sellerId = $productLocked->id_petani;
             $jumlah = (int) $request->input('jumlah');
-            $hargaSatuan = (float) $product->harga;
+            $hargaSatuan = (float) $productLocked->harga;
             $total = $hargaSatuan * $jumlah;
 
             if ((float) ($buyer->saldo ?? 0) < $total) {
@@ -107,7 +120,7 @@ class MarketController extends Controller
             $trx = Transaksi::create([
                 'id_penjual' => $sellerId,
                 'id_pembeli' => $buyerId,
-                'id_produk' => $product->id_produk,
+                'id_produk' => $productLocked->id_produk,
                 'jumlah' => $jumlah,
                 'harga_awalan' => $hargaSatuan,
                 'harga_akhir' => $hargaSatuan,
@@ -115,8 +128,8 @@ class MarketController extends Controller
                 'jenis_transaksi' => 'beli',
                 'status_transaksi' => 'menunggu_pembayaran',
                 'type' => 'purchase',
-                'description' => 'Pembelian langsung produk beras: '.$product->nama_produk,
-                'user_id' => $buyerId,
+                'description' => 'Pembelian langsung produk beras: '.$productLocked->nama_produk,
+                // 'user_id' => $buyerId, // Cleanup redundant column
             ]);
 
             \App\Models\Expenditure::create([
@@ -130,8 +143,8 @@ class MarketController extends Controller
             $buyer->saldo = (float) $buyer->saldo - $total; // hold saldo
             $buyer->save();
 
-            // Potong Stok Langsung (Reserve Stock)
-            $product->decrement('stok', $jumlah);
+            // Potong Stok Langsung (Reserve Stock) - Handled by Observer
+            // $product->decrement('stok', $jumlah);
 
             TransaksiHistory::create([
                 'id_transaksi' => $trx->id_transaksi,

@@ -14,7 +14,8 @@ class TopUp extends Model
         'amount',
         'reference_code',
         'status',
-        'payment_method'
+        'payment_method',
+        'bukti_transfer'
     ];
 
     public function user()
