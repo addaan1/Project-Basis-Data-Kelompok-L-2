@@ -41,8 +41,8 @@
                                 <i class="bi bi-basket3-fill fs-5"></i>
                             </div>
                             <div class="text-center text-md-start">
-                                <h6 class="fw-bold text-dark mb-0 font-poppins">Total Produk</h6>
-                                <span class="text-success fw-bold fs-5">{{ $products->count() }} Pilihan Beras</span>
+                                <h6 class="fw-bold mb-0 font-poppins" style="color: #1B5E20;">Total Produk</h6>
+                                <span class="fw-bold fs-5" style="color: #2E7D32;">{{ $products->count() }} Pilihan Beras</span>
                             </div>
                         </div>
                     </div>
@@ -178,8 +178,57 @@
                 
                 <!-- Pagination -->
                 <div class="mt-5 d-flex justify-content-center position-relative z-1">
-                    @if($products instanceof \Illuminate\Contracts\Pagination\Paginator)
-                        {{ $products->links() }}
+                    @if($products instanceof \Illuminate\Contracts\Pagination\Paginator && $products->hasPages())
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-custom">
+                                {{-- Previous Page Link --}}
+                                @if ($products->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="bi bi-chevron-left"></i>
+                                            <span class="d-none d-sm-inline ms-1">Previous</span>
+                                        </span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $products->previousPageUrl() }}" rel="prev">
+                                            <i class="bi bi-chevron-left"></i>
+                                            <span class="d-none d-sm-inline ms-1">Previous</span>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                {{-- Pagination Elements --}}
+                                @foreach ($products->links()->elements[0] as $page => $url)
+                                    @if ($page == $products->currentPage())
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+
+                                {{-- Next Page Link --}}
+                                @if ($products->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $products->nextPageUrl() }}" rel="next">
+                                            <span class="d-none d-sm-inline me-1">Next</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <span class="d-none d-sm-inline me-1">Next</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
                     @endif
                 </div>
             @endif
@@ -259,6 +308,53 @@
     
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+    
+    /* Custom Pagination Styles */
+    .pagination-custom {
+        gap: 8px;
+    }
+    
+    .pagination-custom .page-item .page-link {
+        border: 2px solid #2E7D32;
+        color: #2E7D32;
+        background: white;
+        border-radius: 12px;
+        padding: 10px 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+        min-width: 48px;
+        text-align: center;
+    }
+    
+    .pagination-custom .page-item .page-link:hover {
+        background: linear-gradient(135deg, #2E7D32, #43A047);
+        color: white;
+        border-color: #2E7D32;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    
+    .pagination-custom .page-item.active .page-link {
+        background: linear-gradient(135deg, #2E7D32, #43A047);
+        color: white;
+        border-color: #2E7D32;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    
+    .pagination-custom .page-item.disabled .page-link {
+        background: #f5f5f5;
+        border-color: #e0e0e0;
+        color: #9e9e9e;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+    
+    .pagination-custom .page-item:first-child .page-link,
+    .pagination-custom .page-item:last-child .page-link {
+        padding: 10px 20px;
+    }
+
 </style>
 
 <script>

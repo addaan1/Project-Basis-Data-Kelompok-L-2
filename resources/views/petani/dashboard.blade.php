@@ -2,26 +2,200 @@
 
 @section('content')
 <div class="container-fluid p-4">
-    <!-- Welcome Section -->
-    <!-- Welcome Section -->
-    <!-- Welcome Section (Hero Card) -->
-    <div class="card border-0 mb-5 shadow-lg overflow-hidden" style="border-radius: 20px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-        <div class="card-body p-4 p-lg-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <div class="text-center text-md-start">
-                <h1 class="display-6 fw-bold mb-2" style="color: #1B5E20; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
-                    <i class="bi bi-speedometer2 me-2 text-warning"></i>Dashboard Petani
-                </h1>
-                <p class="lead mb-0 fw-medium" style="color: #33691E;">
-                    Pantau aktivitas penjualan dan stok beras Anda dengan mudah.
-                </p>
-            </div>
-            <div>
-                <button class="btn btn-warning btn-lg text-dark fw-bold rounded-pill px-4 shadow-sm hover-scale" onclick="window.location.reload()">
-                    <i class="bi bi-arrow-clockwise me-2"></i> Refresh Data
-                </button>
+    <!-- Welcome Section (Premium Hero) -->
+    <div class="card border-0 mb-4 shadow-lg overflow-hidden position-relative hero-card" style="border-radius: 24px; background: linear-gradient(135deg, #66bb6a 0%, #43a047 50%, #2e7d32 100%); min-height: 180px;">
+        
+        <!-- Floating Decorative Elements -->
+        <div class="position-absolute" style="top: 20px; right: 40px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(40px); animation: float 6s ease-in-out infinite;"></div>
+        <div class="position-absolute" style="bottom: 30px; left: 60px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); border-radius: 50%; filter: blur(30px); animation: float 8s ease-in-out infinite reverse;"></div>
+        
+        <div class="card-body p-4 py-md-4 px-md-5 position-relative">
+            <div class="row align-items-center">
+                <!-- Left: Title & Info -->
+                <div class="col-md-7">
+                    <div class="d-flex align-items-start mb-3">
+                        <!-- Animated Icon -->
+                        <div class="icon-container bg-white rounded-4 p-3 shadow-lg me-3 position-relative" style="width: 64px; height: 64px;">
+                            <i class="bi bi-speedometer2 fs-3 text-success position-absolute top-50 start-50 translate-middle"></i>
+                            <div class="pulse-ring"></div>
+                        </div>
+                        
+                        <div class="flex-grow-1">
+                            <!-- Greeting with Animation -->
+                            <div class="greeting-text mb-2" style="animation: slideInLeft 0.6s ease-out;">
+                                <p class="text-white mb-1 d-flex align-items-center" style="font-size: 0.9rem; letter-spacing: 0.5px;">
+                                    <i class="bi bi-sun-fill me-2 text-warning"></i>
+                                    <span class="fw-medium opacity-90">Selamat datang kembali,</span>
+                                </p>
+                                <h3 class="text-white fw-bold mb-0 h4" style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    {{ auth()->user()->nama }}
+                                </h3>
+                            </div>
+                            
+                            <!-- Dashboard Title -->
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="badge bg-white bg-opacity-25 text-white px-3 py-1 rounded-pill">
+                                    <i class="bi bi-bar-chart-fill me-1"></i>
+                                    Dashboard
+                                </div>
+                                <div class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold">
+                                    Petani
+                                </div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <p class="text-white mb-0 small opacity-90 fw-normal">
+                                <i class="bi bi-check-circle-fill me-1 text-warning"></i>
+                                Pantau aktivitas penjualan dan stok beras Anda secara real-time
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Actions & Quick Stats -->
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <div class="d-flex flex-column align-items-md-end gap-3">
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light fw-bold rounded-pill px-4 py-2 shadow-sm hover-lift d-flex align-items-center" onclick="window.location.reload()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Quick Info Card -->
+                        <div class="glass-card rounded-4 px-4 py-3 shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between gap-4">
+                                <div class="text-start">
+                                    <p class="text-white-50 mb-1 small">Last Update</p>
+                                    <p class="text-white mb-0 fw-bold">
+                                        <i class="bi bi-clock-fill me-1"></i>
+                                        {{ now()->format('H:i') }}
+                                    </p>
+                                </div>
+                                <div class="text-start">
+                                    <p class="text-white-50 mb-1 small">Tanggal</p>
+                                    <p class="text-white mb-0 fw-bold">
+                                        <i class="bi bi-calendar-fill me-1"></i>
+                                        {{ now()->format('d M') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        /* Hero Card Effects */
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Icon Container Effects */
+        .icon-container {
+            transition: all 0.3s ease;
+            animation: iconFadeIn 0.8s ease-out;
+        }
+        
+        .icon-container:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        @keyframes iconFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Pulse Ring Animation */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(76, 175, 80, 0.4);
+            border-radius: 16px;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.5;
+            }
+        }
+        
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Hover Lift Effect */
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        /* Badge Animations */
+        .badge {
+            animation: badgeFadeIn 1s ease-out;
+        }
+        
+        @keyframes badgeFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
 
     <!-- Business Stats Grid (ETL Powered) -->
     <div class="row g-4 mb-4">
@@ -147,7 +321,7 @@
                         @forelse($activities as $activity)
                             <div class="list-group-item px-3 py-3 d-flex align-items-center">
                                 <div class="flex-shrink-0 me-3">
-                                    <div class="activity-icon rounded-circle d-flex align-items-center justify-content-center bg-white"
+                                    <div class="activity-icon rounded-circle d-flex align-items-center justify-content-center bg-light"
                                         style="width: 40px; height: 40px;">
                                         @php
                                             $iconColorClass = match($activity->type) {
@@ -165,25 +339,25 @@
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 min-width-0">
-                                    <h6 class="mb-1 fw-bold text-white">{{ $activity->description }}</h6>
-                                    <small class="text-white-50 d-block">
+                                    <h6 class="mb-1 fw-bold text-dark">{{ $activity->description }}</h6>
+                                    <small class="text-muted d-block">
                                         <i class="bi bi-clock me-1"></i>
                                         {{ \Carbon\Carbon::parse($activity->date)->format('d M Y, H:i') }}
                                     </small>
                                 </div>
                                 <div class="text-end ms-3">
-                                    <span class="d-block fw-bold text-white">
+                                    <span class="d-block fw-bold text-dark">
                                         {{ ($activity->type == 'sale' || $activity->type == 'topup') ? '+' : '-' }} Rp {{ number_format($activity->amount, 0, ',', '.') }}
                                     </span>
-                                    <span class="badge bg-white text-dark rounded-pill border mt-1">{{ ucfirst($activity->type) }}</span>
+                                    <span class="badge bg-success text-white rounded-pill mt-1">{{ ucfirst($activity->type) }}</span>
                                 </div>
                             </div>
                         @empty
                             <div class="text-center py-5">
-                                <div class="mb-3 text-white-50 opacity-50">
+                                <div class="mb-3 text-muted opacity-50">
                                     <i class="bi bi-clipboard-x display-4"></i>
                                 </div>
-                                <h6 class="text-white-50">Belum ada aktivitas tercatat.</h6>
+                                <h6 class="text-muted">Belum ada aktivitas tercatat.</h6>
                             </div>
                         @endforelse
                     </div>
@@ -200,11 +374,11 @@
                 <div class="card-body p-4">
                     <div class="table-responsive">
                         <table class="table table-borderless align-middle mb-0">
-                            <thead class="small text-uppercase text-white-50" style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                            <thead class="small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.3);">
                                 <tr>
-                                    <th class="ps-0">Partner</th>
-                                    <th>Jml (Kg)</th>
-                                    <th class="text-end pe-0">Status</th>
+                                    <th class="ps-0 text-white fw-bold">Partner</th>
+                                    <th class="text-white fw-bold">Jml (Kg)</th>
+                                    <th class="text-end pe-0 text-white fw-bold">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -245,10 +419,10 @@
                                 @empty
                                     <tr>
                                         <td colspan="3" class="text-center py-5">
-                                            <div class="text-white-50 opacity-50 mb-3">
-                                                <i class="bi bi-inbox fs-1"></i>
+                                            <div class="mb-3" style="opacity: 0.7;">
+                                                <i class="bi bi-inbox fs-1 text-white"></i>
                                             </div>
-                                            <p class="text-white-50 small mb-0">Tidak ada negosiasi aktif</p>
+                                            <p class="text-white fw-medium mb-0">Tidak ada negosiasi aktif</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -285,6 +459,30 @@
     .bg-info-subtle { background-color: rgba(13, 202, 240, 0.1) !important; }
     .bg-warning-subtle { background-color: rgba(255, 193, 7, 0.1) !important; }
     .bg-secondary-subtle { background-color: rgba(108, 117, 125, 0.1) !important; }
+    
+    /* Negotiation Table Transparency */
+    .table-responsive .table {
+        background-color: transparent !important;
+    }
+    .table-responsive .table thead,
+    .table-responsive .table tbody,
+    .table-responsive .table tr,
+    .table-responsive .table td,
+    .table-responsive .table th {
+        background-color: transparent !important;
+    }
+    
+    /* ApexCharts Text Color Override */
+    .apexcharts-text,
+    .apexcharts-xaxis-label,
+    .apexcharts-yaxis-label,
+    .apexcharts-legend-text {
+        fill: #333333 !important;
+    }
+    
+    .apexcharts-gridline {
+        stroke: #e0e0e0 !important;
+    }
 </style>
 
 <script>
@@ -307,35 +505,121 @@
                     type: 'area',
                     height: 350,
                     toolbar: { show: false },
-                    fontFamily: 'Instrument Sans, sans-serif'
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    dropShadow: {
+                        enabled: true,
+                        top: 3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.1
+                    }
                 },
                 colors: ['#4caf50', '#f44336'],
                 dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
+                stroke: { 
+                    curve: 'smooth', 
+                    width: 3,
+                    lineCap: 'round'
+                },
+                markers: {
+                    size: 5,
+                    colors: ['#4caf50', '#f44336'],
+                    strokeColors: '#fff',
+                    strokeWidth: 2,
+                    hover: {
+                        size: 7
+                    }
+                },
                 fill: {
                     type: 'gradient',
                     gradient: {
                         shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.3,
+                        opacityFrom: 0.6,
+                        opacityTo: 0.2,
                     }
                 },
                 xaxis: {
                     categories: chartData.labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
+                    axisBorder: { 
+                        show: true,
+                        color: '#e0e0e0'
+                    },
+                    axisTicks: { 
+                        show: true,
+                        color: '#e0e0e0'
+                    },
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
                 },
                 yaxis: {
                     labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        },
                         formatter: function (val) {
                             return new Intl.NumberFormat('id-ID', { notation: "compact" }).format(val);
                         }
                     }
                 },
-                grid: {
-                    strokeDashArray: 4,
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    labels: {
+                        colors: '#333333'
+                    },
+                    markers: {
+                        width: 12,
+                        height: 12,
+                        radius: 3
+                    }
                 },
-                tooltip: { y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } } }
+                grid: {
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 3,
+                    xaxis: {
+                        lines: {
+                            show: true
+                        }
+                    },
+                    yaxis: {
+                        lines: {
+                            show: true
+                        }
+                    }
+                },
+                tooltip: { 
+                    theme: 'dark',
+                    shared: false,
+                    intersect: true,
+                    followCursor: false,
+                    style: {
+                        fontSize: '14px',
+                        fontFamily: 'Instrument Sans, sans-serif'
+                    },
+                    x: {
+                        show: true
+                    },
+                    y: { 
+                        formatter: function (val) { 
+                            return "Rp " + new Intl.NumberFormat('id-ID').format(val) 
+                        },
+                        title: {
+                            formatter: function (seriesName) {
+                                return seriesName + ': '
+                            }
+                        }
+                    },
+                    marker: {
+                        show: true
+                    }
+                }
             };
             financeChart = new ApexCharts(document.querySelector("#financeChart"), financeOptions);
             financeChart.render();
@@ -350,22 +634,114 @@
                     type: 'bar',
                     height: 350,
                     toolbar: { show: false },
-                    fontFamily: 'Instrument Sans, sans-serif'
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    dropShadow: {
+                        enabled: true,
+                        top: 3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.1
+                    }
                 },
                 colors: ['#8bc34a'],
                 plotOptions: {
                     bar: {
                         horizontal: false,
-                        columnWidth: '55%',
-                        borderRadius: 4
+                        columnWidth: '60%',
+                        borderRadius: 6,
+                        borderRadiusApplication: 'end',
+                        dataLabels: {
+                            position: 'top'
+                        }
                     },
                 },
-                dataLabels: { enabled: false },
+                dataLabels: { 
+                    enabled: false 
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'light',
+                        type: 'vertical',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#aed581'],
+                        opacityFrom: 0.9,
+                        opacityTo: 0.7,
+                    }
+                },
                 xaxis: {
                     categories: chartData.labels,
+                    axisBorder: {
+                        show: true,
+                        color: '#e0e0e0'
+                    },
+                    axisTicks: {
+                        show: true,
+                        color: '#e0e0e0'
+                    },
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
                 },
-                legend: { position: 'bottom' },
-                tooltip: { y: { formatter: function (val) { return val + " Kg" } } }
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#333333',
+                            fontSize: '12px',
+                            fontWeight: 500
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 3,
+                    xaxis: {
+                        lines: {
+                            show: false
+                        }
+                    },
+                    yaxis: {
+                        lines: {
+                            show: true
+                        }
+                    }
+                },
+                legend: { 
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    labels: {
+                        colors: '#333333'
+                    }
+                },
+                tooltip: { 
+                    theme: 'dark',
+                    shared: false,
+                    intersect: true,
+                    style: {
+                        fontSize: '14px',
+                        fontFamily: 'Instrument Sans, sans-serif'
+                    },
+                    x: {
+                        show: true
+                    },
+                    y: { 
+                        formatter: function (val) { 
+                            return val + " Kg" 
+                        },
+                        title: {
+                            formatter: function (seriesName) {
+                                return seriesName + ': '
+                            }
+                        }
+                    },
+                    marker: {
+                        show: true
+                    }
+                }
             };
             volumeChart = new ApexCharts(document.querySelector("#volumeChart"), volumeOptions);
             volumeChart.render();
