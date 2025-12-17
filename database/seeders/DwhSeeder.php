@@ -13,26 +13,27 @@ class DwhSeeder extends Seeder
     public function run()
     {
         Schema::disableForeignKeyConstraints();
+        Schema::connection('mysql_dashboard')->disableForeignKeyConstraints();
 
         $this->command->info('Starting Robust Seeder...');
 
         // --- PART 1: DWH (Wrapped in Try-Catch) ---
         try {
             $this->command->info('Truncating DWH Tables...');
-            DB::table('fact_transaksi')->truncate();
-            DB::table('fact_negosiasi')->truncate();
-            DB::table('fact_stok_snapshot')->truncate();
-            DB::table('fact_user_daily_metrics')->truncate();
-            DB::table('dim_waktu')->truncate();
-            DB::table('dim_users')->truncate();
-            DB::table('dim_produk')->truncate();
+            DB::connection('mysql_dashboard')->table('fact_transaksi')->truncate();
+            DB::connection('mysql_dashboard')->table('fact_negosiasi')->truncate();
+            DB::connection('mysql_dashboard')->table('fact_stok_snapshot')->truncate();
+            DB::connection('mysql_dashboard')->table('fact_user_daily_metrics')->truncate();
+            DB::connection('mysql_dashboard')->table('dim_waktu')->truncate();
+            DB::connection('mysql_dashboard')->table('dim_users')->truncate();
+            DB::connection('mysql_dashboard')->table('dim_produk')->truncate();
 
             // 1. Dim Waktu
             $startDate = Carbon::now()->subMonths(6)->startOfMonth();
             $endDate = Carbon::now();
             $current = $startDate->copy();
             while ($current <= $endDate) {
-                DB::table('dim_waktu')->insert([
+                DB::connection('mysql_dashboard')->table('dim_waktu')->insert([
                     'id_waktu' => (int) $current->format('Ymd'),
                     'tanggal' => $current->format('Y-m-d'),
                     'hari' => $current->day,
@@ -49,7 +50,7 @@ class DwhSeeder extends Seeder
             // 2. Dim Users
             $users = User::all();
             foreach ($users as $user) {
-                DB::table('dim_users')->insert([
+                DB::connection('mysql_dashboard')->table('dim_users')->insert([
                     'id_user_asli' => $user->id_user,
                     'nama' => $user->nama,
                     'peran' => $user->peran,
@@ -62,7 +63,7 @@ class DwhSeeder extends Seeder
             // 3. Dim Produk
             $products = DB::table('produk_beras')->get(); 
             foreach ($products as $product) {
-                DB::table('dim_produk')->insert([
+                DB::connection('mysql_dashboard')->table('dim_produk')->insert([
                     'id_produk_asli' => $product->id_produk,
                     'nama_produk' => $product->nama_produk,
                     'jenis_beras' => $product->jenis_beras,
@@ -72,16 +73,16 @@ class DwhSeeder extends Seeder
                 ]);
             }
 
-            $petani = DB::table('dim_users')->where('peran', 'petani')->first();
-            $pengepul = DB::table('dim_users')->where('peran', 'pengepul')->first();
-            $produk = DB::table('dim_produk')->first();
+            $petani = DB::connection('mysql_dashboard')->table('dim_users')->where('peran', 'petani')->first();
+            $pengepul = DB::connection('mysql_dashboard')->table('dim_users')->where('peran', 'pengepul')->first();
+            $produk = DB::connection('mysql_dashboard')->table('dim_produk')->first();
 
             if ($petani && $produk) {
                 // 4. Fact Transaksi
                 for ($i = 0; $i < 50; $i++) {
                     $date = Carbon::now()->subDays(rand(1, 180));
                     $sk_waktu = (int) $date->format('Ymd');
-                    DB::table('fact_transaksi')->insert([
+                    DB::connection('mysql_dashboard')->table('fact_transaksi')->insert([
                         'sk_penjual' => $petani->sk_user,
                         'sk_pembeli' => $pengepul ? $pengepul->sk_user : 0,
                         'sk_produk' => $produk ? $produk->sk_produk : 0,
@@ -101,7 +102,7 @@ class DwhSeeder extends Seeder
                 for ($i = 0; $i < 7; $i++) {
                     $date = Carbon::now()->subDays($i);
                     $sk_waktu = (int) $date->format('Ymd');
-                    DB::table('fact_stok_snapshot')->insert([
+                    DB::connection('mysql_dashboard')->table('fact_stok_snapshot')->insert([
                         'sk_produk' => $produk ? $produk->sk_produk : 0,
                         'sk_pemilik' => $petani->sk_user,
                         'sk_waktu' => $sk_waktu,
@@ -116,7 +117,7 @@ class DwhSeeder extends Seeder
                 for ($i = 0; $i < 20; $i++) {
                     $date = Carbon::now()->subDays(rand(1, 30));
                     $sk_waktu = (int) $date->format('Ymd');
-                    DB::table('fact_negosiasi')->insert([
+                    DB::connection('mysql_dashboard')->table('fact_negosiasi')->insert([
                         'sk_pengaju' => $pengepul ? $pengepul->sk_user : 0,
                         'sk_penerima' => $petani->sk_user,
                         'sk_produk' => $produk ? $produk->sk_produk : 0,
@@ -146,8 +147,8 @@ class DwhSeeder extends Seeder
             // A. Fact User Daily Metrics (Hybrid - moved here to ensure display)
             // Even if DWH failed, we force this aggregate for Top Cards
             try {
-                DB::table('fact_user_daily_metrics')->truncate(); // Retry truncate
-                DB::table('fact_user_daily_metrics')->insert([
+                DB::connection('mysql_dashboard')->table('fact_user_daily_metrics')->truncate(); // Retry truncate
+                DB::connection('mysql_dashboard')->table('fact_user_daily_metrics')->insert([
                     'date' => Carbon::yesterday()->toDateString(),
                     'user_id' => $livePetani->id_user,
                     'role' => $livePetani->peran,
@@ -216,5 +217,6 @@ class DwhSeeder extends Seeder
         }
 
         Schema::enableForeignKeyConstraints();
+        Schema::connection('mysql_dashboard')->enableForeignKeyConstraints();
     }
 }

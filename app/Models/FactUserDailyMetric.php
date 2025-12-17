@@ -9,7 +9,7 @@ class FactUserDailyMetric extends Model
 {
     use HasFactory;
 
-    // Gunakan koneksi default (Single Database)
+    protected $connection = 'mysql_dashboard';
     protected $table = 'fact_user_daily_metrics';
     
     protected $fillable = [

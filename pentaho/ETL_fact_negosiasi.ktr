@@ -436,8 +436,8 @@
   <notepads>
   </notepads>
   <connection>
-    <name>Koneksi_Gudang_Beras</name>
-    <server>localhost</server>
+    <name>Koneksi_Source</name>
+    <server>127.0.0.1</server>
     <type>MYSQL</type>
     <access>Native</access>
     <database>db_warungpadi</database>
@@ -448,46 +448,41 @@
     <data_tablespace/>
     <index_tablespace/>
     <attributes>
-      <attribute>
-        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>PORT_NUMBER</code>
-        <attribute>3308</attribute>
-      </attribute>
-      <attribute>
-        <code>PRESERVE_RESERVED_WORD_CASE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>QUOTE_ALL_FIELDS</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>STREAM_RESULTS</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>USE_POOLING</code>
-        <attribute>N</attribute>
-      </attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>3308</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>Y</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>STREAM_RESULTS</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>Koneksi_DWH</name>
+    <server>127.0.0.1</server>
+    <type>MYSQL</type>
+    <access>Native</access>
+    <database>projek_basdat_dashboard</database>
+    <port>3308</port>
+    <username>root</username>
+    <password>Encrypted </password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>3308</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>Y</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>STREAM_RESULTS</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
     </attributes>
   </connection>
   <order>
@@ -574,7 +569,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>Koneksi_Gudang_Beras</connection>
+    <connection>Koneksi_Source</connection>
     <sql>SELECT id as id_nego_asli, id_pengepul, id_petani, id_produk, harga_penawaran, harga_awal, status, created_at FROM negosiasis</sql>
     <limit>0</limit>
     <lookup/>
@@ -608,7 +603,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>Koneksi_Gudang_Beras</connection>
+    <connection>Koneksi_DWH</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
@@ -656,7 +651,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>Koneksi_Gudang_Beras</connection>
+    <connection>Koneksi_DWH</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
@@ -704,7 +699,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>Koneksi_Gudang_Beras</connection>
+    <connection>Koneksi_DWH</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
@@ -752,7 +747,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>Koneksi_Gudang_Beras</connection>
+    <connection>Koneksi_DWH</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
@@ -800,7 +795,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>Koneksi_Gudang_Beras</connection>
+    <connection>Koneksi_DWH</connection>
     <schema/>
     <table>fact_negosiasi</table>
     <commit>1000</commit>
