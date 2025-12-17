@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Riwayat Top-up</span>
-                    <a href="{{ route('topup.create') }}" class="btn btn-primary btn-sm">Top-up Baru</a>
+                    <a href="{{ route('saldo') }}" class="btn btn-primary btn-sm">Top-up Baru</a>
                 </div>
 
                 <div class="card-body">
@@ -32,34 +32,26 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Tanggal</th>
-                                        <th>Kode Referensi</th>
-                                        <th>Jumlah</th>
-                                        <th>Metode</th>
-                                        <th>Status</th>
-                                        <th>Bukti</th>
-                                        <th>Aksi</th>
+                                        <th style="color: black !important;">Tanggal</th>
+                                        <th style="color: black !important;">Kode Referensi</th>
+                                        <th style="color: black !important;">Jumlah</th>
+                                        <th style="color: black !important;">Metode</th>
+                                        <th style="color: black !important;">Status</th>
+                                        <th style="color: black !important;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($topUps as $topUp)
                                         <tr>
                                             <td>{{ $topUp->created_at->format('d M Y H:i') }}</td>
-                                            <td>{{ $topUp->reference_code }}</td>
+                                            <td><span style="color: #212529 !important;">{{ $topUp->reference_code }}</span></td>
                                             <td>Rp {{ number_format($topUp->amount, 0, ',', '.') }}</td>
                                             <td>{{ $topUp->payment_method == 'bank' ? 'Bank Transfer' : 'Mini Market' }}</td>
-                                            <td>
-                                                @if($topUp->bukti_transfer)
-                                                    <a href="{{ asset('storage/' . $topUp->bukti_transfer) }}" target="_blank" class="btn btn-sm btn-outline-secondary">Lihat</a>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
                                             <td>
                                                 @if($topUp->status == 'pending')
                                                     <span class="badge bg-warning">Menunggu Verifikasi</span>
                                                 @elseif($topUp->status == 'completed')
-                                                    <span class="badge bg-success">Selesai</span>
+                                                    <span class="badge bg-success">Berhasil</span>
                                                 @else
                                                     <span class="badge bg-danger">Gagal</span>
                                                 @endif

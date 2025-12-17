@@ -251,7 +251,7 @@
                     
                     <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center mb-3">
                         <i class="bi bi-info-circle-fill fs-4 me-3 text-warning"></i>
-                        <div class="small lh-sm text-dark">
+                        <div class="small lh-sm" style="color: black !important;">
                             Penawaran akan dikirim ke petani. Pastikan harga masuk akal.
                         </div>
                     </div>

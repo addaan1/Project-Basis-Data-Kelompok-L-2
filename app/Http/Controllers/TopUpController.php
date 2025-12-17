@@ -59,19 +59,28 @@ class TopUpController extends Controller
                          ->with('success', 'Permintaan top-up berhasil dibuat.');
     }
 
-    public function show(TopUp $topUp)
+    public function show($id)
     {
+        // Explicitly fetch by ID to debug
+        $topUp = TopUp::find($id);
         
-        // DEBUG V2
-        $tId = $topUp->user_id;
-        $aId = auth()->user()->id_user;
-        \Illuminate\Support\Facades\Log::info("TopUp 9 Debug: TopUpOwner [{$tId}] (".gettype($tId).") vs AuthUser [{$aId}] (".gettype($aId).")");
+        // Comprehensive debug logging
+        \Log::info('=== TopUp Show Debug ===');
+        \Log::info('Requested ID: ' . $id);
+        \Log::info('TopUp Found: ' . ($topUp ? 'Yes' : 'No'));
         
-        // Ensure users can only view their own top-ups
-        // if ((int)$topUp->user_id !== (int)auth()->user()->id_user) {
-        //     abort(403);
-        // }
-
+        if ($topUp) {
+            \Log::info('TopUp Data: ' . json_encode($topUp->toArray()));
+            \Log::info('TopUp ID: ' . $topUp->id);
+            \Log::info('TopUp Amount: ' . $topUp->amount);
+            \Log::info('TopUp Reference: ' . $topUp->reference_code);
+            \Log::info('TopUp Status: ' . $topUp->status);
+            \Log::info('TopUp User ID: ' . $topUp->user_id);
+        } else {
+            \Log::error('TopUp record not found for ID: ' . $id);
+            abort(404, 'Top-up record not found');
+        }
+        
         return view('topup.show', compact('topUp'));
     }
 
