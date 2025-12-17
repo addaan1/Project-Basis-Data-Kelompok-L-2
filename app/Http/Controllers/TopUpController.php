@@ -6,14 +6,20 @@ use App\Models\TopUp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TopUpController extends Controller
 {
     public function index()
     {
-        $topUps = TopUp::where('user_id', auth()->user()->id_user)
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        if (auth()->user()->peran === 'admin') {
+            $topUps = TopUp::orderBy('created_at', 'desc')->get();
+        } else {
+            $topUps = TopUp::where('user_id', auth()->user()->id_user)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+        }
         
         return view('topup.index', compact('topUps'));
     }
@@ -28,7 +34,13 @@ class TopUpController extends Controller
         $request->validate([
             'amount' => 'required|numeric|min:10000',
             'payment_method' => 'required|in:bank,mini_market',
+            'bukti_transfer' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        $buktiPath = null;
+        if ($request->hasFile('bukti_transfer')) {
+            $buktiPath = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
+        }
 
         // Generate random reference code
         $referenceCode = strtoupper(Str::random(8));
@@ -40,6 +52,7 @@ class TopUpController extends Controller
             'reference_code' => $referenceCode,
             'status' => 'pending',
             'payment_method' => $request->payment_method,
+            'bukti_transfer' => $buktiPath,
         ]);
 
         return redirect()->route('topup.show', $topUp->id)
@@ -64,9 +77,9 @@ class TopUpController extends Controller
 
     public function confirm(TopUp $topUp)
     {
-        // Ensure users can only confirm their own top-ups
-        if ((int)$topUp->user_id !== (int)auth()->user()->id_user) {
-            abort(403);
+        // Only Admin can confirm
+        if (auth()->user()->peran !== 'admin') {
+            abort(403, 'Hanya Admin yang dapat memverifikasi Top Up.');
         }
 
         // Only pending top-ups can be confirmed
@@ -74,16 +87,25 @@ class TopUpController extends Controller
             return back()->with('error', 'Top-up ini tidak dapat dikonfirmasi.');
         }
 
-        // Update top-up status
-        $topUp->status = 'completed';
-        $topUp->save();
+        DB::beginTransaction();
+        try {
+            // Update top-up status
+            $topUp->status = 'completed';
+            $topUp->save();
 
-        // Add amount to user's balance
-        $user = User::find($topUp->user_id);
-        $user->saldo += $topUp->amount;
-        $user->save();
+            // Add amount to user's balance
+            $user = User::find($topUp->user_id);
+            $user->saldo += $topUp->amount;
+            $user->save();
 
-        return redirect()->route('topup.index')
-                         ->with('success', 'Top-up berhasil dikonfirmasi dan saldo telah ditambahkan.');
+            DB::commit();
+
+            return redirect()->route('topup.index')
+                             ->with('success', 'Top-up berhasil dikonfirmasi dan saldo telah ditambahkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('TopUp Confirm Error: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memverifikasi Top Up: ' . $e->getMessage());
+        }
     }
 }

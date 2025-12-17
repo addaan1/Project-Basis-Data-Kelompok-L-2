@@ -111,13 +111,15 @@ class TransaksiController extends Controller
                 $buyer->save();
             }
 
-            // Kembalikan Stok (Refund Stock)
+            // Kembalikan Stok (Refund Stock) - Handled by Observer updated event
+            /*
             if ($transaksi->id_produk) {
                $product = \App\Models\ProdukBeras::find($transaksi->id_produk);
                if ($product) {
                    $product->increment('stok', (int) $transaksi->jumlah);
                }
             }
+            */
 
             \App\Models\Expenditure::where('user_id', $transaksi->id_pembeli)
                 ->where('status', 'pending')

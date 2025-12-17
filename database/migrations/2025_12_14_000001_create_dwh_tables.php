@@ -14,6 +14,7 @@ return new class extends Migration
         // 1. Dimension Tables
         
         // Dim Waktu (Time Dimension)
+        if (!Schema::hasTable('dim_waktu')) {
         Schema::create('dim_waktu', function (Blueprint $table) {
             $table->id('id_waktu');
             $table->date('tanggal')->unique();
@@ -26,8 +27,10 @@ return new class extends Migration
             $table->boolean('is_akhir_pekan')->default(false);
             $table->timestamps();
         });
+        }
 
         // Dim User (Petani, Pengepul, dsb) - Type 2 SCD support fields included (versioning)
+        if (!Schema::hasTable('dim_users')) {
         Schema::create('dim_users', function (Blueprint $table) {
             $table->id('sk_user'); // Surrogate Key
             $table->unsignedBigInteger('id_user_asli'); // Original ID from users table
@@ -39,8 +42,10 @@ return new class extends Migration
             // Indexing for faster lookup during ETL
             $table->index('id_user_asli');
         });
+        }
 
         // Dim Produk
+        if (!Schema::hasTable('dim_produk')) {
         Schema::create('dim_produk', function (Blueprint $table) {
             $table->id('sk_produk'); // Surrogate Key
             $table->unsignedBigInteger('id_produk_asli');
@@ -51,10 +56,12 @@ return new class extends Migration
             
             $table->index('id_produk_asli');
         });
+        }
 
         // 2. Fact Tables
 
         // Fact Transaksi (Sales & Purchase) -> Focus: GMV, Revenue, Spending
+        if (!Schema::hasTable('fact_transaksi')) {
         Schema::create('fact_transaksi', function (Blueprint $table) {
             $table->id('id_fact_sales');
             
@@ -81,8 +88,10 @@ return new class extends Migration
             $table->index('sk_penjual');
             $table->index('sk_pembeli');
         });
+        }
 
         // Fact Stok Snapshot -> Focus: Daily Inventory Levels
+        if (!Schema::hasTable('fact_stok_snapshot')) {
         Schema::create('fact_stok_snapshot', function (Blueprint $table) {
             $table->id('id_fact_stok');
             
@@ -97,8 +106,10 @@ return new class extends Migration
             
             $table->timestamps();
         });
+        }
 
         // Fact Negosiasi -> Focus: Conversion Rate, Funnel
+        if (!Schema::hasTable('fact_negosiasi')) {
         Schema::create('fact_negosiasi', function (Blueprint $table) {
             $table->id('id_fact_nego');
             
@@ -118,6 +129,7 @@ return new class extends Migration
             
             $table->timestamps();
         });
+        }
     }
 
     /**

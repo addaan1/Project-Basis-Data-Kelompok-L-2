@@ -126,11 +126,17 @@ class NegosiasiController extends Controller
         
         DB::beginTransaction();
         try {
+            // LOCK PRODUCT for Concurrency Safety
+            $productLocked = ProdukBeras::where('id_produk', $negosiasi->id_produk)->lockForUpdate()->first();
+             if (!$productLocked || $productLocked->stok < $negosiasi->jumlah_kg) {
+                throw new \Exception("Stok tidak mencukupi saat memproses persetujuan ini.");
+            }
+
             // Update status negosiasi
             $negosiasi->update(['status' => 'diterima']);
             
-            // Kurangi stok produk
-            $produk->decrement('stok', $negosiasi->jumlah_kg);
+            // Kurangi stok produk - Handled by Observer via Transaksi::create below
+            // $produk->decrement('stok', $negosiasi->jumlah_kg);
 
             // Proses Keuangan
             // 1. Kurangi saldo pembeli
@@ -162,7 +168,7 @@ class NegosiasiController extends Controller
                 'status_transaksi' => 'disetujui', 
                 'type' => 'purchase',
                 'description' => 'Pembelian produk melalui negosiasi (Diterima)',
-                'user_id' => $buyer->id_user,
+                // 'user_id' => $buyer->id_user, // Cleanup redundant column
             ]);
             
             DB::commit();

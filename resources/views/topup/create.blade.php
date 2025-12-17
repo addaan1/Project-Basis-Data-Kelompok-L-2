@@ -8,7 +8,7 @@
                 <div class="card-header">Top-up Saldo</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('topup.store') }}">
+                    <form method="POST" action="{{ route('topup.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group mb-3">
@@ -28,6 +28,16 @@
                                 <option value="mini_market">Mini Market</option>
                             </select>
                             @error('payment_method')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="bukti_transfer">Bukti Transfer</label>
+                            <input id="bukti_transfer" type="file" class="form-control @error('bukti_transfer') is-invalid @enderror" name="bukti_transfer" required>
+                             @error('bukti_transfer')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

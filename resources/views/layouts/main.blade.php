@@ -774,6 +774,8 @@
                 @if(Auth::user()->peran !== 'admin')
                     <li><a href="{{ route('ewallet') }}" class="{{ request()->routeIs('ewallet') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Pengaturan E-Wallet</a></li>
                     <li><a href="{{ route('topup.index') }}" class="{{ request()->routeIs('topup.*') ? 'active' : '' }}"><i class="fas fa-wallet"></i> Top-up Saldo</a></li>
+                @else
+                    <li><a href="{{ route('topup.index') }}" class="{{ request()->routeIs('topup.*') ? 'active' : '' }}"><i class="fas fa-check-double"></i> Verifikasi Top Up</a></li>
                 @endif
             </ul>
 

@@ -169,6 +169,27 @@ class PasarController extends Controller
             Storage::disk('public')->delete($produk->foto);
         }
 
+        // Kembalikan Stok ke Gudang (Inventory)
+        if ($produk->stok_kg > 0) {
+            $inventory = \App\Models\Inventory::where('id_user', Auth::id())
+                ->where('jenis_beras', $produk->varietas) // Mapping varietas -> jenis_beras
+                ->where('kualitas', $produk->kualitas)
+                ->first();
+
+            if ($inventory) {
+                $inventory->increment('jumlah', $produk->stok_kg);
+            } else {
+                \App\Models\Inventory::create([
+                    'id_user' => Auth::id(),
+                    'jenis_beras' => $produk->varietas,
+                    'kualitas' => $produk->kualitas,
+                    'jumlah' => $produk->stok_kg,
+                    'tanggal_masuk' => now(),
+                    'keterangan' => 'Pengembalian dari Etalase: ' . $produk->nama_produk,
+                ]);
+            }
+        }
+
         $produk->delete();
 
         return redirect()->route('pasar.index')
