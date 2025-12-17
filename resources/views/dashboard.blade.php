@@ -424,8 +424,8 @@
                 grid: { borderColor: '#F1F5F9', strokeDashArray: 4, padding: { left: 10, right: 0 } },
                 legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '11px' },
                 tooltip: { 
-                   theme: 'light',
-                   y: { formatter: val => val + " Kg" }
+                    theme: 'light',
+                    y: { formatter: val => val + " Kg" }
                 }
             };
             volumeChart = new ApexCharts(document.querySelector("#volumeChart"), volumeOptions);

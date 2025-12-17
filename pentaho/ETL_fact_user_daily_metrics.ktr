@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>ETL_Fact_User_Daily_Metrics</name>
+    <description>Aggregates daily user metrics (income, expense, volume) from transactions</description>
+    <extended_description/>
+    <trans_version/>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+    </parameters>
+    <log>
+      <trans-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <size_limit_lines/>
+        <interval/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STATUS</id>
+          <enabled>Y</enabled>
+          <name>STATUS</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+          <subject/>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>STARTDATE</id>
+          <enabled>Y</enabled>
+          <name>STARTDATE</name>
+        </field>
+        <field>
+          <id>ENDDATE</id>
+          <enabled>Y</enabled>
+          <name>ENDDATE</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>DEPDATE</id>
+          <enabled>Y</enabled>
+          <name>DEPDATE</name>
+        </field>
+        <field>
+          <id>REPLAYDATE</id>
+          <enabled>Y</enabled>
+          <name>REPLAYDATE</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>Y</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+      </trans-log-table>
+    </log>
+    <maxdate>
+      <connection/>
+      <table/>
+      <field/>
+      <offset>0.0</offset>
+      <maxdiff>0.0</maxdiff>
+    </maxdate>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <shared_objects_file/>
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies>
+    </dependencies>
+    <partitionschemas>
+    </partitionschemas>
+    <slaveservers>
+    </slaveservers>
+    <clusterschemas>
+    </clusterschemas>
+    <created_user>-</created_user>
+    <created_date>2025/12/15 10:00:00.000</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2025/12/15 10:00:00.000</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <is_key_private>N</is_key_private>
+  </info>
+  <notepads>
+  </notepads>
+  <connection>
+    <name>Koneksi_Gudang_Beras</name>
+    <server>localhost</server>
+    <type>MYSQL</type>
+    <access>Native</access>
+    <database>db_warungpadi</database>
+    <port>3308</port>
+    <username>root</username>
+    <password>Encrypted </password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>3308</attribute>
+      </attribute>
+      <attribute>
+        <code>PRESERVE_RESERVED_WORD_CASE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>STREAM_RESULTS</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <order>
+    <hop>
+      <from>Input Metrics Aggregation</from>
+      <to>Output Fact Table</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <step>
+    <name>Input Metrics Aggregation</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Koneksi_Gudang_Beras</connection>
+    <sql>
+SELECT
+    DATE(dates.updated_at) as `date`,
+    u.id_user as user_id,
+    u.peran as `role`,
+    COALESCE(sales.income, 0) as total_income,
+    COALESCE(purchases.expense, 0) as total_expense,
+    COALESCE(sales.kg_sold, 0) as total_kg_sold,
+    COALESCE(purchases.kg_bought, 0) as total_kg_bought,
+    (COALESCE(sales.tx_count, 0) + COALESCE(purchases.tx_count, 0)) as transaction_count,
+    NOW() as created_at,
+    NOW() as updated_at
+FROM users u
+CROSS JOIN (
+    SELECT DISTINCT DATE(updated_at) as updated_at 
+    FROM transaksis 
+    WHERE status_transaksi IN ('disetujui', 'completed', 'confirmed')
+) dates
+LEFT JOIN (
+    SELECT 
+        id_penjual, 
+        DATE(updated_at) as date, 
+        SUM(jumlah * COALESCE(harga_akhir, harga_awalan, 0)) as income, 
+        SUM(jumlah) as kg_sold, 
+        COUNT(*) as tx_count
+    FROM transaksis
+    WHERE status_transaksi IN ('disetujui', 'completed', 'confirmed')
+    GROUP BY id_penjual, DATE(updated_at)
+) sales ON u.id_user = sales.id_penjual AND DATE(dates.updated_at) = sales.date
+LEFT JOIN (
+    SELECT 
+        id_pembeli, 
+        DATE(updated_at) as date, 
+        SUM(jumlah * COALESCE(harga_akhir, harga_awalan, 0)) as expense, 
+        SUM(jumlah) as kg_bought, 
+        COUNT(*) as tx_count
+    FROM transaksis
+    WHERE status_transaksi IN ('disetujui', 'completed', 'confirmed')
+    GROUP BY id_pembeli, DATE(updated_at)
+) purchases ON u.id_user = purchases.id_pembeli AND DATE(dates.updated_at) = purchases.date
+WHERE sales.income IS NOT NULL OR purchases.expense IS NOT NULL
+    </sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cached_row_meta_active>N</cached_row_meta_active>
+    <row-meta/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>200</xloc>
+      <yloc>100</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Output Fact Table</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Koneksi_Gudang_Beras</connection>
+    <schema/>
+    <table>fact_user_daily_metrics</table>
+    <commit>1000</commit>
+    <truncate>Y</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>date</column_name>
+          <stream_name>date</stream_name>
+        </field>
+        <field>
+          <column_name>user_id</column_name>
+          <stream_name>user_id</stream_name>
+        </field>
+        <field>
+          <column_name>role</column_name>
+          <stream_name>role</stream_name>
+        </field>
+        <field>
+          <column_name>total_income</column_name>
+          <stream_name>total_income</stream_name>
+        </field>
+        <field>
+          <column_name>total_expense</column_name>
+          <stream_name>total_expense</stream_name>
+        </field>
+        <field>
+          <column_name>total_kg_sold</column_name>
+          <stream_name>total_kg_sold</stream_name>
+        </field>
+        <field>
+          <column_name>total_kg_bought</column_name>
+          <stream_name>total_kg_bought</stream_name>
+        </field>
+        <field>
+          <column_name>transaction_count</column_name>
+          <stream_name>transaction_count</stream_name>
+        </field>
+        <field>
+          <column_name>created_at</column_name>
+          <stream_name>created_at</stream_name>
+        </field>
+        <field>
+          <column_name>updated_at</column_name>
+          <stream_name>updated_at</stream_name>
+        </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>500</xloc>
+      <yloc>100</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <slave_transformation>N</slave_transformation>
+  <attributes/>
+</transformation>

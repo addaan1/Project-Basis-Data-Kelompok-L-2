@@ -441,6 +441,7 @@ class DashboardService
                        return $d->gte($weekStart) && $d->lte($weekEnd);
                    });
 
+
                    $income[] = $weekMetrics->sum('total_income');
                    $expense[] = $weekMetrics->sum('total_expense');
                    $sold[] = $weekMetrics->sum('total_kg_sold');
