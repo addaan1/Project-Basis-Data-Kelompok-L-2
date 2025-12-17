@@ -66,11 +66,11 @@
     </div>
 
     <!-- Inventory List -->
-    <div class="card border-0 shadow rounded-4 overflow-hidden">
+    <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-uppercase small fw-bold text-secondary font-poppins">
+                <table class="table table-hover align-middle mb-0 text-dark">
+                    <thead class="bg-light text-uppercase small fw-bold text-dark font-poppins">
                         <tr>
                             <th class="ps-4 py-3 border-0">Jenis Beras</th>
                             <th class="py-3 border-0">Kualitas</th>
@@ -144,5 +144,15 @@
     .glass-card { backdrop-filter: blur(10px); }
     .shadow-hover { transition: all 0.2s; }
     .shadow-hover:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+    
+    /* Force Table Text Color Override */
+    .table-responsive table th,
+    .table-responsive table td,
+    .table-responsive table span:not(.badge) {
+        color: #212529 !important;
+    }
+    .table-responsive table .text-muted {
+        color: #6c757d !important;
+    }
 </style>
 @endsection

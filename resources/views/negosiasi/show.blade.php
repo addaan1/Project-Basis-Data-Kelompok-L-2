@@ -14,6 +14,24 @@
         </a>
     </div>
 
+    <!-- Alert Messages (Added for feedback) -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <!-- End Alert Messages -->
+
     <div class="row g-4">
         <!-- Product Details -->
         <div class="col-lg-4">
@@ -117,7 +135,7 @@
                             default => 'warning text-dark'
                         };
                         $statusText = match($negosiasi->status) {
-                            'dalam_proses' => 'Menunggu Respon',
+                            'dalam_proses', 'menunggu' => 'Menunggu Respon',
                             default => ucfirst($negosiasi->status)
                         };
                     @endphp
@@ -186,7 +204,11 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    @if($negosiasi->status === 'dalam_proses')
+                    @php
+                        $normalizedStatus = trim(strtolower($negosiasi->status));
+                    @endphp
+                    
+                    @if(in_array($normalizedStatus, ['dalam_proses', 'menunggu']))
                         <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-5 pt-4 border-top border-success border-opacity-25">
                             @if(Auth::user()->peran === 'petani')
                                 <form action="{{ route('negosiasi.reject', $negosiasi) }}" method="POST">
@@ -212,14 +234,14 @@
                             @endif
                         </div>
                     @else
-                        <div class="alert {{ $negosiasi->status == 'diterima' ? 'alert-success' : 'alert-danger' }} d-flex align-items-center mb-0 rounded-4 shadow-sm border-0 p-4" role="alert">
-                            <i class="bi {{ $negosiasi->status == 'diterima' ? 'bi-check-circle-fill' : 'bi-x-circle-fill' }} fs-2 me-3"></i>
+                        <div class="alert {{ $normalizedStatus == 'diterima' ? 'alert-success' : 'alert-danger' }} d-flex align-items-center mb-0 rounded-4 shadow-sm border-0 p-4" role="alert">
+                            <i class="bi {{ $normalizedStatus == 'diterima' ? 'bi-check-circle-fill' : 'bi-x-circle-fill' }} fs-2 me-3"></i>
                             <div>
-                                <h5 class="alert-heading fw-bold mb-2">Negosiasi {{ ucfirst($negosiasi->status) }}</h5>
+                                <h5 class="alert-heading fw-bold mb-2">Negosiasi {{ ucfirst($normalizedStatus) }}</h5>
                                 <p class="mb-0">
                                     Tawaran ini telah diproses pada {{ $negosiasi->updated_at->format('d M Y, H:i') }}.
-                                    @if($negosiasi->status == 'diterima') 
-                                        <strong>Transaksi telah dibuat otomatis dan menunggu pembayaran.</strong>
+                                    @if($normalizedStatus == 'diterima') 
+                                        <strong>Transaksi berhasil dibuat, Pembayaran Lunas (Auto-Deduct), dan Saldo diteruskan ke Petani.</strong>
                                     @endif
                                 </p>
                             </div>

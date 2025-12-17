@@ -679,9 +679,9 @@
                        <!-- User Greeting di Kanan (Hello, Nama User) -->
             <div class="user-greeting">
                 <div class="user-avatar">
-                    {{ substr(Auth::user()->name ?? 'User  ', 0, 1) }} <!-- Inisial nama -->
+                    {{ substr(Auth::user()->nama ?? Auth::user()->name ?? 'User', 0, 1) }} <!-- Inisial nama -->
                 </div>
-                <span>Hello, {{ Auth::user()->name ?? 'User  ' }}</span>
+                <span>Hello, {{ Auth::user()->nama ?? Auth::user()->name ?? 'User' }}</span>
                 <!-- Dropdown User dengan background putih dan efek blur -->
                 <div class="dropdown position-relative">
                     <button class="btn btn-transparent p-0 ms-2 dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -689,11 +689,11 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end p-0" style="background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);">
                         <div class="dropdown-header p-3 border-bottom">
-                            <h6 class="mb-0 text-dark">{{ Auth::user()->name ?? 'User ' }}</h6>
-                            <small class="text-muted">{{ Auth::user()->email ?? '' }}</small>
+                            <h6 class="mb-0 fw-bold" style="color: #212529 !important;">{{ Auth::user()->nama ?? Auth::user()->name ?? 'User' }}</h6>
+                            <small style="color: #6c757d !important;">{{ Auth::user()->email ?? '' }}</small>
                             <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="document.getElementById('userDropdown').click()"></button>
                         </div>
-                        <li><a class="dropdown-item d-flex align-items-center py-2 px-3" href="{{ route('settings.index') }}"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center py-2 px-3" href="{{ route('settings.index') }}" style="color: #212529 !important;"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
                         <li><hr class="dropdown-divider my-1"></li>
                         <li>
                             <form action="{{ url('/logout') }}" method="POST">

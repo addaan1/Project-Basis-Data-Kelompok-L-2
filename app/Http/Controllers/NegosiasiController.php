@@ -103,7 +103,8 @@ class NegosiasiController extends Controller
         }
         
         // Cek status negosiasi
-        if ($negosiasi->status !== 'dalam_proses') {
+        $currentStatus = trim(strtolower($negosiasi->status));
+        if (!in_array($currentStatus, ['dalam_proses', 'menunggu'])) {
             return redirect()->route('negosiasi.show', $negosiasi)
                 ->with('error', 'Negosiasi ini sudah tidak dalam proses');
         }
@@ -191,7 +192,8 @@ class NegosiasiController extends Controller
         }
         
         // Cek status negosiasi
-        if ($negosiasi->status !== 'dalam_proses') {
+        $currentStatus = trim(strtolower($negosiasi->status));
+        if (!in_array($currentStatus, ['dalam_proses', 'menunggu'])) {
             return redirect()->route('negosiasi.show', $negosiasi)
                 ->with('error', 'Negosiasi ini sudah tidak dalam proses');
         }

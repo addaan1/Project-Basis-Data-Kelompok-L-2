@@ -50,7 +50,6 @@ class InventoryController extends Controller
 
         if ($existing) {
             $existing->increment('jumlah', $request->jumlah);
-            // Update timestamp maybe?
         } else {
             Inventory::create([
                 'id_user' => Auth::id(),
@@ -61,6 +60,18 @@ class InventoryController extends Controller
                 'keterangan' => $request->keterangan,
             ]);
         }
+
+        // --- SYNCHRONIZATION WITH MARKET (PRODUK_BERAS) ---
+        // Find matching product to update its stock automatically
+        $product = \App\Models\ProdukBeras::where('id_petani', Auth::id())
+            ->where('jenis_beras', $request->jenis_beras)
+            ->where('kualitas', $request->kualitas)
+            ->first();
+
+        if ($product) {
+            $product->increment('stok', $request->jumlah);
+        }
+        // --------------------------------------------------
 
         return redirect()->route('inventory.index')->with('success', 'Stok berhasil ditambahkan ke gudang.');
     }

@@ -28,6 +28,17 @@ class TransaksiObserver
                 }
 
                 $product->decrement('stok', $transaksi->jumlah);
+
+                // --- SYNC INVENTORY DEDUCTION ---
+                $inventory = \App\Models\Inventory::where('id_user', $transaksi->id_penjual)
+                    ->where('jenis_beras', $product->jenis_beras)
+                    ->where('kualitas', $product->kualitas)
+                    ->first();
+                
+                if ($inventory) {
+                    $inventory->decrement('jumlah', $transaksi->jumlah);
+                }
+                // --------------------------------
             }
         }
     }
@@ -47,6 +58,17 @@ class TransaksiObserver
                 $product = ProdukBeras::find($transaksi->id_produk);
                 if ($product) {
                     $product->increment('stok', $transaksi->jumlah);
+
+                    // --- SYNC INVENTORY RESTORATION ---
+                    $inventory = \App\Models\Inventory::where('id_user', $transaksi->id_penjual)
+                        ->where('jenis_beras', $product->jenis_beras)
+                        ->where('kualitas', $product->kualitas)
+                        ->first();
+                    
+                    if ($inventory) {
+                        $inventory->increment('jumlah', $transaksi->jumlah);
+                    }
+                    // ----------------------------------
                 }
             }
         }

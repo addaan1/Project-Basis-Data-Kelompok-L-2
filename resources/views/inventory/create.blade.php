@@ -37,24 +37,75 @@
                         <div class="row g-4 mb-4">
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control bg-light border-0" id="jenis_beras" name="jenis_beras" placeholder="Contoh: Pandan Wangi" value="{{ old('jenis_beras') }}" required>
+                                    <select class="form-select bg-light border-0" id="jenis_beras" name="jenis_beras" required>
+                                        <option value="" disabled selected>Pilih Jenis Beras</option>
+                                        <option value="Setra Ramos (IR64)" {{ old('jenis_beras') == 'Setra Ramos (IR64)' ? 'selected' : '' }}>Setra Ramos (IR64)</option>
+                                        <option value="Pandan Wangi" {{ old('jenis_beras') == 'Pandan Wangi' ? 'selected' : '' }}>Pandan Wangi</option>
+                                        <option value="Rojolele" {{ old('jenis_beras') == 'Rojolele' ? 'selected' : '' }}>Rojolele</option>
+                                        <option value="Menthik Wangi" {{ old('jenis_beras') == 'Menthik Wangi' ? 'selected' : '' }}>Menthik Wangi</option>
+                                        <option value="IR 42 (Pera)" {{ old('jenis_beras') == 'IR 42 (Pera)' ? 'selected' : '' }}>IR 42 (Pera)</option>
+                                        <option value="Beras Merah" {{ old('jenis_beras') == 'Beras Merah' ? 'selected' : '' }}>Beras Merah</option>
+                                        <option value="Beras Hitam" {{ old('jenis_beras') == 'Beras Hitam' ? 'selected' : '' }}>Beras Hitam</option>
+                                        <option value="Ketan Putih" {{ old('jenis_beras') == 'Ketan Putih' ? 'selected' : '' }}>Ketan Putih</option>
+                                    </select>
                                     <label for="jenis_beras" class="text-secondary">Jenis Beras</label>
                                 </div>
-                                <div class="form-text ms-2"><i class="bi bi-info-circle me-1"></i>Nama varietas beras.</div>
+                                <div class="form-text ms-2"><i class="bi bi-info-circle me-1"></i>Pilih varietas beras yang valid.</div>
                             </div>
                             
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <select class="form-select bg-light border-0" id="kualitas" name="kualitas" required>
-                                        <option value="" disabled selected>Pilih Kualitas</option>
-                                        <option value="Premium" {{ old('kualitas') == 'Premium' ? 'selected' : '' }}>Premium (Bagus Sekali)</option>
-                                        <option value="Medium" {{ old('kualitas') == 'Medium' ? 'selected' : '' }}>Medium (Standar)</option>
-                                        <option value="Standard" {{ old('kualitas') == 'Standard' ? 'selected' : '' }}>Standard (Biasa)</option>
+                                    <select class="form-select bg-light border-0" id="kualitas_display" disabled style="cursor: not-allowed; background-color: #e9ecef !important;">
+                                        <option value="" disabled selected>Otomatis sesuai jenis</option>
+                                        <option value="Premium">Premium (Bagus Sekali)</option>
+                                        <option value="Medium">Medium (Standar)</option>
+                                        <option value="Standard">Standard (Biasa)</option>
                                     </select>
-                                    <label for="kualitas" class="text-secondary">Kualitas</label>
+                                    <label for="kualitas_display" class="text-secondary">Kualitas (Otomatis)</label>
+                                    <!-- Hidden input to submit the value -->
+                                    <input type="hidden" id="kualitas" name="kualitas" value="{{ old('kualitas') }}">
                                 </div>
+                                <div class="form-text ms-2"><i class="bi bi-lock-fill me-1"></i>Ditentukan otomatis dari jenis beras.</div>
                             </div>
                         </div>
+
+                        <!-- Javascript for Auto-Quality -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const berasSelect = document.getElementById('jenis_beras');
+                                const kualitasDisplay = document.getElementById('kualitas_display');
+                                const kualitasInput = document.getElementById('kualitas');
+
+                                const qualityMap = {
+                                    'Pandan Wangi': 'Premium',
+                                    'Rojolele': 'Premium',
+                                    'Menthik Wangi': 'Premium',
+                                    'Beras Merah': 'Premium',
+                                    'Beras Hitam': 'Premium',
+                                    'Setra Ramos (IR64)': 'Medium',
+                                    'IR 42 (Pera)': 'Standard',
+                                    'Ketan Putih': 'Standard'
+                                };
+
+                                function updateQuality() {
+                                    const selectedRice = berasSelect.value;
+                                    const quality = qualityMap[selectedRice] || '';
+                                    
+                                    if (quality) {
+                                        kualitasDisplay.value = quality;
+                                        kualitasInput.value = quality;
+                                    } else {
+                                        kualitasDisplay.value = '';
+                                        kualitasInput.value = '';
+                                    }
+                                }
+
+                                berasSelect.addEventListener('change', updateQuality);
+                                
+                                // Run on load if old value exists
+                                if(berasSelect.value) updateQuality();
+                            });
+                        </script>
 
                         <!-- Quantity Section -->
                         <h6 class="text-uppercase text-muted fw-bold small mb-4 letter-spacing-1 border-top pt-4">Jumlah & Waktu</h6>
