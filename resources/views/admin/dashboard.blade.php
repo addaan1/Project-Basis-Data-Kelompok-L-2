@@ -192,7 +192,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-header bg-white border-0 p-4 pb-0">
-                    <h5 class="fw-bold mb-0">Status Transaksi</h5>
+                    <h5 class="fw-bold mb-0">Status Negosiasi (Data Warehouse)</h5>
                 </div>
                 <div class="card-body p-4 d-flex align-items-center justify-content-center">
                     <div id="statusChart" class="w-100"></div>

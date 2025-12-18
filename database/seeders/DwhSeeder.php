@@ -73,63 +73,101 @@ class DwhSeeder extends Seeder
                 ]);
             }
 
-            $petani = DB::connection('mysql_dashboard')->table('dim_users')->where('peran', 'petani')->first();
-            $pengepul = DB::connection('mysql_dashboard')->table('dim_users')->where('peran', 'pengepul')->first();
-            $produk = DB::connection('mysql_dashboard')->table('dim_produk')->first();
+            $petaniIds = DB::connection('mysql_dashboard')->table('dim_users')->where('peran', 'petani')->pluck('sk_user')->toArray();
+            $pengepulIds = DB::connection('mysql_dashboard')->table('dim_users')->where('peran', 'pengepul')->pluck('sk_user')->toArray();
+            $produkIds = DB::connection('mysql_dashboard')->table('dim_produk')->pluck('sk_produk')->toArray();
 
-            if ($petani && $produk) {
-                // 4. Fact Transaksi
-                for ($i = 0; $i < 50; $i++) {
-                    $date = Carbon::now()->subDays(rand(1, 180));
+            if (!empty($petaniIds) && !empty($produkIds)) {
+                
+                // 4A. GLOBAL RANDOM TRANSACTIONS (Background Noise)
+                for ($i = 0; $i < 300; $i++) {
+                    $date = Carbon::now()->subDays(rand(1, 360));
                     $sk_waktu = (int) $date->format('Ymd');
+                    
                     DB::connection('mysql_dashboard')->table('fact_transaksi')->insert([
-                        'sk_penjual' => $petani->sk_user,
-                        'sk_pembeli' => $pengepul ? $pengepul->sk_user : 0,
-                        'sk_produk' => $produk ? $produk->sk_produk : 0,
+                        'sk_penjual' => $petaniIds[array_rand($petaniIds)],
+                        'sk_pembeli' => !empty($pengepulIds) ? $pengepulIds[array_rand($pengepulIds)] : 0,
+                        'sk_produk' => $produkIds[array_rand($produkIds)],
                         'sk_waktu' => $sk_waktu,
-                        'no_transaksi_asli' => 'TRX-' . rand(10000, 99999),
+                        'no_transaksi_asli' => 'TRX-RND-' . rand(10000, 99999),
                         'jumlah_kg' => rand(100, 1000),
                         'nilai_transaksi' => rand(1000000, 10000000),
                         'harga_per_kg' => rand(9000, 15000),
                         'jenis_transaksi' => 'jual',
                         'status_transaksi' => 'completed',
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'created_at' => $date,
+                        'updated_at' => $date,
                     ]);
                 }
 
-                // 5. Fact Stok
-                for ($i = 0; $i < 7; $i++) {
-                    $date = Carbon::now()->subDays($i);
+                // 4B. TARGETED TRANSACTIONS FOR MAIN "PETANI" (Guarantee 500 Records)
+                // We pick the first Petani (usually seed user) to flood with data
+                $mainPetaniSk = $petaniIds[0]; 
+                
+                for ($i = 0; $i < 500; $i++) {
+                    $date = Carbon::now()->subDays(rand(1, 360));
                     $sk_waktu = (int) $date->format('Ymd');
-                    DB::connection('mysql_dashboard')->table('fact_stok_snapshot')->insert([
-                        'sk_produk' => $produk ? $produk->sk_produk : 0,
-                        'sk_pemilik' => $petani->sk_user,
+                    
+                    DB::connection('mysql_dashboard')->table('fact_transaksi')->insert([
+                        'sk_penjual' => $mainPetaniSk, // THIS IS THE TARGET
+                        'sk_pembeli' => !empty($pengepulIds) ? $pengepulIds[array_rand($pengepulIds)] : 0,
+                        'sk_produk' => $produkIds[array_rand($produkIds)],
                         'sk_waktu' => $sk_waktu,
-                        'stok_akhir_hari' => rand(500, 2000),
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'no_transaksi_asli' => 'TRX-PET-' . rand(10000, 99999),
+                        'jumlah_kg' => rand(500, 2000), // Larger volumes for visibility
+                        'nilai_transaksi' => rand(5000000, 20000000), 
+                        'harga_per_kg' => rand(10000, 16000),
+                        'jenis_transaksi' => 'jual',
+                        'status_transaksi' => 'completed',
+                        'created_at' => $date,
+                        'updated_at' => $date,
                     ]);
                 }
+
+                // 5. Fact Stok (Last 30 Days) - Ensure all users have stock history
+                $allUsers = array_merge($petaniIds, $pengepulIds);
+                foreach ($allUsers as $userId) {
+                    for ($i = 0; $i < 30; $i++) {
+                        $date = Carbon::now()->subDays($i);
+                        $sk_waktu = (int) $date->format('Ymd');
+                        
+                        DB::connection('mysql_dashboard')->table('fact_stok_snapshot')->insert([
+                            'sk_produk' => $produkIds[array_rand($produkIds)],
+                            'sk_pemilik' => $userId, 
+                            'sk_waktu' => $sk_waktu,
+                            'stok_akhir_hari' => rand(500, 5000),
+                            'stok_masuk_hari_ini' => rand(0, 500),
+                            'stok_keluar_hari_ini' => rand(0, 500),
+                            'created_at' => $date,
+                            'updated_at' => $date,
+                        ]);
+                    }
+                }
                 
-                // 6. Fact Negosiasi
-                $statuses = ['Menunggu', 'Disetujui', 'Ditolak'];
-                for ($i = 0; $i < 20; $i++) {
-                    $date = Carbon::now()->subDays(rand(1, 30));
+                // 6. Fact Negosiasi (300 Data)
+                $statuses = ['Menunggu', 'Disetujui', 'Ditolak', 'Ditolak', 'Disetujui'];
+                for ($i = 0; $i < 300; $i++) {
+                    $date = Carbon::now()->subDays(rand(1, 180));
                     $sk_waktu = (int) $date->format('Ymd');
+                    $basePrice = rand(10000, 14000);
+                    $offerPrice = $basePrice - rand(500, 2000);
+                    $dealPrice = $offerPrice + rand(0, 1000);
+                    
+                    $sellerId = $petaniIds[array_rand($petaniIds)];
+                    $buyerId = !empty($pengepulIds) ? $pengepulIds[array_rand($pengepulIds)] : 0;
+
                     DB::connection('mysql_dashboard')->table('fact_negosiasi')->insert([
-                        'sk_pengaju' => $pengepul ? $pengepul->sk_user : 0,
-                        'sk_penerima' => $petani->sk_user,
-                        'sk_produk' => $produk ? $produk->sk_produk : 0,
+                        'sk_pengaju' => $buyerId,
+                        'sk_penerima' => $sellerId,
+                        'sk_produk' => $produkIds[array_rand($produkIds)],
                         'sk_waktu' => $sk_waktu,
-                        // id_nego_asli removed
-                        'harga_tawaran' => rand(9000, 12000),
-                        'harga_deal' => rand(9000, 12000),
+                        'harga_tawaran' => $offerPrice,
+                        'harga_deal' => $dealPrice,
                         'status_akhir' => $statuses[array_rand($statuses)],
-                        'selisih_harga' => rand(-500, 500),
-                        'durasi_negosiasi_jam' => rand(1, 48),
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'selisih_harga' => $dealPrice - $offerPrice,
+                        'durasi_negosiasi_jam' => rand(1, 72),
+                        'created_at' => $date,
+                        'updated_at' => $date,
                     ]);
                 }
             }

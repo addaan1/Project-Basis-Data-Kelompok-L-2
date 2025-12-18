@@ -559,7 +559,7 @@
     <hop>
       <from>Lookup Dim User (Pembeli)</from>
       <to>Lookup Dim Produk</to>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Lookup Dim Produk</from>
@@ -574,7 +574,7 @@
     <hop>
       <from>Lookup Dim Waktu</from>
       <to>Table Output Fact</to>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
     </hop>
   </order>
   <step>
@@ -600,6 +600,21 @@
       <value_precision>-1</value_precision>
       <remove>N</remove>
       <conversion_mask>yyyy-MM-dd</conversion_mask>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <calculation>
+      <field_name>calculated_total_value</field_name>
+      <calc_type>MULTIPLY</calc_type>
+      <field_a>jumlah</field_a>
+      <field_b>harga_akhir</field_b>
+      <field_c/>
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
       <decimal_symbol/>
       <grouping_symbol/>
       <currency_symbol/>
@@ -630,7 +645,7 @@
       <schema_name/>
     </partitioning>
     <connection>Koneksi_Source</connection>
-    <sql>SELECT id_transaksi, id_penjual, id_pembeli, id_produk, jumlah, harga_akhir, tanggal, jenis_transaksi, status_transaksi FROM transaksis WHERE status_transaksi = 'confirmed'</sql>
+    <sql>SELECT id_transaksi, id_penjual, id_pembeli, id_produk, jumlah, harga_akhir, tanggal, jenis_transaksi, status_transaksi FROM transaksis WHERE status_transaksi IN ('confirmed', 'completed', 'disetujui')</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -895,6 +910,10 @@
       </field>
       <field>
         <column_name>nilai_transaksi</column_name>
+        <stream_name>calculated_total_value</stream_name>
+      </field>
+      <field>
+        <column_name>harga_per_kg</column_name>
         <stream_name>harga_akhir</stream_name>
       </field>
       <field>
@@ -908,6 +927,14 @@
       <field>
         <column_name>status_transaksi</column_name>
         <stream_name>status_transaksi</stream_name>
+      </field>
+      <field>
+        <column_name>created_at</column_name>
+        <stream_name>tanggal</stream_name>
+      </field>
+      <field>
+        <column_name>updated_at</column_name>
+        <stream_name>tanggal</stream_name>
       </field>
     </fields>
     <attributes/>

@@ -25,44 +25,45 @@ class TransaksiSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Generating dummy transactions for the last 30 days...');
+        $this->command->info('Generating 500 dummy transactions for the last 365 days...');
 
-        $startDate = Carbon::now()->subDays(30);
+        $startDate = Carbon::now()->subDays(365);
+        $totalTx = 500;
+        $generated = 0;
 
-        for ($i = 0; $i <= 30; $i++) {
-            $currentDate = $startDate->copy()->addDays($i);
-            $dailyTxCount = rand(2, 5); // 2-5 transactions per day
+        while ($generated < $totalTx) {
+            $daysBack = rand(0, 365);
+            $currentDate = Carbon::now()->subDays($daysBack);
+            
+            $buyer = $pengepuls->random();
+            $product = $products->random();
+            $seller = User::find($product->id_petani);
+            
+            if (!$seller) continue;
 
-            for ($j = 0; $j < $dailyTxCount; $j++) {
-                $buyer = $pengepuls->random();
-                $product = $products->random();
-                // Ensure seller is the product owner
-                $seller = User::find($product->id_petani); 
-                
-                if (!$seller) continue;
-
-                $qty = rand(10, 100); // 10-100 kg
-                $price = $product->harga;
-                
-                try {
-                    Transaksi::create([
-                        'id_penjual' => $seller->id_user,
-                        'id_pembeli' => $buyer->id_user,
-                        'id_produk' => $product->id_produk,
-                        'jumlah' => $qty,
-                        'harga_awalan' => $price,
-                        'harga_akhir' => $price, // Deal price
-                        'tanggal' => $currentDate->toDateString(),
-                        'jenis_transaksi' => 'jual',
-                        'status_transaksi' => 'disetujui', // Aggregated data usually from completed tx
-                        'created_at' => $currentDate->setTime(rand(8, 16), rand(0, 59)),
-                        'updated_at' => $currentDate->setTime(rand(16, 20), rand(0, 59)), // Completed later that day
-                        'description' => "Transaksi dummy #{$i}-{$j}",
-                        'user_id' => $buyer->id_user
-                    ]);
-                } catch (\Exception $e) {
-                    $this->command->error("Failed to insert transaction: " . $e->getMessage());
-                }
+            $qty = rand(10, 1000); 
+            $price = $product->harga;
+            $dealPrice = $price - rand(0, 500); // Slight negotiation effect
+            
+            try {
+                Transaksi::create([
+                    'id_penjual' => $seller->id_user,
+                    'id_pembeli' => $buyer->id_user,
+                    'id_produk' => $product->id_produk,
+                    'jumlah' => $qty,
+                    'harga_awalan' => $price,
+                    'harga_akhir' => $dealPrice,
+                    'tanggal' => $currentDate->toDateString(),
+                    'jenis_transaksi' => 'jual',
+                    'status_transaksi' => 'disetujui', 
+                    'created_at' => $currentDate->setTime(rand(8, 16), rand(0, 59)),
+                    'updated_at' => $currentDate->setTime(rand(16, 20), rand(0, 59)),
+                    'description' => "Penjualan {$qty} kg {$product->nama_produk}",
+                    'user_id' => $buyer->id_user
+                ]);
+                $generated++;
+            } catch (\Exception $e) {
+                // Ignore errors
             }
         }
         

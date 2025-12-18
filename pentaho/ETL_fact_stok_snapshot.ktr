@@ -813,6 +813,14 @@
         <column_name>stok_akhir_hari</column_name>
         <stream_name>stok</stream_name>
       </field>
+      <field>
+        <column_name>created_at</column_name>
+        <stream_name>current_date</stream_name>
+      </field>
+      <field>
+        <column_name>updated_at</column_name>
+        <stream_name>current_date</stream_name>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>

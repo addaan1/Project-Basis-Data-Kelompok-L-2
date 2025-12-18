@@ -48,7 +48,7 @@ class DashboardController extends Controller {
             $view = match ($user->peran) {
                 'admin' => 'admin.dashboard',
                 'petani' => 'petani.dashboard',
-                'pengepul' => 'pengepul.dashboard',
+                'pengepul' => 'dashboard', // Assuming Pengepul uses generic
                 default => 'dashboard',
             };
 

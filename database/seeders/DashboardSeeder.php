@@ -97,10 +97,10 @@ class DashboardSeeder extends Seeder
         }
 
         // 3. Create Transactions (Massive Data: 100 transactions)
-        for ($i = 0; $i < 100; $i++) {
-            // Force 20% of transactions to be TODAY (Realtime testing)
-            $isToday = rand(1, 100) <= 20; 
-            $date = $isToday ? Carbon::now() : Carbon::now()->subDays(rand(1, 60));
+        // 3. Create Transactions (Massive Data: 1200 transactions)
+        for ($i = 0; $i < 1200; $i++) {
+            // Spread over last 12 months uniformly
+            $date = Carbon::now()->subDays(rand(0, 365));
             
             $product = $products[array_rand($products)];
             $buyer = ($i % 2 == 0) ? $pengepul1 : $pengepul2;
@@ -127,25 +127,36 @@ class DashboardSeeder extends Seeder
                 'jenis_transaksi' => 'jual',
                 'status_transaksi' => 'confirmed', // Correct Enum
                 'tanggal' => $date,
-                'type' => 'sale',
-                'description' => 'Penjualan ' . $product->nama_produk,
-                'user_id' => $buyer->id_user,
+                // 'type' => 'sale',             // Removed: Column missing
+                // 'description' => 'Penjualan ' . $product->nama_produk, // Removed: Column missing
+                // 'user_id' => $buyer->id_user, // Removed: Column missing
                 'created_at' => $date, // Critical for ETL
                 'updated_at' => $date // Critical for ETL
             ]);
         }
 
-        // 4. Create Negotiations (Pending/Active)
-        Negosiasi::create([
-            'id_produk' => $products[0]->id_produk,
-            'id_pengepul' => $pengepul1->id_user,
-            'id_petani' => $products[0]->id_petani,
-            'harga_awal' => $products[0]->harga,
-            'harga_penawaran' => $products[0]->harga - 500,
-            'jumlah_kg' => 1000,
-            'status' => 'dalam_proses',
-            'pesan' => 'Bisa kurang sedikit pak?'
-        ]);
+        // 4. Create Negotiations (Massive Data: 1000 negotiations)
+        for ($i = 0; $i < 1000; $i++) {
+             $date = Carbon::now()->subDays(rand(0, 365));
+             $statusList = ['dalam_proses', 'disetujui', 'ditolak'];
+             $status = $statusList[array_rand($statusList)];
+             
+             // Randomly choose a product
+             $prod = $products[array_rand($products)];
+             
+             Negosiasi::create([
+                'id_produk' => $prod->id_produk,
+                'id_pengepul' => $pengepul1->id_user, // Always Pengepul1 for demo simplicity
+                'id_petani' => $prod->id_petani,
+                'harga_awal' => $prod->harga,
+                'harga_penawaran' => $prod->harga - rand(100, 2000),
+                'jumlah_kg' => rand(500, 5000),
+                'status' => $status,
+                'pesan' => 'Nego harga pak, ambil banyak.',
+                'created_at' => $date, 
+                'updated_at' => $date
+            ]);
+        }
 
         // 5. Run ETL
         $this->command->info('Running ETL Aggregate...');

@@ -3,173 +3,141 @@
 @section('content')
 <div class="dashboard-wrapper min-vh-100 p-4">
     
-    <!-- POWER PIXEL LAYOUT -->
-    
-    <!-- Top Section: Stats (Left 4) & Finance Chart (Right 8) -->
-    <div class="row g-4 mb-4 animate-slide-down">
-        <!-- LEFT COLUMN: 2x2 Stats Grid -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="row g-3 h-100 align-content-between">
-                <!-- 1. Net Cashflow -->
-                <div class="col-6">
-                    <div class="modern-stat-card bg-green-gradient text-white h-100 position-relative overflow-hidden rounded-4 shadow-sm border-bottom-yellow p-3 d-flex flex-column justify-content-between">
-                         <div class="d-flex justify-content-between align-items-start mb-1">
-                            <i class="bi bi-wallet2 fs-2 opacity-50"></i>
-                            <span class="badge bg-white bg-opacity-20 rounded-pill x-small">Saldo</span>
-                         </div>
-                         <div class="mt-2">
-                            <h5 class="fw-bold mb-0 text-truncate" title="Rp {{ number_format($saldo ?? 0, 0, ',', '.') }}">
-                                {{ number_format(($saldo ?? 0)/1000000, 1, ',', '.') }}M
-                            </h5>
-                            <small class="opacity-75 x-small">Total Saldo</small>
-                        </div>
-                    </div>
+    <!-- 1. TOP WELCOME BANNER (Orange) -->
+    <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="background: linear-gradient(90deg, #FF9800 0%, #F57C00 100%); border-radius: 16px;">
+        <div class="card-body p-4 text-white d-flex align-items-center justify-content-between relative">
+            <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-25 p-3 rounded-circle me-3">
+                    <i class="bi bi-shop-window fs-2 text-white"></i>
                 </div>
-
-                <!-- 2. Transaksi -->
-                <div class="col-6">
-                     <div class="modern-stat-card bg-green-gradient text-white h-100 position-relative overflow-hidden rounded-4 shadow-sm border-bottom-blue p-3 d-flex flex-column justify-content-between">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <i class="bi bi-cart-check fs-2 opacity-50"></i>
-                             <span class="badge bg-white bg-opacity-20 rounded-pill x-small">Trx</span>
-                        </div>
-                        <div class="mt-2">
-                             <h5 class="fw-bold mb-0">{{ $activities->where('type', 'purchase')->count() ?? 0 }}</h5>
-                             <small class="opacity-75 x-small">Pembelian</small>
-                        </div>
+                <div>
+                    <h4 class="fw-bold mb-1">{{ Auth::user()->nama ?? 'Mitra WarungPadi' }} ({{ ucfirst(Auth::user()->peran ?? 'User') }})</h4>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-white text-warning"><i class="bi bi-bar-chart-fill me-1"></i> Dashboard</span>
+                        <span class="badge bg-white bg-opacity-25">{{ ucfirst(Auth::user()->peran ?? 'User') }}</span>
                     </div>
+                     <p class="mb-0 mt-2 opacity-75 small"><i class="bi bi-info-circle me-1"></i> Pantau arus kas, stok masuk, dan negosiasi pasar</p>
                 </div>
+            </div>
+             <div class="text-end d-none d-md-block">
+                <small class="opacity-75">Last Update</small>
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-clock me-1"></i> {{ \Carbon\Carbon::now()->format('H:i') }}
+                    <span class="mx-2">|</span>
+                    {{ \Carbon\Carbon::now()->format('d M') }}
+                </h5>
+            </div>
+            <!-- Decorative circle -->
+            <div style="position: absolute; right: -20px; bottom: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+        </div>
+    </div>
 
-                <!-- 3. Gudang -->
-                <div class="col-6">
-                     <div class="modern-stat-card bg-green-gradient text-white h-100 position-relative overflow-hidden rounded-4 shadow-sm border-bottom-cyan p-3 d-flex flex-column justify-content-between">
-                         <div class="d-flex justify-content-between align-items-start mb-1">
-                            <i class="bi bi-building fs-2 opacity-50"></i>
-                             <span class="badge bg-white bg-opacity-20 rounded-pill x-small">Stok</span>
-                        </div>
-                        <div class="mt-2">
-                             <h5 class="fw-bold mb-0">
-                                {{ number_format($inventoryTon ?? 0, 0, ',', '.') }}<small class="fs-6">t</small>
-                            </h5>
-                             <div class="progress rounded-pill bg-white bg-opacity-25 mt-1" style="height: 4px;">
-                                <div class="progress-bar bg-white rounded-pill" style="width: {{ $capacityPercent ?? 0 }}%"></div>
-                            </div>
-                        </div>
+    <!-- 2. STATS GRID (4 Green Cards) -->
+    <div class="row g-4 mb-4">
+        <!-- Net Cashflow -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 text-white" style="background-color: #4CAF50; border-radius: 12px;">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="small fw-bold text-uppercase opacity-75">Net Cashflow</span>
+                        <i class="bi bi-wallet2 fs-4 opacity-50"></i>
                     </div>
-                </div>
-
-                 <!-- 4. Tawaran -->
-                <div class="col-6">
-                     <div class="modern-stat-card bg-green-gradient text-white h-100 position-relative overflow-hidden rounded-4 shadow-sm border-bottom-orange p-3 d-flex flex-column justify-content-between">
-                         <div class="d-flex justify-content-between align-items-start mb-1">
-                            <i class="bi bi-chat-quote fs-2 opacity-50"></i>
-                             <span class="badge bg-white bg-opacity-20 rounded-pill x-small">Nego</span>
-                        </div>
-                        <div class="mt-2">
-                             <h5 class="fw-bold mb-0">{{ $negotiationsSummary->where('status', 'Menunggu')->count() }}</h5>
-                             <small class="opacity-75 x-small">Pending</small>
-                        </div>
-                    </div>
+                    <h4 class="fw-bold mb-1">Rp {{ number_format($saldo ?? 0, 0, ',', '.') }}</h4>
+                    <small class="opacity-75" style="font-size: 0.75rem;">
+                        Inc: <span class="text-white">{{ number_format(($chartData['income'][11] ?? 0)/1000000, 1) }}M</span> | 
+                        Out: <span class="text-danger bg-white px-1 rounded">{{ number_format(($chartData['expense'][11] ?? 0)/1000000, 1) }}M</span>
+                    </small>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: Finance Chart -->
-        <div class="col-xl-8 col-lg-7">
-            <div class="glass-card p-4 h-100 shadow-sm border-0 d-flex flex-column">
-                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <div>
-                        <h5 class="fw-bold text-dark mb-0">Analisis Keuangan</h5>
-                        <small class="text-secondary">Ringkasan Pemasukan & Pengeluaran</small>
+        <!-- Volume Pembelian -->
+        <div class="col-xl-3 col-md-6">
+             <div class="card border-0 shadow-sm h-100 text-white" style="background-color: #4CAF50; border-radius: 12px;">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between mb-2">
+                         <span class="small fw-bold text-uppercase opacity-75">Volume Pembelian (Harian)</span>
+                         <i class="bi bi-download fs-4 opacity-50"></i>
                     </div>
-                    <div class="d-flex gap-2">
-                         <button class="btn btn-sm btn-light rounded-pill px-3 fw-bold text-success active filter-btn" data-range="30d" onclick="updateChartFilter(this, '30d')">30D</button>
-                         <button class="btn btn-sm btn-light rounded-pill px-3 text-secondary filter-btn" data-range="4w" onclick="updateChartFilter(this, '4w')">4W</button>
-                    </div>
+                    <h4 class="fw-bold mb-1">
+                        {{ number_format($activities->where('type', 'purchase')->where('date', '>=', \Carbon\Carbon::today())->sum('amount')/1000 ?? 0, 0, ',', '.') }} Kg
+                    </h4>
+                     <small class="opacity-75" style="font-size: 0.75rem;"><i class="bi bi-arrow-down-circle me-1"></i> Stok Masuk</small>
                 </div>
-                <div class="flex-grow-1" id="financeChart" style="min-height: 280px;"></div>
+            </div>
+        </div>
+
+        <!-- Kapasitas Gudang -->
+        <div class="col-xl-3 col-md-6">
+             <div class="card border-0 shadow-sm h-100 text-white" style="background-color: #4CAF50; border-radius: 12px;">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between mb-2">
+                         <span class="small fw-bold text-uppercase opacity-75">Kapasitas Gudang</span>
+                         <i class="bi bi-building fs-4 opacity-50"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">
+                         {{ number_format($inventoryTon ?? 0, 0, ',', '.') }} <span class="fs-6 fw-normal text-white-50">/ 10.000 Kg</span>
+                    </h4>
+                    <div class="progress bg-white bg-opacity-25 mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-white" style="width: {{ $capacityPercent ?? 0 }}%"></div>
+                    </div>
+                     <small class="opacity-75 mt-1 d-block" style="font-size: 0.7rem;">Terisi {{ $capacityPercent ?? 0 }}%</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tawaran Saya -->
+        <div class="col-xl-3 col-md-6">
+             <div class="card border-0 shadow-sm h-100 text-white" style="background-color: #4CAF50; border-radius: 12px;">
+                <div class="card-body p-3">
+                     <div class="d-flex justify-content-between mb-2">
+                         <span class="small fw-bold text-uppercase opacity-75">Tawaran Saya</span>
+                         <i class="bi bi-chat-quote fs-4 opacity-50"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ $negotiationsSummary->where('status', 'Menunggu')->count() }} <span class="fs-6 fw-normal">Pending</span></h4>
+                     <small class="opacity-75" style="font-size: 0.75rem;"><i class="bi bi-clock-history me-1"></i> Menunggu Respon Petani</small>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Section: Table (Left 8) & Volume Donut (Right 4) -->
-    <div class="row g-4 animate-slide-up" style="animation-delay: 0.1s;">
-        <!-- Left: Recent Transactions Table -->
+    <!-- 3. CHARTS ROW (Orange Header / Green Body) -->
+    <div class="row g-4">
+        <!-- Tren Arus Kas -->
         <div class="col-xl-8 col-lg-7">
-            <div class="glass-card p-0 h-100 shadow-sm border-0 overflow-hidden">
-                <div class="p-4 border-bottom border-light">
-                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold text-dark mb-0">Transaksi Terakhir</h5>
-                        <a href="{{ route('transaksi.index') }}" class="btn btn-sm btn-outline-success rounded-pill px-3">Lihat Semua</a>
+            <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                <div class="card-header bg-warning text-white py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0">Tren Arus Kas</h6>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-white text-warning py-0 px-2 fw-bold" style="font-size: 0.7rem;">30 Hari</button>
+                        <button class="btn btn-sm btn-outline-light py-0 px-2 opacity-50" style="font-size: 0.7rem;">24 Jam</button>
+                        <button class="btn btn-sm btn-outline-light py-0 px-2 opacity-50" style="font-size: 0.7rem;">4 Minggu</button>
+                        <button class="btn btn-sm btn-dark py-0 px-2" style="font-size: 0.7rem;">12 Bulan</button>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 text-nowrap">
-                        <thead class="bg-light bg-opacity-50">
-                            <tr>
-                                <th class="ps-4 border-0 text-secondary x-small fw-bold text-uppercase">Deskripsi</th>
-                                <th class="border-0 text-secondary x-small fw-bold text-uppercase">Tanggal</th>
-                                <th class="border-0 text-secondary x-small fw-bold text-uppercase text-end">Jumlah</th>
-                                <th class="pe-4 border-0 text-secondary x-small fw-bold text-uppercase text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($activities->take(5) ?? [] as $activity)
-                            <tr>
-                                <td class="ps-4 border-bottom-0">
-                                    <div class="d-flex align-items-center">
-                                         <div class="rounded-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-light" 
-                                            style="width: 40px; height: 40px;">
-                                            @php
-                                                $iconColor = match($activity->type) {
-                                                    'sale' => 'text-success',
-                                                    'purchase' => 'text-primary',
-                                                    'topup' => 'text-info',
-                                                    default => 'text-danger'
-                                                };
-                                                $icon = match($activity->type) {
-                                                    'sale' => 'bi-arrow-up-right',
-                                                    'purchase' => 'bi-arrow-down-left',
-                                                    'topup' => 'bi-wallet2',
-                                                    default => 'bi-circle'
-                                                };
-                                            @endphp
-                                            <i class="bi {{ $icon }} fs-5 {{ $iconColor }}"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0 text-dark fw-bold small">{{ Str::limit($activity->description, 30) }}</h6>
-                                            <small class="text-secondary x-small">{{ $activity->type }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="border-bottom-0 text-secondary small">
-                                    {{ isset($activity->date) ? \Carbon\Carbon::parse($activity->date)->format('d M, H:i') : '-' }}
-                                </td>
-                                <td class="border-bottom-0 text-end fw-bold text-dark small">
-                                    {{ in_array($activity->type, ['sale', 'topup']) ? '+' : '-' }} Rp {{ number_format(abs($activity->amount ?? 0), 0, ',', '.') }}
-                                </td>
-                                <td class="pe-4 border-bottom-0 text-center">
-                                    <span class="badge bg-success text-white rounded-pill px-2">Selesai</span>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr><td colspan="4" class="text-center py-4 text-muted small">Belum ada data.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                <div class="card-body bg-success text-white">
+                     <!-- Legend hack manually placed if needed, or use Chart legend -->
+                     <div class="d-flex justify-content-end mb-2">
+                         <span class="badge bg-transparent border border-white me-2"><i class="bi bi-circle-fill text-white"></i> Pemasukan</span>
+                         <span class="badge bg-transparent border border-danger text-danger bg-white"><i class="bi bi-circle-fill text-danger"></i> Pengeluaran</span>
+                     </div>
+                    <div id="financeChart" style="min-height: 280px;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Right: Volume Chart (Bar) -->
+        <!-- Volume Transaksi -->
         <div class="col-xl-4 col-lg-5">
-            <div class="glass-card p-4 h-100 shadow-sm border-0 d-flex flex-column">
-                <div class="mb-3 text-center">
-                    <h5 class="fw-bold text-dark mb-0">Volume Transaksi (kg)</h5>
-                    <small class="text-secondary">Rasio Jual Beli</small>
+             <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                <div class="card-header bg-warning text-white py-2">
+                    <h6 class="fw-bold mb-0">Volume Transaksi</h6>
                 </div>
-                <div class="flex-grow-1 position-relative">
-                     <div id="volumeChart" style="width: 100%; min-height: 250px;"></div>
+                <div class="card-body bg-success text-white">
+                      <div class="d-flex justify-content-end mb-2">
+                         <small class="me-2"><i class="bi bi-square-fill text-info"></i> Stok Masuk</small>
+                         <small><i class="bi bi-square-fill text-warning"></i> Stok Keluar</small>
+                     </div>
+                    <div id="volumeChart" style="min-height: 250px;"></div>
                 </div>
             </div>
         </div>
@@ -177,287 +145,67 @@
 </div>
 
 <style>
-    /* GLOBAL THEME VARS */
-    :root {
-        --rice-green: #4CAF50;
-        --rice-dark: #2E7D32;
-        --rice-orange: #FF9800;
-        --rice-blue: #2196F3;
-    }
-
-    .dashboard-wrapper {
-        background-image: url('{{ asset('images/Background.png') }}');
-        background-size: cover;
-        background-position: center top;
-        background-attachment: fixed;
-    }
-
-    /* UTILITIES */
-    .x-small { font-size: 0.7rem; letter-spacing: 0.5px; }
-    
-    /* MODERN SOLID CARD TWEAKS */
-    .bg-green-gradient { background: linear-gradient(135deg, #43A047 0%, #2E7D32 100%); }
-    .modern-stat-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .modern-stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(46, 125, 50, 0.25) !important; }
-    
-    /* GLASS & TABLE */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(24px);
-        border: 1px solid rgba(255,255,255,0.8);
-        border-radius: 16px;
-    }
-    .table-hover tbody tr:hover { background-color: rgba(76, 175, 80, 0.05); }
-    
-    /* BORDERS */
-    .border-bottom-yellow { border-bottom: 4px solid #FFD54F; }
-    .border-bottom-blue { border-bottom: 4px solid #42A5F5; }
-    .border-bottom-cyan { border-bottom: 4px solid #26C6DA; }
-    .border-bottom-orange { border-bottom: 4px solid #FFA726; }
-    
-    /* CUSTOM ICON BOX */
-    .icon-box-sm {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-    }
-    
-    @media (max-width: 991px) {
-        .dashboard-wrapper { padding: 1rem !important; }
-    }
-
-    /* NUCLEAR FIX for ApexCharts Tooltip Visibility */
-    html body .apexcharts-tooltip.apexcharts-theme-light, 
-    html body .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title,
-    html body .apexcharts-tooltip.apexcharts-theme-light .apexcharts-text-y-value,
-    html body .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-text-y-label,
-    html body .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-text-value,
-    html body .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-text-label {
-        color: #0F172A !important;
-        background: #FFFFFF !important;
-        border-color: #E2E8F0 !important;
-    }
-    html body .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
-        background: #F1F5F9 !important;
-        border-bottom: 1px solid #E2E8F0 !important;
-        font-weight: 700 !important;
-        color: #1E293B !important;
-    }
-    .apexcharts-tooltip *, .apexcharts-tooltip-text * { color: inherit !important; }
-
-    /* --- MODERN CUTOUT CARD DESIGN --- */
-    .modern-cutout-card {
-        position: relative;
-        border-radius: 24px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100%;
-        transition: transform 0.2s;
-        /* create the scoop at top right */
-        -webkit-mask-image: radial-gradient(circle at top right, transparent 32px, black 33px);
-        mask-image: radial-gradient(circle at top right, transparent 32px, black 33px);
-    }
-    .modern-cutout-card:hover { text-decoration: none; transform: translateY(-3px); }
-
-    /* Variant: Primary (Green) */
-    .card-theme-green {
-        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-        color: #FFFFFF;
-        box-shadow: 0 10px 15px -3px rgba(46, 125, 50, 0.3);
-        border: none;
-    }
-    /* Variant: White/Glass */
-    .card-theme-white {
-        background: #FFFFFF;
-        color: #1E293B;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-
-    /* The Floating Icon Button */
-    .cutout-icon-btn {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 44px; /* Slightly larger than the 32px mask radius */
-        height: 44px;
-        background: #FFFFFF;
-        border-radius: 50%; /* Make it rounded or squround */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: -2px 2px 5px rgba(0,0,0,0.05);
-        z-index: 10;
-        /* Visual trick: The button actually sits BEHIND the mask if we want strict cutout, 
-           but here we place it neatly in the void. */
-        border: 4px solid transparent; /* spacing */
-    }
-    /* Icon positioning adjustment because masking makes the container lose that corner */
-    .cutout-wrapper {
-        position: relative;
-        height: 100%;
-    }
-    /* We need to place the button OUTSIDE the masked container */
-    .card-container-wrapper {
-        position: relative;
-        height: 100%;
-        border-radius: 24px; /* Matches card */
-        /* background: transparent; we rely on child for background */
-    }
-    /* REVISION: Masking cuts the content too. 
-       Better approach: CSS border-radius manipulation without mask if possible? 
-       No, mask is cleanest for the inverted curve. 
-       We will place the button absolute to the wrapper, not the card. */
-    
-    .stats-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 4px; }
-    .stats-label { font-size: 13px; font-weight: 500; opacity: 0.9; margin-bottom: 12px; }
-    .stats-badge { 
-        display: inline-flex; align-items: center; gap: 4px;
-        padding: 4px 10px; border-radius: 20px; 
-        font-size: 11px; font-weight: 600;
-    }
-    .badge-white-glass { background: rgba(255, 255, 255, 0.2); color: #FFFFFF; backdrop-filter: blur(4px); }
-    .badge-green-subtle { background: #DCFCE7; color: #166534; }
-
+    .dashboard-wrapper { background: #f8f9fa; }
+    /* ApexCharts White Theme Override */
+    .apexcharts-text { fill: #ffffff !important; }
+    .apexcharts-gridline { stroke: rgba(255,255,255,0.2) !important; stroke-dasharray: 4; }
+    .apexcharts-legend-text { color: #ffffff !important; }
 </style>
 
 <script>
     let financeChart, volumeChart;
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Init Tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) { return new bootstrap.Tooltip(tooltipTriggerEl) })
-
-        // Data from Controller
         const chartData = @json($chartData ?? []);
-        const totalSold = chartData.kg_sold ? chartData.kg_sold.reduce((a, b) => a + b, 0) : 0;
-        const totalBought = chartData.kg_bought ? chartData.kg_bought.reduce((a, b) => a + b, 0) : 0;
-
-        // 1. Finance Chart (Spline Area)
+        
         if (chartData.labels && chartData.labels.length > 0) {
+            // 1. Tren Arus Kas (Line/Area with dashed grid)
             const financeOptions = {
                 series: [{ name: 'Pemasukan', data: chartData.income }, { name: 'Pengeluaran', data: chartData.expense }],
-                chart: { type: 'area', height: 320, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', background: 'transparent' },
-                colors: ['#4CAF50', '#ef5350'],
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 3 },
-                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 } },
+                chart: { type: 'line', height: 300, toolbar: { show: false }, background: 'transparent' },
+                colors: ['#ffffff', '#ef5350'], 
+                stroke: { curve: 'smooth', width: 2, dashArray: [0, 0] },
+                markers: { size: 4, hover: { size: 6 } },
                 xaxis: { 
                     categories: chartData.labels, 
-                    axisBorder: { show: false }, 
-                    axisTicks: { show: false }, 
-                    labels: { 
-                        style: { colors: '#64748B', fontSize: '11px', fontFamily: 'Inter, sans-serif' },
-                        rotate: -45,
-                        rotateAlways: false,
-                        hideOverlappingLabels: true,
-                        trim: true,
-                        maxHeight: 60
-                    },
-                    tickAmount: 12,
-                    tooltip: { enabled: false }
+                    labels: { style: { colors: '#ffffff', fontSize: '10px' } },
+                    axisBorder: { show: false }, axisTicks: { show: false }
                 },
                 yaxis: { 
                     labels: { 
-                        formatter: val => new Intl.NumberFormat('id-ID', { notation: "compact" }).format(val), 
-                        style: { colors: '#64748B', fontSize: '11px', fontFamily: 'Inter, sans-serif' } 
+                        formatter: val => (val/1000000).toFixed(1) + "jt", 
+                        style: { colors: '#ffffff', fontSize: '10px' } 
                     } 
                 },
-                grid: { borderColor: '#F1F5F9', strokeDashArray: 4, padding: { top: 0, right: 0, bottom: 0, left: 10 } },
-                legend: { position: 'top', horizontalAlign: 'right' },
-                tooltip: { 
-                    theme: 'light',
-                    style: {
-                        fontSize: '12px',
-                        fontFamily: 'Inter, sans-serif'
-                    },
-                    y: {
-                        formatter: function(val) {
-                            return "Rp " + new Intl.NumberFormat('id-ID').format(val);
-                        }
-                    }
-                }
+                grid: { borderColor: 'rgba(255,255,255,0.2)', strokeDashArray: 3 },
+                legend: { show: false }, // Custom legend used
+                tooltip: { theme: 'light', y: { formatter: val => "Rp " + new Intl.NumberFormat('id-ID').format(val) } }
             };
             financeChart = new ApexCharts(document.querySelector("#financeChart"), financeOptions);
             financeChart.render();
 
-            // 2. Volume Chart (Bar with fixes)
+            // 2. Volume Transaksi (Bar)
             const volumeOptions = {
-                series: [{ name: 'Terjual', data: chartData.kg_sold }, { name: 'Dibeli', data: chartData.kg_bought }],
-                chart: { 
-                    type: 'bar', 
-                    height: 280, 
-                    stacked: true,
-                    toolbar: { show: false }, 
-                    fontFamily: 'Inter, sans-serif', 
-                    background: 'transparent' 
-                },
-                colors: ['#FFA726', '#4FC3F7'],
-                plotOptions: { 
-                    bar: { 
-                        horizontal: false, 
-                        columnWidth: '50%', 
-                        borderRadius: 2 
-                    } 
-                },
+                series: [{ name: 'Stok Masuk (Beli)', data: chartData.kg_bought }, { name: 'Stok Keluar (Jual)', data: chartData.kg_sold }],
+                chart: { type: 'bar', height: 280, stacked: false, toolbar: { show: false }, background: 'transparent' },
+                colors: ['#29B6F6', '#FFA726'], // Blue and Orange bars
+                plotOptions: { bar: { borderRadius: 2, columnWidth: '60%' } },
                 dataLabels: { enabled: false },
-                stroke: { show: true, width: 2, colors: ['transparent'] },
                 xaxis: { 
                     categories: chartData.labels, 
-                    axisBorder: { show: false }, 
-                    axisTicks: { show: false },
-                    labels: { 
-                        style: { colors: '#64748B', fontSize: '10px', fontFamily: 'Inter, sans-serif' },
-                        rotate: -45,
-                        hideOverlappingLabels: true,
-                        tickAmount: 6
-                    },
-                    tooltip: { enabled: false }
+                    labels: { style: { colors: '#ffffff', fontSize: '10px' }, rotate: -45 },
+                    axisBorder: { show: false }
                 },
                 yaxis: { 
-                    labels: { 
-                        style: { colors: '#64748B', fontSize: '10px', fontFamily: 'Inter, sans-serif' },
-                        formatter: val => new Intl.NumberFormat('id-ID', { notation: "compact" }).format(val)
-                    } 
+                    labels: { style: { colors: '#ffffff', fontSize: '10px' } }
                 },
-                grid: { borderColor: '#F1F5F9', strokeDashArray: 4, padding: { left: 10, right: 0 } },
-                legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '11px' },
-                tooltip: { 
-                    theme: 'light',
-                    y: { formatter: val => val + " Kg" }
-                }
+                grid: { borderColor: 'rgba(255,255,255,0.2)', strokeDashArray: 3 },
+                legend: { show: false },
+                tooltip: { theme: 'light' }
             };
             volumeChart = new ApexCharts(document.querySelector("#volumeChart"), volumeOptions);
             volumeChart.render();
         }
     });
-
-    async function updateChartFilter(btn, range) {
-        document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('active', 'text-success'); b.classList.add('text-secondary'); });
-        btn.classList.add('active', 'text-success'); btn.classList.remove('text-secondary');
-        
-        try {
-            const response = await fetch(`{{ route('dashboard.chart-data') }}?range=${range}`);
-            const data = await response.json();
-            if (financeChart) { financeChart.updateOptions({ xaxis: { categories: data.labels } }); financeChart.updateSeries([{ data: data.income }, { data: data.expense }]); }
-            // For Volume, since it's cumulative donut, we might need different logic if the API returns arrays.
-            // Assuming API returns arrays for the period. We sum them up.
-            if (volumeChart) {
-                const newSold = data.kg_sold.reduce((a, b) => a + b, 0);
-                const newBought = data.kg_bought.reduce((a, b) => a + b, 0);
-                 volumeChart.updateSeries([newSold, newBought]);
-            }
-        } catch (error) { console.error('Error fetching chart data:', error); }
-    }
-    
-    async function fetchDashboardData() {
-         location.reload(); 
-    }
 </script>
 @endsection
